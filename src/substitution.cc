@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2022 Hans Åberg.
+/* Copyright (C) 2017, 2021-2023 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -297,28 +297,23 @@ namespace mli {
   }
 
 
-  struct variable_substitution_construct {
-    ref<variable> variable_;
-
-    variable_substitution_construct(const ref<variable>& v)
-     : variable_(v) {}
-
-    ref<formula> operator()(const ref<formula>& x) const {
-      return ref<variable_substitution>(make, variable_, x);
-    }
-  };
-
-
   split_formula variable_substitution::split(unify_environment tg,
     const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
+
     split_formula sf(this);  // Return value.
+
+#if SPLIT_CONTAINER
+#warning variable_substitution::split SPLIT_CONTAINER
     // If t and *this unify, then *this can be replaced by x:
     alternatives as = mli::unify(t, tt, this, tg, dbp, lv, sl, dr);
 
     if (!as.empty())
       sf.push_back(this, ref<formula>(x), tt.table_->find_local());
+#endif
 
-    sf.append(mli::split(formula_, tg, variable_substitution_construct(variable_), x, t, tt, dbp, lv, sl, dr));
+    auto 𝜆 = [&](const ref<formula>& x) { ref<variable_substitution> r(*this); r->formula_ = x; return r; };
+
+    sf.append(mli::split(formula_, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
 
     return sf;
   }
@@ -703,7 +698,6 @@ namespace mli {
 
       if (trace_value & trace_unify) {
         std::lock_guard<std::recursive_mutex> guard(write_mutex);
-
         std::clog << "explicit_substitution::unify_substitution2 B0\n  "
           << "unify(" << formula_ << ", " << std::get<0>(i) << ")."
           << std::endl;
@@ -713,7 +707,6 @@ namespace mli {
 
       if (trace_value & trace_unify) {
         std::lock_guard<std::recursive_mutex> guard(write_mutex);
-
         std::clog << "explicit_substitution::unify_substitution2 B1\n  "
           << "unify(" << formula_ << ", " << std::get<0>(i) << ") ="
           << as0
@@ -755,6 +748,7 @@ namespace mli {
               cont = !std::get<2>(i).contains(k);
 
               if (trace_value & trace_unify) {
+                std::lock_guard<std::recursive_mutex> guard(write_mutex);
                 std::clog << "explicit_substitution::unify_substitution2:\n"
                   << "The variables occurrence " << k << " in\n" << y << " ≡ ("
                   << std::get<1>(i) << ")[" << variable_ << " ⤇ " << k << "]\n"
@@ -778,6 +772,7 @@ namespace mli {
                 std::get<2>(i).begin(), std::get<2>(i).end());
 
             if (trace_value & trace_unify) {
+              std::lock_guard<std::recursive_mutex> guard(write_mutex);
               std::clog << "explicit_substitution::unify_substitution2:\n"
                 << "The set of excluded variables of " << k << " in\n" << y << " ≡ ("
                 << std::get<1>(i) << ")[" << variable_ << " ⤇ " << k << "]\n"
@@ -806,7 +801,6 @@ namespace mli {
 
       if (trace_value & trace_unify) {
         std::lock_guard<std::recursive_mutex> guard(write_mutex);
-
         std::clog << "explicit_substitution::unify_substitution2\n  "
           << "unify(" << formula_ << ", " << std::get<0>(i) << ") as1 ="
           << as1
@@ -943,28 +937,22 @@ namespace mli {
   }
 
 
-  struct explicit_substitution_construct {
-    ref<variable> variable_;
-
-    explicit_substitution_construct(const ref<variable>& v)
-     : variable_(v) {}
-
-    ref<formula> operator()(const ref<formula>& x) const {
-      return ref<explicit_substitution>(make, variable_, x);
-    }
-  };
-
-
   split_formula explicit_substitution::split(unify_environment tg,
     const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
     split_formula sf(this);  // Return value.
+
+#if SPLIT_CONTAINER
+#warning explicit_substitution::split SPLIT_CONTAINER
     // If t and *this unify, then *this can be replaced by x:
     alternatives as = mli::unify(t, tt, this, tg, dbp, lv, sl, dr);
 
     if (!as.empty())
       sf.push_back(this, ref<formula>(x), tt.table_->find_local());
+#endif
 
-    sf.append(mli::split(formula_, tg, explicit_substitution_construct(variable_), x, t, tt, dbp, lv, sl, dr));
+    auto 𝜆 = [&](const ref<formula>& x) { ref<explicit_substitution> r(*this); r->formula_ = x; return r; };
+
+    sf.append(mli::split(formula_, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
 
     return sf;
   }
@@ -1112,23 +1100,25 @@ namespace mli {
   }
 
 
-  struct composition_construct {
-    ref<formula> operator()(const ref<formula>& x, const ref<formula>& y) const {
-      return ref<substitution_composition>(make, ref<substitution>(x), ref<substitution>(y));
-    }
-  };
-
-
   split_formula substitution_composition::split(unify_environment tg,
     const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
     split_formula sf(this);  // Return value.
+
+#if SPLIT_CONTAINER
+#warning substitution_composition::split SPLIT_CONTAINER
     // If t and *this unify, then *this can be replaced by x:
     alternatives as = mli::unify(t, tt, this, tg, dbp, lv, sl, dr);
 
     if (!as.empty())
       sf.push_back(this, ref<formula>(x), tt.table_->find_local());
+#endif
 
-    sf.append(mli::split(ref<formula>(outer_), ref<formula>(inner_), tg, composition_construct(), x, t, tt, dbp, lv, sl, dr));
+    auto 𝜆 = [&](const ref<formula>& x, const ref<formula>& y) {
+      ref<substitution_composition> r(*this); r->outer_ = x; r->inner_ = y; return r;
+    };
+
+    sf.append(mli::split({outer_, inner_}, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
+
     return sf;
   }
 
@@ -1397,24 +1387,25 @@ namespace mli {
   }
 
 
-  struct substitution_formula_construct {
-    ref<formula> operator()(const ref<formula>& x, const ref<formula>& y) const {
-      return ref<substitution_formula>(make, ref<substitution>(x), y);
-    }
-  };
-
-
   split_formula substitution_formula::split(unify_environment tg,
     const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
     split_formula sf(this);  // Return value.
-#if !DEBUG_SUBSTITUTION_FORMULA_UNIFY
+
+#if SPLIT_CONTAINER
+#warning substitution_formula::split SPLIT_CONTAINER
     // If t and *this unify, then *this can be replaced by x:
     alternatives as = mli::unify(t, tt, this, tg, dbp, lv, sl, dr);
 
     if (!as.empty())
       sf.push_back(this, ref<formula>(x), tt.table_->find_local());
 #endif
-    sf.append(mli::split(ref<formula>(substitution_), formula_, tg, substitution_formula_construct(), x, t, tt, dbp, lv, sl, dr));
+
+    auto 𝜆 = [&](const ref<formula>& x, const ref<formula>& y) {
+      ref<substitution_formula> r(*this); r->substitution_ = x; r->formula_ = y; return r;
+    };
+
+    sf.append(mli::split({substitution_, formula_}, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
+
     return sf;
   }
 
@@ -1471,8 +1462,8 @@ namespace mli {
   }
 
 
-  alternative& alternative::sublabel(const std::string& ls, level lv) {
-    labelstatements_[lv.sub].substatements_.push_back(ls);
+  alternative& alternative::sublabel(const ref<statement>& ls, level lv) {
+    labelstatements_[lv.sub].substatements_.push_front(ls);
 
     return *this;
   }
@@ -1511,11 +1502,8 @@ namespace mli {
           for (auto& j: i.second.substatements_) {
             if (it0) it0 = false;
             else     os << ", ";
-#if NEW_SUBSTATEMENTS
-            os << j;
-#else
+
             j->write(os, ws);
-#endif
           }
 
           os << "⁾";
@@ -1547,32 +1535,12 @@ namespace mli {
         }
       }
 
-#if NEW_SUBSTATEMENTS
-      if (!i.second.substatements_.empty()) {
-        os << "substatements: ";
-
-        bool it0 = true;
-
-        for (auto& j: i.second.substatements_) {
-          if (it0) it0 = false;
-          else     os << ", ";
-
-          os << j;
-        }
-
-        os << "\n";
-      }
-#else
-      if (!i.second.substatements_.empty())
-        os << "Substatement section:\n";
-
       for (auto& j: i.second.substatements_) {
         if (!j->empty()) {
           j->write(os, write_style(write_name | write_type | write_statement | tabs2));
           os << "\n";
         }
       }
-#endif
     }
 #else
     for (auto& i: labelstatements_) {
@@ -1598,15 +1566,56 @@ namespace mli {
     }
   }
 
-#if 1
+
+  // If y is an inference of the same metalevel, concatenate the heads and concatenate
+  // the bodies, otherwise, concatenate the head with y.
+  inference& inference::append(const ref<formula>& y) {
+    if (trace_value & trace_unify) {
+      std::lock_guard<std::recursive_mutex> guard(write_mutex);
+      std::clog
+       << "inference::append(\n  "
+       << *this << ";\n  "
+       << y << ")"
+       << std::endl;
+    }
+
+    inference* ip = ref_cast<inference*>(y);
+
+    if (ip != nullptr && ip->metalevel_ == metalevel_) {
+      head_ = concatenate(head_, ip->head_);
+      body_ = concatenate(body_, ip->body_);
+    }
+    else
+      head_ = concatenate(head_, y);
+
+    return *this;
+  }
+
+
+
   // Assumption is that x comes from an inference head unification and y from body unification.
-  // The metalevel ml is the one of the inference contructed in infrence::unify. The metalevel of
+  // The metalevel ml is the one of the inference constructed in infrence::unify. The metalevel of
   // y may be lower if no new inference is contructed. The metalevel of x is allowed to be equal
   // to ml to allow for the head unification to produce a premise.
-  ref<formula> merge(const ref<formula>& x, const ref<formula>& y, metalevel_t ml) {
+  ref<formula> merge(const ref<formula>& x, const ref<formula>& y,
+    const ref<formula>& h, const ref<formula>& b, metalevel_t ml,
+    const varied_type& vs, const varied_type& vrs) {
+    if (trace_value & trace_unify) {
+      std::lock_guard<std::recursive_mutex> guard(write_mutex);
+      std::clog
+       << "merge ml = " << ml << " (\n  "
+       << x << ";\n  "
+       << y << ";\n  "
+       << b << " ⊢ " << h << ")"
+       << std::endl;
+    }
+
+#if 0
+#if SIMPLIFY_PROVED_INFERENCE
     if (y->provable()) { if (x->provable()) return {}; else return x; }
     if (x->provable())  return y;
-
+#endif
+#endif
     metalevel_t ml1 = x->metalevel();
     metalevel_t ml2 = y->metalevel();
 
@@ -1617,6 +1626,9 @@ namespace mli {
     bool ib1 = ip1 != 0 && ml1 == ml;
     bool ib2 = ip2 != 0 && ml2 == ml;
 
+
+    // concatenate vs, vrs with those of ip1 and ip2 when appropriate:
+
     if (ib1 && ib2) {
       // Only insert the head of x in case it is not provable from the y premises, and
       // only insert the head of y in case it is not provable from the x premises,
@@ -1626,51 +1638,68 @@ namespace mli {
       bool hb2 = !ip2->head_->provable() && !ip1->body_->has_formula(ip2->head_);
 
       if (hb1 && hb2)
-        hr = concatenate(ip1->head_, ip2->head_);
+        hr = concatenate(ip1->head_, ip2->head_, h);
       else if (hb1)
-        hr = ip1->head_;
+        hr = concatenate(ip1->head_, h);
       else if (hb2)
-        hr = ip2->head_;
+        hr = concatenate(ip2->head_, h);
       else
+        hr = h;
+
+      if (hr->empty())
         return {};
 
-      return ref<inference>(make, hr, concatenate(ip1->body_, ip2->body_),
-        ip2->metalevel_, ip2->varied_, ip2->varied_in_reduction_);
+      return ref<inference>(make, hr, concatenate(b, ip1->body_, ip2->body_),
+        ml, vs, vrs);
     }
     else if (ib2) {
       // Only insert x in case it is not provable from the y premises:
       ref<formula> hr;
-      if (!x->provable() && !ip2->body_->has_formula(x))
-        hr = concatenate(x, ip2->head_);
-      else
-        hr = ip2->head_;
 
-      return ref<inference>(make, hr, ip2->body_, ip2->metalevel_, ip2->varied_, ip2->varied_in_reduction_);
+      if (!x->provable() && !ip2->body_->has_formula(x))
+        hr = concatenate(x, ip2->head_, h);
+      else
+        hr = concatenate(ip2->head_, h);
+
+      if (hr->empty())
+        return {};
+
+      return ref<inference>(make, hr, concatenate(b, ip2->body_), ml, vs, vrs);
     }
     else if (ib1) {
-      // Case should not appear, but added for symmetry:
-
       // Only insert y in case it is not provable from the x premises:
       ref<formula> hr;
-      if (!y->provable() && !ip1->body_->has_formula(y))
-        hr = concatenate(ip1->head_, y);
-      else
-        hr = ip1->head_;
 
-      return ref<inference>(make, hr, ip1->body_, ip1->metalevel_, ip1->varied_, ip1->varied_in_reduction_);
+      if (!y->provable() && !ip1->body_->has_formula(y))
+        hr = concatenate(ip1->head_, y, h);
+      else
+        hr = concatenate(ip1->head_, h);
+
+      if (hr->empty())
+        return {};
+
+      return ref<inference>(make, hr, concatenate(b, ip1->body_), ml, vs, vrs);
     }
 
-    return concatenate(x, y);
+    ref<formula> hr = concatenate(x, y, h);
+
+    if (hr->empty())
+      return {};
+
+    return ref<inference>(make, hr, b, ml, vs, vrs);
   }
 
 
-  alternative merge(const alternative& x, const alternative& y, metalevel_t ml) {
+  alternative merge(const alternative& x, const alternative& y,
+    const ref<formula>& h, const ref<formula>& b, metalevel_t ml,
+    const varied_type& vs, const varied_type& vrs) {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
        << "alternative merge(\n  "
        << x << ";\n  "
-       << y << ")"
+       << y << ";\n  "
+       << b << " ⊢ " << h << ")"
        << std::endl;
 
       if (!x.goal_->empty() && !y.goal_->empty())
@@ -1712,27 +1741,31 @@ namespace mli {
     }
 #endif
 
+#if 1
+    a.goal_ = merge((*y.substitution_)(x.goal_), y.goal_, h, b, ml, vs, vrs);
+#else
     // Forward goal concatenation order:
     // The order of the goals are preserved here: the old x.goal_ followed by the new
     // y.goal_, with the new subtitution y.substitution_ applied to the old goal x.goal_.
     a.goal_ = merge((*y.substitution_)(x.goal_), y.goal_, ml);
+#endif
 
     return a;
   }
 
 
-  alternatives merge(const alternatives& x, const alternatives& y, metalevel_t ml) {
-    if (y.empty() || x.empty())  return O;
-
+  alternatives merge(const alternatives& x, const alternatives& y,
+    const ref<formula>& h, const ref<formula>& b, metalevel_t ml,
+    const varied_type& vs, const varied_type& vrs) {
     alternatives as;
 
     for (auto& i: x)
       for (auto& j: y)
-        as.push_back(merge(i, j, ml));
+        as.push_back(merge(i, j, h, b, ml, vs, vrs));
 
     return as;
   }
-#endif
+
 
   alternative operator*(const alternative& x, const alternative& y) {
     if (trace_value & trace_unify) {
@@ -1860,7 +1893,7 @@ namespace mli {
   }
 
 
-  alternatives& alternatives::sublabel(const std::string& ls, level lv) {
+  alternatives& alternatives::sublabel(const ref<statement>& ls, level lv) {
     for (auto& i: alternatives_)
       i = i.sublabel(ls, lv);
 
@@ -1898,8 +1931,10 @@ namespace mli {
         as.push_back(i.add_goal(x));
       }
       catch (illegal_substitution& ex) {
-        if (trace_value & trace_unify)
+        if (trace_value & trace_unify) {
+          std::lock_guard<std::recursive_mutex> guard(write_mutex);
           std::clog << ex.what() << std::endl;
+        }
       }
     }
 
@@ -2094,8 +2129,10 @@ namespace mli {
           as.append(i * bs);
       }
       catch (illegal_substitution& ex) {
-        if (trace_value & trace_unify)
+        if (trace_value & trace_unify) {
+          std::lock_guard<std::recursive_mutex> guard(write_mutex);
           std::clog << ex.what() << std::endl;
+        }
       }
 
     }
@@ -2241,13 +2278,15 @@ namespace mli {
       std::get<1>(i)->write(os, ws);
       os << "; ";
       std::get<0>(i).write(os, ws);
-      os << "; ";
+      os << "; {";
 
       bool j0 = true;
       for (auto& j: std::get<2>(i)) {
         if (j0) j0 = false; else os << " ";
         os << j;
       }
+
+      os << "}";
     }
   }
 

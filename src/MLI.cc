@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2022 Hans Åberg.
+/* Copyright (C) 2017, 2021-2023 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -29,6 +29,7 @@
 #include "substitution.hh"
 #include "function.hh"
 #include "precedence.hh"
+#include "inferenceengine.hh"
 
 
 #define NEW_INFERENCE_UNIFY 0
@@ -37,8 +38,6 @@
 
 
 namespace mli {
-
-  extern bool proofs_found;
 
   size_type level_max = 100;
   size_type unify_count = 0;
@@ -49,6 +48,16 @@ namespace mli {
   bool expand_implicit_premise = false;
 
   bool strict_proof = false;
+
+  bool false_elimination = false, false_introduction = false;
+
+  bool negation_elimination = false, negation_elimination_in_premise = false;
+  bool double_negation_elimination = false, double_negation_elimination_in_premise = false;
+  bool double_negation_introduction = false, double_negation_introduction_in_premise = false;
+
+  bool implication_elimination = false, implication_elimination_in_premise = false;
+  bool conjunction_elimination = false, conjunction_elimination_in_premise = false;
+  bool disjunction_elimination = false, disjunction_elimination_in_premise = false;
 
 
   degree degree_pool::get() {
@@ -91,7 +100,6 @@ namespace mli {
         unused_.erase(i1);
     }
   }
-
 
 
   ref<formula> concatenate(const ref<formula>& x, const ref<formula>& y, sequence::type t);
@@ -261,6 +269,8 @@ namespace mli {
        << (ty.target_? "fact  " : "goal  ") << y << ";\n"
        << (tx.target_? "fact  " : "goal  ") << x << ")";
 
+    os << std::endl;
+
     return os;
   }
 
@@ -269,10 +279,7 @@ namespace mli {
   // Sort out directions and unnest definitions:
   alternatives unify(const ref<formula>& x0, unify_environment tx0, const ref<formula>& y0, unify_environment ty0, database* dbp, level lv, degree_pool& sl, direction dr, expansion ex) {
     if (trace_value & trace_unify)
-      write_unify(std::clog, "mli::", x0, tx0, y0, ty0, dbp, dr) << std::endl;
-
-    if (proofs_found)
-      throw thread_exit();
+      write_unify(std::clog, "mli::", x0, tx0, y0, ty0, dbp, dr);
 
     if (unify_count_max != 0 && ++unify_count > unify_count_max)
       throw std::runtime_error("Too many calls to unify.");
@@ -290,7 +297,8 @@ namespace mli {
     unify_environment tx, ty;
 
     // If arguments are reversed, change them back, so that 'unify'
-    // here always gets them in reduction (original, unreversed) order.
+    // here always gets them in reduction (original, unreversed) order, that is,
+    // x is goal and y is fact.
     // Subsequent calls to 'unify' should use directions 'reduction' and 'deduction',
     // not dr and !dr.
     if (dr == reduction) {
@@ -326,7 +334,7 @@ namespace mli {
     if (y->meta_container_and_mode(ty.target_))
       return y->unify(ty, x, tx, dbp, lv, sl, deduction);
 
-  {
+
     alternatives as;
 #if 1
     // Expand premises if not done so, and y does not contain a premise,
@@ -386,21 +394,19 @@ namespace mli {
       return as;
     }
 
+
     if (x->inference_mode()) {
       alternatives bs = x->unify(tx, y, ty, dbp, lv, sl, reduction);
       as.append(bs);
       return as;
     }
-
+    else
     if (y->inference_mode()) {
       alternatives bs = y->unify(ty, x, tx, dbp, lv, sl, deduction);
       as.append(bs);
       return as;
     }
-  }
 
-
-    alternatives as, bs;
 
     // Polymorphic unify call in first variable x; required calls in y covered below.
     as = x->unify(tx, y, ty, dbp, lv, sl, reduction);
@@ -420,7 +426,7 @@ namespace mli {
 
     // If (vp1 != 0) then variable::unify has already been called above.
     if (vp1 == 0 && vp2 != 0) {
-      bs = vp2->unify(ty, x, tx, dbp, lv, sl, deduction);
+      alternatives bs = vp2->unify(ty, x, tx, dbp, lv, sl, deduction);
       as.append(bs);
     }
 
@@ -430,7 +436,7 @@ namespace mli {
 
     // Must always have a substitution_formula::unify polymorphic call in y:
     if (sfp1 == nullptr && sfp2 != nullptr) {
-      bs = sfp2->unify(ty, x, tx, dbp, lv, sl, deduction);
+      alternatives bs = sfp2->unify(ty, x, tx, dbp, lv, sl, deduction);
       as.append(bs);
     }
 #else
@@ -438,7 +444,7 @@ namespace mli {
 
     // Must always have a substitution_formula::unify polymorphic call in y:
     if (sfp2 != 0) {
-      bs = sfp2->unify(ty, x, tx, dbp, lv, sl, deduction);
+      alternatives bs = sfp2->unify(ty, x, tx, dbp, lv, sl, deduction);
       as.append(bs);
     }
 #endif
@@ -447,11 +453,267 @@ namespace mli {
 
     // If fap1 != nullptr then function_application::unify has already been called above.
     if (fap1 == nullptr && fap2 != nullptr) {
-      bs = fap2->unify(ty, x, tx, dbp, lv, sl, deduction);
+      alternatives bs = fap2->unify(ty, x, tx, dbp, lv, sl, deduction);
       as.append(bs);
     }
 
+
+    // Implicit logic simplifications:
+    if (as.empty())
+      return logic_unify(y, ty, x, tx, dbp, lv, sl);
+
     return as;
+  }
+
+
+  // Logic simplification unify, deduction order: fact x, goal y.
+  alternatives logic_unify(const ref<formula>& x, unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl) {
+    if (trace_value & trace_unify)
+      write_unify(std::clog, "logic_", x, tx, y, ty, dbp, deduction);
+
+    alternatives as;
+
+    if (!tx.is_premise_ && !ty.is_premise_) {
+      // -⇒: eliminate implication in the conclusion (head) by the use of Modus Ponus (MP).
+      if (implication_elimination && x->is_implication()) {
+        // x ≔ 𝑨 ⇒ 𝑩
+        structure* sp = ref_cast<structure*>(x);
+        if (sp != nullptr) {
+          // sqp ≔ 𝑨, 𝑩
+          sequence* sqp = ref_cast<sequence*>(sp->argument);
+          if (sqp != nullptr || sqp->formulas_.size() == 2) {
+            // nr0 ≔ ¬𝑨, nr1 ≔ ¬𝑩
+            ref<structure> nr0(make, "¬", structure::logic, x->metalevel(),
+              structure::prefix, logical_not_oprec, sqp->formulas_.front());
+            ref<structure> nr1(make, "¬", structure::logic, x->metalevel(),
+              structure::prefix, logical_not_oprec, sqp->formulas_.back());
+
+            // ir0 ≔ 𝑨, 𝑨 ⇒ 𝑩 ⊢ 𝑩
+            ref<inference> ir0(make, sqp->formulas_.back(),
+              std::list<ref<formula>>{sqp->formulas_.front(), x}, (metalevel_t)(x->metalevel() + 1_ml));
+            ref<supposition> pr0(make, supposition::implicit_, "-⇒₀̂", ir0, true);
+
+            // ir1 ≔ ¬𝑩, 𝑨 ⇒ 𝑩 ⊢ ¬𝑨
+            ref<inference> ir1(make, nr0,
+              std::list<ref<formula>>{nr1, x}, (metalevel_t)(x->metalevel() + 1_ml));
+            ref<supposition> pr1(make, supposition::implicit_, "-⇒₁̂", ir1, true);
+
+            if (trace_value & trace_logic)
+              std::clog << "-⇒⊢: x = " << x << ", y = " << y << ", ir0 = " << ir0 << ", ir1 = " << ir1 << std::endl;
+
+  #if 0
+            // ir ≔ 𝑨 ⊢ 𝑩
+            ref<inference> ir(make, sqp->formulas_.back(), sqp->formulas_.front(), (metalevel_t)(y->metalevel() + 1_ml));
+            as.append(mli::unify(ir, tx, y, ty, dbp, lv, sl, deduction).sublabel(pr0, lv));
+  #else
+            // 𝐮(𝑩, y).𝛄(𝑨)
+            as.append(mli::unify(sqp->formulas_.back(), tx, y, ty, dbp, lv, sl, deduction).add_goal(sqp->formulas_.front()).sublabel(pr0, lv));
+
+            // Contraposition:
+            as.append(mli::unify(nr0, tx, y, ty, dbp, lv, sl, deduction).add_goal(nr1).sublabel(pr1, lv));
+  #endif
+            return as;
+          }
+        }
+      }
+
+    }
+
+
+
+
+    if (tx.is_premise_ && ty.is_premise_) {
+
+      // -⇒⊢: eliminate implication in the premise (body) by the use of Modus Ponus (MP)
+      // 𝑨, 𝑨 ⇒ 𝑩 ⊢ 𝑩 and its contraposition ¬𝑩, 𝑨 ⇒ 𝑩 ⊢ ¬𝑨 ≡ ¬𝑩, ¬𝑩 ⇒ ¬𝑨 ⊢ ¬𝑨.
+      if (implication_elimination_in_premise && y->is_implication()) {
+        // y ≔ 𝑨 ⇒ 𝑩
+        structure* sp = ref_cast<structure*>(y);
+        if (sp != nullptr) {
+          // sqp ≔ 𝑨, 𝑩
+          sequence* sqp = ref_cast<sequence*>(sp->argument);
+          if (sqp != nullptr || sqp->formulas_.size() == 2) {
+            // nr0 ≔ ¬𝑨, nr1 ≔ ¬𝑩
+            ref<structure> nr0(make, "¬", structure::logic, y->metalevel(),
+              structure::prefix, logical_not_oprec, sqp->formulas_.front());
+            ref<structure> nr1(make, "¬", structure::logic, y->metalevel(),
+              structure::prefix, logical_not_oprec, sqp->formulas_.back());
+
+            // ir0 ≔ 𝑨, 𝑨 ⇒ 𝑩 ⊢ 𝑩
+            ref<inference> ir0(make, sqp->formulas_.back(),
+              std::list<ref<formula>>{sqp->formulas_.front(), y}, (metalevel_t)(y->metalevel() + 1_ml));
+            ref<supposition> pr0(make, supposition::implicit_, "-⇒⊢₀̂", ir0, true);
+
+            // ir1 ≔ ¬𝑩, 𝑨 ⇒ 𝑩 ⊢ ¬𝑨
+            ref<inference> ir1(make, nr0,
+              std::list<ref<formula>>{nr1, y}, (metalevel_t)(y->metalevel() + 1_ml));
+            ref<supposition> pr1(make, supposition::implicit_, "-⇒⊢₁̂", ir1, true);
+
+            if (trace_value & trace_logic)
+              std::clog << "-⇒⊢: x = " << x << ", y = " << y << ", ir0 = " << ir0 << ", ir1 = " << ir1 << std::endl;
+
+            as.append(mli::unify(x, tx, sqp->formulas_.back(), ty, dbp, lv, sl, deduction).add_goal(sqp->formulas_.front()).sublabel(pr0, lv));
+
+            // Contraposition:
+            as.append(mli::unify(x, tx, nr0, ty, dbp, lv, sl, deduction).add_goal(nr1).sublabel(pr1, lv));
+
+            return as;
+          }
+        }
+      }
+
+      // -∧⊢: eliminate conjunction in the premise (body) by 𝑨 ∧ 𝑩 ⊢ 𝑨, 𝑩.
+      if (conjunction_elimination_in_premise && y->is_conjunction()) {
+        structure* sp = ref_cast<structure*>(y);
+        if (sp != nullptr) {
+          // sqp ≔ 𝑨, 𝑩
+          sequence* sqp = ref_cast<sequence*>(sp->argument);
+          if (sqp != nullptr || sqp->formulas_.size() == 2) {
+            // ir0 ≔ 𝑨 ∧ 𝑩 ⊢ 𝑩; ir1 ≔  𝑨 ∧ 𝑩 ⊢ 𝑨
+            ref<inference> ir0(make, sqp->formulas_.back(),
+              y, (metalevel_t)(y->metalevel() + 1_ml));
+            ref<inference> ir1(make, sqp->formulas_.front(),
+              y, (metalevel_t)(y->metalevel() + 1_ml));
+            ref<supposition> pr0(make, supposition::implicit_, "-∧⊢₀̂", ir0, true);
+            ref<supposition> pr1(make, supposition::implicit_, "-∧⊢₁̂", ir1, true);
+
+            if (trace_value & trace_logic)
+              std::clog << "-∧⊢: x = " << x << ", y = " << y << ", ir0 = " << ir0 << ", ir1 = " << ir1 << std::endl;
+
+            as.append(mli::unify(x, tx, sqp->formulas_.back(), ty, dbp, lv, sl, deduction).sublabel(pr0, lv));
+
+            as.append(mli::unify(x, tx, sqp->formulas_.front(), ty, dbp, lv, sl, deduction).sublabel(pr1, lv));
+
+            return as;
+          }
+        }
+      }
+
+      // -∨⊢: eliminate disjunction in the premise (body) by ¬𝑨, 𝑨 ∨ 𝑩 ⊢ 𝑩; ¬𝑩, 𝑨 ∨ 𝑩 ⊢ 𝑨.
+      if (disjunction_elimination_in_premise && y->is_disjunction()) {
+        structure* sp = ref_cast<structure*>(y);
+        if (sp != nullptr) {
+          // sqp ≔ 𝑨, 𝑩
+          sequence* sqp = ref_cast<sequence*>(sp->argument);
+          if (sqp != nullptr || sqp->formulas_.size() == 2) {
+            // nr0 ≔ ¬𝑨, nr1 ≔ ¬𝑩
+            ref<structure> nr0(make, "¬", structure::logic, y->metalevel(),
+              structure::prefix, logical_not_oprec, sqp->formulas_.front());
+            ref<structure> nr1(make, "¬", structure::logic, y->metalevel(),
+              structure::prefix, logical_not_oprec, sqp->formulas_.back());
+
+            // ir0 ≔ ¬𝑨, 𝑨 ∨ 𝑩 ⊢ 𝑩; ir1 ≔ ¬𝑩, 𝑨 ∨ 𝑩 ⊢ 𝑩
+            ref<inference> ir0(make, sqp->formulas_.back(),
+              std::list<ref<formula>>{nr0, y}, (metalevel_t)(y->metalevel() + 1_ml));
+            ref<inference> ir1(make, sqp->formulas_.front(),
+              std::list<ref<formula>>{nr1, y}, (metalevel_t)(y->metalevel() + 1_ml));
+
+            ref<supposition> pr0(make, supposition::implicit_, "-∨⊢₀̂", ir0, true);
+            ref<supposition> pr1(make, supposition::implicit_, "-∨⊢₁̂", ir1, true);
+
+            if (trace_value & trace_logic)
+              std::clog << "-∨⊢: x = " << x << ", y = " << y << ", ir0 = " << ir0 << ", ir1 = " << ir1 << std::endl;
+
+            as.append(mli::unify(x, tx, sqp->formulas_.back(), ty, dbp, lv, sl, deduction).add_goal(nr0).sublabel(pr0, lv));
+
+            as.append(mli::unify(x, tx, sqp->formulas_.front(), ty, dbp, lv, sl, deduction).add_goal(nr1).sublabel(pr1, lv));
+
+            return as;
+          }
+        }
+      }
+
+      // +¬¬⊢: introduce double negation in the premise (body) by 𝑨 ⊢ ¬¬𝑨.
+      if (double_negation_introduction_in_premise && x->is_double_negation()) {
+        structure* sp0 = ref_cast<structure*>(x);
+        if (sp0 != nullptr) {
+          sequence* sqp0 = ref_cast<sequence*>(sp0->argument);
+          if (sqp0 != nullptr && sqp0->formulas_.size() == 1) {
+            structure* sp1 = ref_cast<structure*>(sqp0->formulas_.front());
+            if (sp1 != nullptr) {
+              sequence* sqp1 = ref_cast<sequence*>(sp1->argument);
+              if (sqp1 != nullptr && sqp1->formulas_.size() == 1) {
+                ref<structure> dnr(make, "¬", structure::logic, x->metalevel(),
+                  structure::prefix, logical_not_oprec, ref<structure>(make, "¬", structure::logic, x->metalevel(), structure::prefix, logical_not_oprec, sqp1->formulas_.front()));
+                ref<inference> ir(make, x, sqp1->formulas_.front(),
+                  (metalevel_t)(x->metalevel() + 1_ml));
+                ref<supposition> pr(make, supposition::implicit_, "+¬¬⊢", ir, true);
+
+                if (trace_value & trace_logic)
+                  std::clog << "+¬¬⊢: x = " << x << ", y = " << y << ", ir = " << ir << std::endl;
+
+                as.append(mli::unify(sqp1->formulas_.front(), tx, y, ty, dbp, lv, sl, deduction).sublabel(pr, lv));
+
+                return as;
+              }
+            }
+          }
+        }
+      }
+
+      // -¬¬⊢: eliminate double negation in the premise (body) by ¬¬𝑨 ⊢ 𝑨.
+      if (double_negation_elimination_in_premise && y->is_double_negation()) {
+        structure* sp0 = ref_cast<structure*>(y);
+        if (sp0 != nullptr) {
+          sequence* sqp0 = ref_cast<sequence*>(sp0->argument);
+          if (sqp0 != nullptr && sqp0->formulas_.size() == 1) {
+            structure* sp1 = ref_cast<structure*>(sqp0->formulas_.front());
+            if (sp1 != nullptr) {
+              sequence* sqp1 = ref_cast<sequence*>(sp1->argument);
+              if (sqp1 != nullptr && sqp1->formulas_.size() == 1) {
+                ref<structure> dnr(make, "¬", structure::logic, y->metalevel(),
+                  structure::prefix, logical_not_oprec, ref<structure>(make, "¬", structure::logic, y->metalevel(), structure::prefix, logical_not_oprec, sqp1->formulas_.front()));
+                ref<inference> ir(make, sqp1->formulas_.front(),
+                  y, (metalevel_t)(y->metalevel() + 1_ml));
+                ref<supposition> pr(make, supposition::implicit_, "-¬¬⊢", ir, true);
+
+                if (trace_value & trace_logic)
+                  std::clog << "-¬¬⊢: x = " << x << ", y = " << y << ", ir = " << ir << std::endl;
+
+                as.append(mli::unify(x, tx, sqp1->formulas_.front(), ty, dbp, lv, sl, deduction).sublabel(pr, lv));
+
+                return as;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return as;
+
+
+
+#if 1
+#endif
+
+#if 1
+#endif
+
+#if 1
+
+    if (negation_elimination && y->is_negation()
+      && !tx.is_premise_ && !ty.is_premise_) {
+    }
+#if 0
+    if (negation_introduction && x->is_negation()
+      && !tx.is_premise_ && !ty.is_premise_) {
+    }
+#endif
+
+
+    if (false_elimination && y->is_false()
+      && !tx.is_premise_ && !ty.is_premise_) {
+    }
+
+    if (false_introduction && x->is_false()
+      && !tx.is_premise_ && !ty.is_premise_) {
+
+    }
+#endif
+
+    return as;
+
   }
 
 
@@ -510,10 +772,16 @@ namespace mli {
 
 
   ref<formula> statement::rename(level lv, degree sl) const {
+#if USE_VAL
+    ref<statement> rv(*this); // Make a polymorphic copy (clone).
+    rv->statement_ = statement_->rename(lv, sl);
+    return rv;
+#else
     statement* rp = this->new_p();
     ref<formula> rt(rp);
     rp->statement_ = statement_->rename(lv, sl);
     return rt;
+#endif
   }
 
 
@@ -525,10 +793,16 @@ namespace mli {
 
 
   ref<formula> statement::substitute(const ref<substitution>& s, substitute_environment vt) const {
+#if USE_VAL
+    ref<statement> rv(*this); // Make a polymorphic copy (clone).
+    rv->statement_ = statement_->substitute(s, vt);
+    return rv;
+#else
     statement* rp = this->new_p();
     ref<formula> rt(rp);
     rp->statement_ = statement_->substitute(s, vt);
     return rt;
+#endif
   }
 
 
@@ -1501,7 +1775,7 @@ namespace mli {
        << std::endl;
     }
 
-#if UNIFY_FALSE
+#if UNIFY_FALSE // Should be moved to mli::unify
     if (name == "𝕗") {
       alternatives as = I;
       as = as.add_goal(ref<structure>(make, "¬", structure::logic, metalevel_t(0),
@@ -1571,7 +1845,7 @@ namespace mli {
 
   alternatives sequence::unify(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
     if (trace_value & trace_unify)
-      write_unify(std::clog, "sequence::", this, tt, x, tx, dbp, dr) << std::endl;
+      write_unify(std::clog, "sequence::", this, tt, x, tx, dbp, dr);
 
     // Here, *this is not a meta object, and global unify makes sure that
     // neither is x, so unify indices, with the result the composition.
@@ -1582,54 +1856,16 @@ namespace mli {
   }
 
 
-  struct sequence_construct {
-    sequence::type type_;
-
-    sequence_construct(sequence::type t) : type_(t) {}
-
-    ref<formula> operator()() const { return ref<sequence>(make, type_); }
-
-    ref<formula> operator()(const ref<formula>& x) const { return ref<sequence>(make, x, type_); }
-
-    ref<formula> operator()(const ref<formula>& x, const ref<formula>& y) const {
-      sequence* yp = ref_cast<sequence*>(y);
-      if (yp == 0)  return ref<sequence>(make, x, y, type_);
-      std::list<ref<formula>> ls = yp->formulas_;
-      ls.push_front(x);
-      return ref<sequence>(make, ls, type_);
-    }
-  };
-
-
   split_formula sequence::split(unify_environment tg,
     const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
-    split_formula sf(this);  // Return value.
 
-#define SPLIT_CONTAINER 0
+    // Possible optimization: If t and *this unify, then *this can be replaced by x.
 
-#if SPLIT_CONTAINER
-    // If t and *this unify, then *this can be replaced by x:
-    if (!as.empty())
-      sf.push_back(this, ref<formula>(x), tt.table_->find_local());
-#endif
+    // Lambda expression that converts a value of type sequence::container_type to a sequence, that is,
+    // a clone of *this with only formulas_ changed; other values considered invariants.
+    auto 𝜆 = [&](const container_type& xs) { ref<sequence> r(*this); r->formulas_ = xs; return r; };
 
-    if (formulas_.empty()) {
-      sf.push_back(ref<sequence>(make, type_));
-      return sf;
-    }
-
-    const ref<formula> f = formulas_.front();
-    if (formulas_.size() == 1) {
-      sf.append(mli::split(f, tg, sequence_construct(type_), x, t, tt, dbp, lv, sl, dr));
-      return sf;
-    }
-
-    std::list<ref<formula>> fs = formulas_;
-    fs.pop_front();
-    ref<formula> g = ref<sequence>(make, fs, type_);
-    sf.append(mli::split(f, g, tg, sequence_construct(type_), x, t, tt, dbp, lv, sl, dr));
-
-    return sf;
+    return mli::split(formulas_, 𝜆, tg, x, t, tt, dbp, lv, sl, dr);
   }
 
 
@@ -1824,28 +2060,6 @@ namespace mli {
        << "structure::unify(\n  " << *this << ";\n  " << x << ")" << std::endl;
     }
 
-#if IMPLICATION_ELIMINATION
-    if ((tt.is_fact() && !tt.is_premise_|| tt.is_goal() && tt.is_premise_)
-        && is_implication() && !x->is_implication()) {
-      sequence* sqp = ref_cast<sequence*>(argument);
-      if (sqp == nullptr || sqp->formulas_.size() != 2)
-        return O;
-
-      return mli::unify(sqp->formulas_.back(), tt, x, tx, dbp, lv, sl, dr).add_goal(sqp->formulas_.front()).sublabel("-⇒", lv);;
-    }
-
-    if ((tx.is_fact() && !tx.is_premise_ || tx.is_goal() && tx.is_premise_)
-        && !is_implication() && x->is_implication()) {
-      structure* stp = ref_cast<structure*>(x);
-
-      if (stp != nullptr) {
-        sequence* sqp = ref_cast<sequence*>(stp->argument);
-        if (sqp != nullptr && sqp->formulas_.size() == 2)
-          return mli::unify(this, tt, sqp->formulas_.back(), tx, dbp, lv, sl, dr).add_goal(sqp->formulas_.front()).sublabel("-⇒", lv);;
-      }
-    }
-#endif
-
     structure* sp = ref_cast<structure*>(x);
 
     // Structures of different metalevel do not unify:
@@ -1857,31 +2071,43 @@ namespace mli {
   }
 
 
-  struct structure_construct {
-    precedence_t precedence_;
-    structure::type type_;
-    structure::style style_;
-    metalevel_t metalevel_;
-
-    structure_construct(structure::type t, structure::style s, precedence_t p, metalevel_t ml)
-     : type_(t), style_(s), precedence_(p), metalevel_(ml) {}
-
-    ref<formula> operator()(const ref<formula>& x, const ref<formula>& y) const {
-      return ref<structure>(make, x, y, type_, metalevel_, style_, precedence_);
-    }
-  };
-
-
   split_formula structure::split(unify_environment tg,
     const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
-    split_formula sf(this);  // Return value.
-    // If t and *this unify, then *this can be replaced by x:
-    alternatives as = mli::unify(t, tt, this, tg, dbp, lv, sl, dr); // Direction correct?
 
-    if (!as.empty())
+    if (trace_value & trace_split) {
+      std::lock_guard<std::recursive_mutex> guard(write_mutex);
+      std::clog << "structure::split Begin: *this = " << *this
+        << ", t = " << t
+        << std::endl;
+    }
+
+    split_formula sf(this);  // Return value. Includes the split (*this, {}).
+
+    // If t and *this unify, then *this can be replaced by x, that is the split (x, {*this}).
+    // Optimization: Cut this split in case the alternatives from 'unify' are empty.
+    sf.alternatives_ = mli::unify(t, tt, this, tg, dbp, lv, sl, dr); // Direction correct?
+
+    if (!sf.alternatives_.empty()) {
       sf.push_back(this, ref<formula>(x), tt.table_->find_local());
 
-    sf.append(mli::split(atom, argument, tg, structure_construct(type_, style_, precedence_, metalevel_), x, t, tt, dbp, lv, sl, dr));
+      if (trace_value & trace_split) {
+        std::lock_guard<std::recursive_mutex> guard(write_mutex);
+        std::clog << "structure::split A: sf = " << sf << std::endl;
+      }
+
+    }
+
+    auto 𝜆 = [&](const ref<formula>& x, const ref<formula>& y) {
+      ref<structure> r(*this); r->atom = x; r->argument = y; return r;
+    };
+
+    sf.append(mli::split({atom, argument}, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
+
+    if (trace_value & trace_split) {
+      std::lock_guard<std::recursive_mutex> guard(write_mutex);
+      std::clog << "structure::split B: sf = " << sf << std::endl;
+    }
+
     return sf;
   }
 
@@ -2065,7 +2291,8 @@ namespace mli {
       return this;
     }
 
-    bound_formula* bp = new bound_formula(v, domain_, formula_, bt);
+    // GC allocate the pointer bp, as it becomes a part of the ref<formula> object formula_.
+    bound_formula* bp = new(shared) bound_formula(v, domain_, formula_, bt);
     formula_ = bp;
     return bp; 
   }
@@ -2106,10 +2333,8 @@ namespace mli {
       const ref<variable>& y, unify_environment ty, const ref<formula>& fy,
       database* dbp, level lv, degree_pool& sl, direction dr) {
 
-    if (trace_value & trace_unify) {
-      std::lock_guard<std::recursive_mutex> guard(write_mutex);
-      write_unify(std::clog, "mli::bound_", ref<formula>(x), tx, ref<formula>(y), ty, dbp, dr) << std::endl;
-    }
+    if (trace_value & trace_unify)
+      write_unify(std::clog, "mli::bound_", ref<formula>(x), tx, ref<formula>(y), ty, dbp, dr);
 
     // Check if x, y are unifiable. If so, add to the unifying substitution free(fx) if x
     // is the mapped variable, or free(fy) if y.
@@ -2190,20 +2415,6 @@ namespace mli {
   }
 
 
-  struct bound_formula_construct {
-    ref<variable> variable_;
-    bound_formula::type type_;
-    bind bind_;
-
-    bound_formula_construct(const ref<variable>& v, bound_formula::type bt, bind b)
-     : variable_(v), type_(bt), bind_(b) {}
-
-    ref<formula> operator()(const ref<formula>& d, const ref<formula>& x) const {
-      return ref<bound_formula>(make, variable_, d, x, type_, bind_);
-    }
-  };
-
-
   split_formula bound_formula::split(unify_environment tg,
     const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
 
@@ -2219,8 +2430,12 @@ namespace mli {
     if (!as.empty())
       sf.push_back(this, ref<formula>(x), tt.table_->find_local());
 
-    sf.append(
-      mli::split(domain_, formula_, tg, bound_formula_construct(variable_, type_, bind_), x, t, tt, dbp, lv, sl, dr));
+    auto 𝜆 = [&](const ref<formula>& x, const ref<formula>& y) {
+      ref<bound_formula> r(*this); r->domain_ = x; r->formula_ = y; return r;
+    };
+
+    sf.append(mli::split({domain_, formula_}, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
+
     return sf;
   }
 
@@ -2657,8 +2872,8 @@ namespace mli {
 
 
   // 𝜞.add_premise(𝑨, 𝑘):
-  // If 𝜞 is not a formula sequence or formula sequence with metalevel(𝜞) < 𝑘 then 𝑨 ⊢^𝑘 𝜞 is possible.
-  // Otherwise, writing 𝜞 ≔ {𝜞₀, …}, one must have {𝜞₀.add_premise(𝑨, 𝑘), …}:
+  // If 𝜞 is not a formula sequence, or a formula sequence with metalevel(𝜞) < 𝑘, then 𝑨 ⊢^𝑘 𝜞 is possible.
+  // Otherwise, writing 𝜞 ≔ ⦅𝜞₀, …⦆, one must have ⦅𝜞₀.add_premise(𝑨, 𝑘), …⦆:
   ref<formula> formula_sequence::add_premise(const ref<formula>& x, metalevel_t ml,
       const varied_type& vs, const varied_type& vrs) const {
     if (x->provable())
@@ -2719,7 +2934,7 @@ namespace mli {
 
   alternatives formula_sequence::unify(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
     if (trace_value & trace_unify)
-      write_unify(std::clog, "formula_sequence::", this, tt, x, tx, dbp, dr) << std::endl;
+      write_unify(std::clog, "formula_sequence::", this, tt, x, tx, dbp, dr);
 
     // Expand 𝜞 ⊢ ⦅𝑨₀, …⦆ to ⦅𝜞 ⊢ 𝑨₀; …⦆ both goal and fact.
     if (unexpanded())
@@ -2857,48 +3072,27 @@ namespace mli {
   }
 
 
-  struct formula_sequence_construct {
-    formula_sequence_construct() {}
-
-    ref<formula> operator()() const { return ref<formula_sequence>(make); }
-
-    ref<formula> operator()(const ref<formula>& x) const { return ref<formula_sequence>(make, x); }
-
-    ref<formula> operator()(const ref<formula>& x, const ref<formula>& y) const {
-      formula_sequence* yp = ref_cast<formula_sequence*>(y);
-      if (yp == 0)  return ref<formula_sequence>(make, {x, y});
-
-      return ref<formula_sequence>(make, x, *yp);
-    }
-  };
-
-
   split_formula formula_sequence::split(unify_environment tg,
     const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
+
     split_formula sf(this);  // Return value.
 
 #if SPLIT_CONTAINER
+#warning formula_sequence::split SPLIT_CONTAINER
+    // Possible optimization: If t and *this unify, then *this can be replaced by x.
+
     // If t and *this unify, then *this can be replaced by x:
-    alternatives as = mli::unify(t, tt, this, tg, dr, lv, sl, dbp);
+    alternatives as = mli::unify(t, tt, this, tg, dbp, lv, sl, dr);
 
     if (!as.empty())
       sf.push_back(this, ref<formula>(x), tt.table_->find_local());
 #endif
-    if (formulas_.empty()) {
-      sf.push_back(ref<formula_sequence>(make));
-      return sf;
-    }
 
-    const ref<formula> f = formulas_.front();
-    if (formulas_.size() == 1) {
-      sf.append(mli::split(f, tg, formula_sequence_construct(), x, t, tt, dbp, lv, sl, dr));
-      return sf;
-    }
+    // Lambda expression that converts a value of type sequence::container_type to a sequence, that is,
+    // a clone of *this with only formulas_ changed; other values considered invariants.
+    auto 𝜆 = [&](const container_type& xs) { ref<formula_sequence> r(*this); r->formulas_ = xs; return r; };
 
-    std::vector<ref<formula>> fs(formulas_.begin() + !formulas_.empty(), formulas_.end());
-
-    ref<formula> g = ref<formula_sequence>(make, fs);
-    sf.append(mli::split(f, g, tg, formula_sequence_construct(), x, t, tt, dbp, lv, sl, dr));
+    sf.append(mli::split(formulas_, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
 
     return sf;
   }
@@ -3262,7 +3456,7 @@ namespace mli {
 
 #if DEBUG_BODY
             std::cout << "H: " << ky << ", " << b << "\n"
-              << *this << "\n" << xinf << "\n\n" << yinf << "\n" << r << "\n" << a << std::endl;
+              << xinf << "\n\n" << yinf << "\n" << r << "\n" << a << std::endl;
 #endif
 
             for (auto& xj: xbp->formulas_) {
@@ -3310,7 +3504,7 @@ namespace mli {
   alternatives inference::unify(unify_environment tt0, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
 
     if (trace_value & trace_unify)
-      write_unify(std::clog, "inference::", this, tt0, y, ty, dbp, dr) << std::endl;
+      write_unify(std::clog, "inference::", this, tt0, y, ty, dbp, dr);
 
     unify_environment tt = tt0;
 
@@ -3356,6 +3550,7 @@ namespace mli {
 
     inference* yip = ref_cast<inference*>(y);
 
+    // If yip != nullptr, then *this is the goal, as called so in mli::unify.
     if (yip != nullptr) {
       unify_environment ty1 = ty;
 
@@ -3397,7 +3592,7 @@ namespace mli {
         ty1.is_premise_ = true;
 
 #if 1
-        // Alternatively, return unify with arguents reversed, but does not arrive here.
+        // Alternatively, return unify with arguments reversed, but does not arrive here.
         if (tt.target_ == fact)
           throw std::runtime_error("inference::unify: *this not a goal.");
 #endif
@@ -3416,13 +3611,12 @@ namespace mli {
     if (tt.target_ == goal) {
       alternatives qs; // Return alternatives.
 
+#if NEW_UNIFY_BODY
       for (auto& a: as) {
         ref<substitution> s = a.substitution_;
-#if NEW_HEAD_CONDITION
-        // The goals in as come from unification of the inference heads, and should
-        // should be put back there, so lifted out here:
-        ref<formula> g = a.goal_;
-        a.goal_ = ref<formula>();
+#if USE_UNIFY_BODY_A1
+        ref<formula> g0 = a.goal_;
+        a.goal_ = {};
 #endif
         ref<inference> xinf, yinf;
 
@@ -3439,13 +3633,14 @@ namespace mli {
             << "y    = " << y << "\n"
             << "yinf = " << yinf << "\n"
             << "s = " << s << "\n"
-            << "g = " << g << std::endl;
-          yinf = y->substitute(s, ty1);
+            << "a.goal_ = " << a.goal_ << std::endl;
 #endif
         }
         catch (illegal_substitution& ex) {
-          if (trace_value & trace_unify)
+          if (trace_value & trace_unify) {
+            std::lock_guard<std::recursive_mutex> guard(write_mutex);
             std::clog << ex.what() << std::endl;
+          }
 
           continue;
         }
@@ -3476,7 +3671,8 @@ namespace mli {
             << "yinf = " << yinf << "\n"
             << "s  = " << s << "\n"
             << "sr  = " << sr << "\n"
-            << "a * sr = " << a * sr << std::endl;
+            << "a * sr = " << a * sr << "\n"
+            << "qs = " << qs << std::endl;
 #endif
           continue;
         }
@@ -3492,26 +3688,33 @@ namespace mli {
 #if NEW_PROVED
           alternatives ds;
 
+          alternatives bs;
+
           if (xbp == nullptr)
-            ds = merge(a, mli::unify(xb, tt, yb, ty1, dbp, lv, sl, dr), metalevel_);
+            bs = mli::unify(xb, tt, yb, ty1, dbp, lv, sl, dr);
           else
             for (auto& i: xbp->formulas_)
-              ds.append(merge(a, mli::unify(i, tt, yb, ty1, dbp, lv, sl, dr), metalevel_));
+              bs.append(mli::unify(i, tt, yb, ty1, dbp, lv, sl, dr));
 
-          if (ds.empty()) {
-            ref<inference> r0(make, yinf->body_, xinf->body_, metalevel_, varied_);
+          // If bs is empty, then yinf->body_ has not been proved from the premises of xinf,
+          // and should be forwarded as a goal, together with with the premises of xinf.
+          if (bs.empty()) {
+            if (includes_varied(xinf, yinf, 0, 0)) {
+              alternative c = merge(a, {}, yinf->body_, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
 
-            if (includes_varied(xinf, yinf, 0, 0))
-#if 0         // Using the merge in case a has a condition that is an inference:
-              ds = merge(a, alternative({}, r0), metalevel_);
-#else
-              ds = a.add_goal(r0);
-#endif
+              ds.push_back(c);
+            }
+          }
+          else
+          for (auto& b: bs) {
+            alternative d = merge(a, b, {}, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
+
+            ds.push_back(d);
           }
 
           qs.append(ds);
-#else
-          ref<inference> r0(make, yinf->body_, xinf->body_, metalevel_, varied_);
+#else // NEW_PROVED
+          ref<inference> r0(make, yinf->body_, xinf->body_, metalevel_, varied_, varied_in_reduction_);
 
           if (includes_varied(xinf, yinf, 0, 0))
             qs.append(a.add_goal(r0));
@@ -3521,7 +3724,7 @@ namespace mli {
           else
             for (auto& i: xbp->formulas_)
               qs.append(a * mli::unify(i, tt, yb, ty1, dbp, lv, sl, dr));
-#endif
+#endif // NEW_PROVED
           continue;
         }
 
@@ -3534,6 +3737,7 @@ namespace mli {
         //
         // If the fact body formula sequence contains a formula sequence variable, then this variable
         // should pick up what the fact body that does not unify with the goal inference premises.
+
 
         // Find the sets of indices in yb with formulas, respective formula sequence variables:
         std::list<formula_sequence::iterator> fi, fsvi;
@@ -3605,13 +3809,12 @@ namespace mli {
                 ref<substitution> t = b.substitution_;
 
                 hr = fsv->substitute(t, ty1);
-#if NEW_HEAD_CONDITION
-                gr = g->substitute(t, ty1);
-#endif
               }
               catch (illegal_substitution& ex) {
-                if (trace_value & trace_unify)
+                if (trace_value & trace_unify) {
+                  std::lock_guard<std::recursive_mutex> guard(write_mutex);
                   std::clog << ex.what() << std::endl;
+                }
 
                 continue;
               }
@@ -3649,37 +3852,27 @@ namespace mli {
 
 #if NEW_PROVED
               if (!hrp->formulas_.empty()) {
-#if NEW_HEAD_CONDITION
-                ref<formula> kr;
-                if (gr->provable() || xinf->body_->has_formula(gr))
-                  kr = hr;
-                else
-                  kr = concatenate(gr, hr);
+                alternative d = merge(a, b,
+                  hr, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
 
-                ref<inference> r0(make, kr, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
-#else
-                ref<inference> r0(make, hr, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
-#endif
-                rs.push_back(b.add_goal(r0));
+                rs.push_back(d);
               }
               else {
-#if NEW_HEAD_CONDITION
                 // Here, fact body has been proved in full using the goal premises, but there may be still a
-                // condition from the unification of the heads that must be check if provable.
+                // condition from the unification of the heads that must be checked if provable.
                 if (!gr->provable() && !xinf->body_->has_formula(gr)) {
-                  ref<inference> r0(make, gr, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
-                  rs.push_back(b.add_goal(r0));
+                  alternative d = merge(a, b,
+                    gr, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
+
+                  rs.push_back(d);
                 }
                 else {
                   hrb = true;
-                  ps.push_back(b);
-                  rs.push_back(b);
+                  alternative d = merge(a, b,
+                    {}, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
+                  ps.push_back(d);
+                  rs.push_back(d);
                 }
-#else
-                hrb = true;
-                ps.push_back(b);
-                rs.push_back(b);
-#endif
               }
 #else
               if (!hrp->formulas_.empty()) {
@@ -3692,14 +3885,10 @@ namespace mli {
 #endif
             }
 
-#if NEW_PROVED
             if (hrb)
-              qs.append(merge(a, ps, metalevel_));
+              qs.append(ps);
             else
-              qs.append(merge(a, rs, metalevel_));
-#else
-            qs.append(a * rs);
-#endif
+              qs.append(rs);
 
             continue;
           }
@@ -3744,8 +3933,10 @@ namespace mli {
                 hr = fsv->substitute(t, ty1);
               }
               catch (illegal_substitution& ex) {
-                if (trace_value & trace_unify)
+                if (trace_value & trace_unify) {
+                  std::lock_guard<std::recursive_mutex> guard(write_mutex);
                   std::clog << ex.what() << std::endl;
+                }
 
                 continue;
               }
@@ -3782,9 +3973,11 @@ namespace mli {
 
 #if NEW_PROVED
               if (!hrp->formulas_.empty()) {
-                ref<inference> r0(make, hr, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
 
-                rs.push_back(b.add_goal(r0));
+                alternative d = merge(a, b,
+                  hr, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
+
+                rs.push_back(d);
               }
               else {
                 hrb = true;
@@ -3804,9 +3997,9 @@ namespace mli {
 
 #if NEW_PROVED
             if (hrb)
-              qs.append(merge(a, ps, metalevel_));
+              qs.append(ps);
             else
-              qs.append(merge(a, rs, metalevel_));
+              qs.append(rs);
 #else
             qs.append(a * rs);
 #endif
@@ -3861,59 +4054,62 @@ namespace mli {
               bs = ds;
             }
 
-            // Here, bs should be expanded into alternatives, in case different
-            // substitutions unify different formulas.
+            // Here, bs should be expanded into alternatives, in case different substitutions
+            // unify different formulas (as is the case when yb' contains formula variables).
 
             // If there are no alternatives, then not s(yb') ⊆ s(xb), and yb does not
-            // unify with xb, as adjusting the yb formuls set variables will not help:
-            if (bs.empty())
-              continue;
+            // unify with xb, as adjusting the yb formula set variables will not help:
+            for (auto& b: bs) {
+              // Compute the formula sequence variables of yb by a variation of s(xb) ⊆ s(yb):
 
-            // Compute the formula sequence variables of yb by a variation of s(xb) ⊆ s(yb):
+              alternatives cs = b;
 
-            formula_sequence::iterator i, i0 = xbp->formulas_.begin(), i1 = xbp->formulas_.end();
+              formula_sequence::iterator i, i0 = xbp->formulas_.begin(), i1 = xbp->formulas_.end();
 
-            for (i = i0; i != i1; ++i) {
-              // If *i unifies with at least formula in yb', that is, fi, then
-              // it should not be added to the formula sequence variables.
-              bool b0 = false;
+              for (i = i0; i != i1; ++i) {
+                // If *i unifies with at least formula in yb', that is, fi, then
+                // it should not be added to the formula sequence variables.
+                bool b0 = false;
 
-              for (auto& j: fi) {
-                alternatives ds = bs.unify(*i, tt, *j, ty1, dbp, lv, sl, dr);
+                for (auto& j: fi) {
+                  alternatives ds = cs.unify(*i, tt, *j, ty1, dbp, lv, sl, dr);
 
-                if (!ds.empty()) {
-                  b0 = true; break;
+                  if (!ds.empty()) {
+                    b0 = true; break;
+                  }
                 }
+
+                if (b0)
+                  continue;
+
+                // As i does not unify with any formula in yb, that is yb', compute the
+                // alternatives for the formula sequence variables in yb:
+
+                alternatives ds;
+
+                for (auto& j: fsvi) {
+                  ref<variable> jp = ref_cast<variable*>(*j);
+
+                  ref<variable> vr(make, *jp);
+                  vr->index_ = i - i0;
+                  ds.append(cs.unify(*i, tt, vr, ty, dbp, lv, sl, dr));
+                }
+
+                cs = ds;
               }
-
-              if (b0)
-                continue;
-
-              // As i does not unify with any formula in yb, that is yb', compute the
-              // alternatives for the formula sequence variables in yb:
-
-              alternatives ds;
-
-              for (auto& j: fsvi) {
-                ref<variable> jp = ref_cast<variable*>(*j);
-
-                ref<variable> vr(make, *jp);
-                vr->index_ = i - i0;
-                ds.append(bs.unify(*i, tt, vr, ty, dbp, lv, sl, dr));
-              }
-
-              bs = ds;
-            }
 
               // Adding end marker [*i ↦ ⦰] for all i in fsvi.
               for (auto& i: fsvi) {
                 ref<substitution> sr
                   = ref<substitution>(ref<variable_substitution>(make, *i, ref<end_of_formula_sequence>()));
 
-                bs = bs * sr;
+                cs = cs * sr;
               }
 
-            qs.append(merge(a, bs, metalevel_));
+              qs.append(merge(a, cs, {}, {}, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_));
+
+            }
+
             continue;
           }
             // Now xbp == nullptr.
@@ -3971,7 +4167,8 @@ namespace mli {
               bs = ds;
             }
 
-            qs.append(merge(a, bs, metalevel_));
+            qs.append(merge(a, bs, {}, {}, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_));
+
             continue;
           }
 
@@ -3980,24 +4177,581 @@ namespace mli {
 
         qs.push_back(a);
       }
+#else // NEW_UNIFY_BODY
+      for (auto& a: as) {
+        ref<substitution> s = a.substitution_;
 
-      return qs;
-    }
+        ref<inference> xinf, yinf;
+
+
+       // An illegal substitution merely produces no alternative, but the search loop continues:
+        try {
+          // Check use of tt/tt1, ty1/ty2:
+          xinf = this->substitute(s, tt);
+          yinf = y->substitute(s, ty1);
+#if DEBUG_INFERENCE_UNIFY
+          std::cout << "inference::unify X:\n"
+            << "this = " << *this << "\n"
+            << "xinf = " << xinf << "\n"
+            << "y    = " << y << "\n"
+            << "yinf = " << yinf << "\n"
+            << "s = " << s << "\n"
+            << "a.goal_ = " << a.goal_ << std::endl;
+#endif
+        }
+        catch (illegal_substitution& ex) {
+          if (trace_value & trace_unify) {
+            std::lock_guard<std::recursive_mutex> guard(write_mutex);
+            std::clog << ex.what() << std::endl;
+          }
+
+          continue;
+        }
+
+
+        auto xb = xinf->body_;
+        auto xbp = ref_cast<formula_sequence*>(xb);
+
+        auto yb = yinf->body_;
+        auto ybp = ref_cast<formula_sequence*>(yb);
+
+
+        // If the fact body consist of a single formula sequence variable, it picks up
+        // all of the goal body and varied variables.
+        auto vp = ref_cast<variable*>(yb);
+
+        if (vp != nullptr && vp->type_ == variable::formula_sequence_&& !vp->is_unspecializable()) {
+          // The formula sequence variable vp of y should carry reduction the varied_ and
+          // varied_in_reduction_ variables of xinf.
+          ref<substitution> sr = ref<variable_substitution>(make, vp, xb, xinf->varied_, xinf->varied_in_reduction_);
+          qs.push_back(a * sr);
+
+#if DEBUG_INFERENCE_UNIFY
+          std::cout << "inference::unify Y:\n"
+            << "this = " << *this << "\n"
+            << "xinf = " << xinf << "\n"
+            << "y    = " << y << "\n"
+            << "yinf = " << yinf << "\n"
+            << "s  = " << s << "\n"
+            << "sr  = " << sr << "\n"
+            << "a * sr = " << a * sr << "\n"
+            << "qs = " << qs << std::endl;
+#endif
+          continue;
+        }
+
+
+        // If the fact body is a single formula, not a formula sequence variable, it may unify
+        // with one of goal premises if the varied variables are not dropped in the deduction,
+        // or become the new goal.
+        // Even if it unifies with one of the premises, that may not be the correct solution,
+        // due to variable dependenies between different conclusions, as here only one conclusion
+        // is present.
+        if (ybp == nullptr) {
+#if NEW_PROVED
+          alternatives ds;
+
+          alternatives bs;
+
+          if (xbp == nullptr)
+            bs = mli::unify(xb, tt, yb, ty1, dbp, lv, sl, dr);
+          else
+            for (auto& i: xbp->formulas_)
+              bs.append(mli::unify(i, tt, yb, ty1, dbp, lv, sl, dr));
+
+          // If bs is empty, then yinf->body_ has not been proved from the premises of xinf,
+          // and should be forwarded as a goal, together with with the premises of xinf.
+          if (bs.empty()) {
+            if (includes_varied(xinf, yinf, 0, 0)) {
+              alternative c = merge(a, {}, yinf->body_, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
+
+              ds.push_back(c);
+            }
+          }
+          else
+          for (auto& b: bs) {
+            alternative d = merge(a, b, {}, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
+
+            ds.push_back(d);
+          }
+
+          qs.append(ds);
+#else // NEW_PROVED
+          ref<inference> r0(make, yinf->body_, xinf->body_, metalevel_, varied_, varied_in_reduction_);
+
+          if (includes_varied(xinf, yinf, 0, 0))
+            qs.append(a.add_goal(r0));
+
+          if (xbp == nullptr)
+            qs.append(a * mli::unify(xb, tt, yb, ty1, dbp, lv, sl, dr));
+          else
+            for (auto& i: xbp->formulas_)
+              qs.append(a * mli::unify(i, tt, yb, ty1, dbp, lv, sl, dr));
+#endif // NEW_PROVED
+          continue;
+        }
+
+
+        // Now ybp != nullptr, that is, the fact body is a formula sequence.
+        //
+        // If the fact body formula sequence does not contain a formula sequence variable,
+        // then each component may unify with a goal body component, that is, a premise.
+        // The part of the fact body that does not unify with the goal premises becomes the new goal.
+        //
+        // If the fact body formula sequence contains a formula sequence variable, then this variable
+        // should pick up what the fact body that does not unify with the goal inference premises.
+
+
+        // Find the sets of indices in yb with formulas, respective formula sequence variables:
+        std::list<formula_sequence::iterator> fi, fsvi;
+
+        formula_sequence::iterator i, i0 = ybp->formulas_.begin(), i1 = ybp->formulas_.end();
+
+        for (i = i0; i != i1; ++i) {
+          auto ip = ref_cast<variable*>(*i);
+
+          if (ip != nullptr && ip->type_ == variable::formula_sequence_ && !ip->is_unspecializable())
+            fsvi.push_back(i);
+          else
+            fi.push_back(i);
+        }
+
+
+        // Case: fact inference body has no formula sequence variable.
+#if 1
+        if (yinf->metalevel_ == ty1.metalevel_ && fsvi.empty())
+#else
+        if (fsvi.empty())
+#endif
+        {
+          // Making an internal, implicit, formula sequence variable:
+          ref<variable> fsv(make, "𝚪", variable::formula_sequence_, 0, lv);
+          fsv->metalevel_ = metalevel_;
+          fsv->is_implicit_ = true;
+
+          if (xbp != nullptr) {
+            alternatives bs = I;
+
+            size_type m = 0; // Premise index.
+
+            for (auto& i: ybp->formulas_) {
+              alternatives ds;
+
+              ref<variable> vr(make, *fsv);
+              vr->index_ = m;
+              ds = bs.unify(vr, tt, i, ty1, dbp, lv, sl, dr);
+
+              for (auto& j: xbp->formulas_)
+                ds.append(bs.unify(j, tt, i, ty1, dbp, lv, sl, dr));
+
+              bs = ds;
+              ++m;
+            }
+
+            // Adding end marker [fsv ↦ ⦰]
+            ref<substitution> sr
+              = ref<substitution>(ref<variable_substitution>(make, fsv, ref<end_of_formula_sequence>()));
+            bs = bs * sr;
+
+            // For each alternative, compute the part of the fact body that was not
+            // used by applying the substitution to fsv, which becomes the new goal.
+            // If the result is an empty formula sequence, that is no new goal, which
+            // further is compatible with the variable variation, then
+            // the alternatives not fulling these conditions are redundant, as
+            // the current goal formula is provable without further reductions.
+            alternatives rs; // All alternatives
+#if NEW_PROVED
+            alternatives ps; // Only alternatives with empty hrp->formulas_.
+            bool hrb = false; // Set to true if one of the hrp->formulas_ is non-empty.
+#endif
+
+            for (auto& b: bs) {
+              ref<formula> hr, gr;
+
+              try {
+                ref<substitution> t = b.substitution_;
+
+                hr = fsv->substitute(t, ty1);
+              }
+              catch (illegal_substitution& ex) {
+                if (trace_value & trace_unify) {
+                  std::lock_guard<std::recursive_mutex> guard(write_mutex);
+                  std::clog << ex.what() << std::endl;
+                }
+
+                continue;
+              }
+
+
+              // Simplify hr, by removing formulas present as a premise, and also
+              // add the varied variables of the unused premises, that will become
+              // the new conclusion, as varied in the reduction.
+
+              auto hrp = ref_cast<formula_sequence*>(hr);
+              size_type j = 0; // Premise index.
+              size_type k = 0; // Index of the new conclusion.
+
+              for (auto i = hrp->formulas_.begin(); i != hrp->formulas_.end(); ) {
+                if (xinf->body_->has_formula(*i))
+                  i = hrp->formulas_.erase(i);
+                else {
+                  auto iy = yinf->varied_.find(0);
+
+                  if (iy != yinf->varied_.end()) {
+                    auto jy = iy->second.find(j);
+
+                    if (jy != iy->second.end())
+                      if (!jy->second.empty())
+                        for (size_type p = 0; p < xinf->body_->formula_sequence_size(); ++p)
+                          xinf->varied_in_reduction_[k][p].insert(jy->second.begin(), jy->second.end());
+                  }
+
+                  ++k;
+                  ++i;
+                }
+
+                ++j;
+              }
+
+#if NEW_PROVED
+              if (!hrp->formulas_.empty()) {
+                alternative d = merge(a, b,
+                  hr, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
+
+                rs.push_back(d);
+              }
+              else {
+                // Here, fact body has been proved in full using the goal premises, but there may be still a
+                // condition from the unification of the heads that must be checked if provable.
+                if (!gr->provable() && !xinf->body_->has_formula(gr)) {
+                  alternative d = merge(a, b,
+                    gr, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
+
+                  rs.push_back(d);
+                }
+                else {
+                  hrb = true;
+                  alternative d = merge(a, b,
+                    {}, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
+                  ps.push_back(d);
+                  rs.push_back(d);
+                }
+              }
+#else
+              if (!hrp->formulas_.empty()) {
+                ref<inference> r0(make, hr, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
+
+                rs.push_back(b.add_goal(r0));
+              }
+              else
+                rs.push_back(b);
+#endif
+            }
+
+            if (hrb)
+              qs.append(ps);
+            else
+              qs.append(rs);
+
+            continue;
+          }
+            // Now xbp == nullptr.
+          else {
+            alternatives bs = I;
+
+            size_type m = 0; // Premise index.
+
+            for (auto& i: ybp->formulas_) {
+              alternatives ds;
+
+              ref<variable> vr(make, *fsv);
+              vr->index_ = m;
+              ds = bs.unify(vr, tt, i, ty1, dbp, lv, sl, dr);
+
+              ds.append(bs.unify(xb, tt, i, ty1, dbp, lv, sl, dr));
+
+              bs = ds;
+              ++m;
+            }
+
+            // Adding end marker [fsv ↦ ⦰]
+            ref<substitution> sr
+              = ref<substitution>(ref<variable_substitution>(make, fsv, ref<end_of_formula_sequence>()));
+            bs = bs * sr;
+
+            // For each alternative, compute the part of the fact body that was not
+            // used by appying the substitution to fsv, which becomes the new goal.
+            alternatives rs;  // All alternatives
+#if NEW_PROVED
+            alternatives ps;  // Only alternatives with empty hrp->formulas_.
+            bool hrb = false; // Set to true if one of the hrp->formulas_ is non-empty.
+#endif
+
+            for (auto& b: bs) {
+              ref<formula> hr;
+
+              try {
+                ref<substitution> t = b.substitution_;
+
+                hr = fsv->substitute(t, ty1);
+              }
+              catch (illegal_substitution& ex) {
+                if (trace_value & trace_unify) {
+                  std::lock_guard<std::recursive_mutex> guard(write_mutex);
+                  std::clog << ex.what() << std::endl;
+                }
+
+                continue;
+              }
+
+              // Simplify hr, by removing formulas present as a premise, and also
+              // add the varied variables of the unused premises, that will become
+              // the new conclusion, as varied in the reduction.
+
+              auto hrp = ref_cast<formula_sequence*>(hr);
+              size_type j = 0; // Premise index.
+              size_type k = 0; // Index of the new conclusion.
+
+              for (auto i = hrp->formulas_.begin(); i != hrp->formulas_.end(); ) {
+                if (xinf->body_->has_formula(*i))
+                  i = hrp->formulas_.erase(i);
+                else {
+                  auto iy = yinf->varied_.find(0);
+
+                  if (iy != yinf->varied_.end()) {
+                    auto jy = iy->second.find(j);
+
+                    if (jy != iy->second.end())
+                      if (!jy->second.empty())
+                        for (size_type p = 0; p < xinf->body_->formula_sequence_size(); ++p)
+                          xinf->varied_in_reduction_[k][p].insert(jy->second.begin(), jy->second.end());
+                  }
+
+                  ++k;
+                  ++i;
+                }
+
+                ++j;
+              }
+
+#if NEW_PROVED
+              if (!hrp->formulas_.empty()) {
+
+                alternative d = merge(a, b,
+                  hr, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
+
+                rs.push_back(d);
+              }
+              else {
+                hrb = true;
+                ps.push_back(b);
+                rs.push_back(b);
+              }
+#else
+              if (!hrp->formulas_.empty()) {
+                ref<inference> r0(make, hr, xinf->body_, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
+
+                rs.push_back(b.add_goal(r0));
+              }
+              else
+                rs.push_back(b);
+#endif
+            }
+
+#if NEW_PROVED
+            if (hrb)
+              qs.append(ps);
+            else
+              qs.append(rs);
+#else
+            qs.append(a * rs);
+#endif
+            continue;
+          }
+
+          return qs;
+        }
+
+        // Now fact body has at least one formula sequence variable, that is, bfsv == true.
+        // As before, ybp != nullptr, that is, the fact body is a formula sequence.
+        //
+        // The formula sequence variables of the fact body should pick up the part
+        // of goal body that does not unify with the fact body, formula sequence variables excluded,
+        // so that the fact body and the goal body become equivalent after substitution viewed as
+        // sets of formulas.
+        // In particular, if the fact body formulas, formula sequence variables excluded, are not
+        // after substitution a subset of the goal body formulas viewed as a set, the unification fails.
+
+        // The objective is to find substitutions s such that s(xb) = s(sy) viewed as sets of
+        // formulas, on the condition that the varied variables of a fact premise, after
+        // substitution, must not be dropped in the goal premis it unifies with.
+        //
+        // The following finds substitutions s such that, in this order, xb goal and yb fact:
+        //   s(xb) ⊆ s(yb)
+        //   s(xb) ⊇ s(yb)
+        // The first check s(xb) ⊆ s(yb) computes the formula sequence variables of yb, but yb may have additional
+        // formulas not unified in xb, so the check s(xb) s(xb) ⊇ s(yb) is necessary to ensure they
+        // are equal. In addition, the same formula can more than one occurence, but with different
+        // sets of varied variables, so it is necessary to check these as well.
+        // So strictly, xb and yb are not unifed as sets of formulas, but the pairs of formulas
+        // and their sets of varied variables.
+
+
+
+
+
+#if 1 // bfsv == true
+        // First find substitution s such that s(yb') ⊆ s(xb), where yb' is the part of yb
+        // holding formulas and not formula sequence variables. Thereafter compute the values of the
+        // formula sequence variables of yb by a variation of s(xb) ⊆ s(yb).
+        {
+          if (xbp != nullptr) {
+            alternatives bs = I;
+
+            // fi holds the indices of *ybp holding formulas:
+            for (auto& i: fi) {
+              alternatives ds;
+              for (auto& j: xbp->formulas_)
+                ds.append(bs.unify(j, tt, *i, ty1, dbp, lv, sl, dr));
+
+              bs = ds;
+            }
+
+            // Here, bs should be expanded into alternatives, in case different substitutions
+            // unify different formulas (as is the case when yb' contains formula variables).
+
+            // If there are no alternatives, then not s(yb') ⊆ s(xb), and yb does not
+            // unify with xb, as adjusting the yb formula set variables will not help:
+            for (auto& b: bs) {
+              // Compute the formula sequence variables of yb by a variation of s(xb) ⊆ s(yb):
+
+              alternatives cs = b;
+
+              formula_sequence::iterator i, i0 = xbp->formulas_.begin(), i1 = xbp->formulas_.end();
+
+              for (i = i0; i != i1; ++i) {
+                // If *i unifies with at least formula in yb', that is, fi, then
+                // it should not be added to the formula sequence variables.
+                bool b0 = false;
+
+                for (auto& j: fi) {
+                  alternatives ds = cs.unify(*i, tt, *j, ty1, dbp, lv, sl, dr);
+
+                  if (!ds.empty()) {
+                    b0 = true; break;
+                  }
+                }
+
+                if (b0)
+                  continue;
+
+                // As i does not unify with any formula in yb, that is yb', compute the
+                // alternatives for the formula sequence variables in yb:
+
+                alternatives ds;
+
+                for (auto& j: fsvi) {
+                  ref<variable> jp = ref_cast<variable*>(*j);
+
+                  ref<variable> vr(make, *jp);
+                  vr->index_ = i - i0;
+                  ds.append(cs.unify(*i, tt, vr, ty, dbp, lv, sl, dr));
+                }
+
+                cs = ds;
+              }
+
+              // Adding end marker [*i ↦ ⦰] for all i in fsvi.
+              for (auto& i: fsvi) {
+                ref<substitution> sr
+                  = ref<substitution>(ref<variable_substitution>(make, *i, ref<end_of_formula_sequence>()));
+
+                cs = cs * sr;
+              }
+
+              qs.append(merge(a, cs, {}, {}, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_));
+
+            }
+
+            continue;
+          }
+            // Now xbp == nullptr.
+          else {
+            alternatives bs = I;
+
+            // fi holds the indices of *ybp holding formulas:
+            for (auto& i: fi)
+              bs = bs.unify(xb, tt, *i, ty1, dbp, lv, sl, dr);
+
+            // If there are no alternatives, then not s(yb') ⊆ s(xb), and yb does not
+            // unify with xb, as adjusting the yb formuls set variables will not help:
+            if (!fi.empty() && bs.empty())
+              continue;
+
+            // Compute the formula sequence variables of yb by a variation of s(xb) ⊆ s(yb):
+
+            // If bs is non-empty, then the single formula in xb unified with all formulas
+            // in yb', and the formula sequence variables should be sent to the empty formula.
+            // If bs is empty, then one of the formula sequence variables should be sent to xb,
+            // and the others to the empty formula. Do this by making alternatives of
+            // fromula set variable components of index 0, which should have an end
+            // marker [*i ↦ ⦰] for all i in fsvi.
+
+            // Here, bs should be expanded into alternatives, in case different
+            // substitutions unify different formulas.
+
+            if (!bs.empty()) {
+              for (auto& i: fsvi) {
+                ref<substitution> sr
+                  = ref<substitution>(ref<variable_substitution>(make, *i, ref<formula>()));
+                bs = bs * sr;
+              }
+            }
+            else {
+
+              // As i does not unify with any formula in yb, that is yb', compute the
+              // alternatives for the formula sequence variables in yb:
+
+              alternatives ds;
+
+              for (auto& j: fsvi) {
+                ref<variable> jp = ref_cast<variable*>(*j);
+
+                ref<variable> vr(make, *jp);
+                vr->index_ = 0;  // Turn into a formula sequence variable component of index 0.
+
+                ds.append(bs.unify(xb, tt, vr, ty, dbp, lv, sl, dr));
+              }
+
+              // Adding end marker ['i ↦ ⦰] for all i in fsvi.
+              for (auto& i: fsvi)
+                ds = ds * ref<variable_substitution>(make, *i, ref<end_of_formula_sequence>());
+
+              bs = ds;
+            }
+
+            qs.append(merge(a, bs, {}, {}, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_));
+
+            continue;
+          }
+
+        }
+#endif  // bfsv == true
+
+        qs.push_back(a);
       }
+#endif // NEW_UNIFY_BODY
+      return qs;
+    } // tt.target_ == goal
+      } // metalevel_ == yip->metalevel_
       else if (metalevel_ < yip->metalevel_) {
         alternatives as;
 
-        // If the goal has lower metalevel than the inference fact, it should
-        // only unify as an object against the head of the fact, and the body of the latter becomes
-        // the new fact.
-        if (tt.target_ == goal && metalevel_ < yip->metalevel_) {
-          as = mli::unify(this, tt, yip->head_, ty1, dbp, lv, sl, dr);
-          as = as.add_goal(yip->body_);
-        }
-        else if (ty1.target_ == goal && metalevel_ > yip->metalevel_) {
-          as = mli::unify(head_, tt, y, ty1, dbp, lv, sl, dr);
-          as = as.add_goal(body_);
-        }
+        // When the goal has lower metalevel than the inference fact, it should
+        // only unify as an object against the head of the fact, and the body of
+        // the latter becomes the new fact.
+        as = mli::unify(this, tt, yip->head_, ty1, dbp, lv, sl, dr);
+        as = as.add_goal(yip->body_);
 
         return as;
       }
@@ -4008,21 +4762,15 @@ namespace mli {
 
         // Now the goal has higher metalevel than the inference fact, the latter should
         // unify against the head of the former, retaining the body as a premise.
-        if (tt.target_ == goal) {
-          as = mli::unify(head_, tt, y, ty1, dbp, lv, sl, dr);
+        as = mli::unify(head_, tt, y, ty1, dbp, lv, sl, dr);
 #if DEBUG_INFERENCE_UNIFY
-          std::cout << "inference::unify Q:\n*this = " << *this << "\ny = " << y << "\nas = " << as << std::endl;
+        std::cout << "inference::unify Q:\n*this = " << *this << "\ny = " << y << "\nas = " << as << std::endl;
 #endif
-          as = as.add_premise(body_, metalevel_, varied_, varied_in_reduction_);
-        }
-        else {
-          as = mli::unify(this, tt, yip->head_, ty1, dbp, lv, sl, dr);
-          as = as.add_premise(yip->body_, yip->metalevel_, yip->varied_, yip->varied_in_reduction_);
-        }
+        as = as.add_premise(body_, metalevel_, varied_, varied_in_reduction_);
 
         return as;
       }
-    }
+    } // yip != nullptr
 
 
     /* Write A ≔ body_, B ≔ head_, x ≔ (A ⊢ B), u ≔ unify, and when y is an
@@ -4063,16 +4811,139 @@ namespace mli {
       return as;
     }
     else {
+      // tt.target_ == fact
+
       alternatives as = mli::unify(head_, tt, y, ty, dbp, lv, sl, dr);
 
       // Variable is_premise_ is required for implicit logic simplification.
       tt.is_premise_ = true;
+
+#if 1
+#if 0
+      alternatives rs; // Return alternatives
+
+      for (auto& a: as) {
+        ref<substitution> s = a.substitution_;
+        ref<inference> xinf;
+        ref<formula> y1;
+
+        try {
+          // Check use of tt/tt1, ty1/ty2:
+          xinf = this->substitute(s, tt);
+          y1 = y->substitute(s, ty);
+#if DEBUG_INFERENCE_UNIFY
+          std::cout << "inference::unify X1:\n"
+            << "this = " << *this << "\n"
+            << "xinf = " << xinf << "\n"
+            << "y    = " << y << "\n"
+            << "y1 = " << y1 << "\n"
+            << "s = " << s << "\n"
+            << "a.goal_ = " << a.goal_ << std::endl;
+#endif
+        }
+        catch (illegal_substitution& ex) {
+          if (trace_value & trace_unify) {
+            std::lock_guard<std::recursive_mutex> guard(write_mutex);
+            std::clog << ex.what() << std::endl;
+          }
+
+          continue;
+        }
+
+        auto xb = xinf->body_;
+        auto xbp = ref_cast<formula_sequence*>(xb);
+
+        if (xb->empty()) {
+          rs.push_back(a);
+          continue;
+        }
+
+        if (xbp == nullptr) { // Case where body xb is not a formula sequence:
+          auto ip = ref_cast<variable*>(xb);
+
+          if (ip != nullptr && ip->type_ == variable::formula_sequence_ && !ip->is_unspecializable()) {
+            // Adding end marker [fsv ↦ ⦰]
+            ref<substitution> sr
+              = ref<substitution>(ref<variable_substitution>(make, xb, ref<end_of_formula_sequence>()));
+
+            a = a * sr;
+          }
+
+          alternative d = merge(a, {}, xb, {}, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
+
+#if DEBUG_INFERENCE_UNIFY
+            std::cout << "inference::unify X4:\n"
+              << "a = " << a << "\nd = " << d << std::endl;
+#endif
+          rs.push_back(d);
+          continue;
+        }
+
+        // Find the sets of indices in xb with formula sequence variables:
+        std::list<formula_sequence::iterator> fsvi;
+        bool all_fsv = true; // Set to false if there is a not provable formulas that is not a formula sequence variable.
+
+        formula_sequence::iterator i, i0 = xbp->formulas_.begin(), i1 = xbp->formulas_.end();
+
+        for (i = i0; i != i1; ++i) {
+          auto ip = ref_cast<variable*>(*i);
+
+          if (ip != nullptr && ip->type_ == variable::formula_sequence_ && !ip->is_unspecializable())
+            fsvi.push_back(i);
+          else if (!(*i)->provable()) {
+            all_fsv = false;
+            break;
+          }
+        }
+
+        if (all_fsv) {
+          // Case all formulas are formula sequence variables 𝜞 in the body xb, which should
+          // have a substitution [𝜞 ↦ ⦰]
+
+          for (auto& fsvp: fsvi) {
+            // Adding end marker [fsv ↦ ⦰]
+            ref<substitution> sr
+              = ref<substitution>(ref<variable_substitution>(make, *fsvp, ref<end_of_formula_sequence>()));
+
+            a = a * sr;
+          }
+
+#if DEBUG_INFERENCE_UNIFY
+          std::cout << "inference::unify X2:\n"
+            << "a = " << a << std::endl;
+#endif
+
+          rs.push_back(a);
+          continue;
+        }
+
+
+        // Case where the body xb contains a non-provable formula, so it should be added as a new goal:
+        alternative d = merge(a, {}, xb, {}, xinf->metalevel_, xinf->varied_, xinf->varied_in_reduction_);
+
+#if DEBUG_INFERENCE_UNIFY
+          std::cout << "inference::unify X3:\n"
+            << "d = " << d << std::endl;
+#endif
+
+        rs.push_back(d);
+      }
+
+      return rs;
 
       // The body can be a formula sequence 𝜞 (or ⦰), in which case there should be a substitution [𝜞 ↦ ⦰].
       alternatives bs = as.unify(body_, tt, ref<formula>(), ty, dbp, lv, sl, dr);
 
       if (!bs.empty())
         return bs;
+#else
+      // The body can be a formula sequence 𝜞 (or ⦰), in which case there should be a substitution [𝜞 ↦ ⦰].
+      alternatives bs = as.unify(body_, tt, ref<formula>(), ty, dbp, lv, sl, dr);
+
+      if (!bs.empty())
+        return bs;
+#endif
+#endif
 
       as = as.add_goal(body_);
 
@@ -4081,27 +4952,25 @@ namespace mli {
   }
 
 
-  struct inference_construct {
-    metalevel_t metalevel_;
-
-    inference_construct(metalevel_t ml) : metalevel_(ml) {}
-
-    ref<formula> operator()(const ref<formula>& x, const ref<formula>& y) const {
-      return ref<inference>(make, x, y, metalevel_);
-    }
-  };
-
-
   split_formula inference::split(unify_environment tg,
     const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
+
     split_formula sf(this);  // Return value.
+
+#if SPLIT_CONTAINER
+#warning inference::split SPLIT_CONTAINER
     // If t and *this unify, then *this can be replaced by x:
     alternatives as = mli::unify(t, tt, this, tg, dbp, lv, sl, dr);
 
     if (!as.empty())
       sf.push_back(this, ref<formula>(x), tt.table_->find_local());
+#endif
 
-    sf.append(mli::split(head_, body_, tg, inference_construct(metalevel_), x, t, tt, dbp, lv, sl, dr));
+    auto 𝜆 = [&](const ref<formula>& x, const ref<formula>& y) {
+      ref<inference> r(*this); r->head_ = x; r->body_ = y; return r;
+    };
+
+    sf.append(mli::split({head_, body_}, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
 
     return sf;
   }
@@ -4229,6 +5098,7 @@ namespace mli {
   ref<formula> inference::substitute(const ref<substitution>& s, substitute_environment vt) const {
     ref<formula> h = head_->substitute(s, vt);
 
+#if SIMPLIFY_PROVED_INFERENCE
 #if NEW_PROVED
     if (h->provable())
       return {};
@@ -4236,7 +5106,7 @@ namespace mli {
     if (h->empty())
       return {};
 #endif
-
+#endif
     // To properly renumber the varied variable in case of a formula sequence variable
     // in the body, it is necessary, when applicable, to expand the latter into a formula sequence
     // and then substitute the formula sequence variable, as in formulas_set::substitute.
@@ -4406,10 +5276,11 @@ namespace mli {
     }
 
 #if 1
+#if SIMPLIFY_PROVED_INFERENCE
     // Reduce ⦅⦆ ⊢ 𝑨 to 𝑨, in case no varied in reduction variables.
     if (b->formulas_.empty() && vrs.empty())
       return h;
-
+#endif
     // Reduce ⦅𝑨⦆ ⊢ 𝑩 to 𝑨 ⊢ 𝑩.
     if (b->formulas_.size() == 1)
       return ref<inference>(make, h, b->formulas_.front(), metalevel_, vvs, vrs);
@@ -4646,7 +5517,11 @@ namespace mli {
 
 
   ref<formula> database::rename(level, degree) const {
+#if USE_VAL
+    return *this;  // Make a polymorphic copy (clone).
+#else
     return this->new_p();
+#endif
   }
 
 

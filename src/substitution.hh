@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2022 Hans Åberg.
+/* Copyright (C) 2017, 2021-2023 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -24,6 +24,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <deque>
 #include <tuple>
 
 
@@ -419,11 +420,7 @@ namespace mli {
     struct statement_data {
       ref<statement> statement_;
       std::vector<ref<statement>> definitions_;
-#if NEW_SUBSTATEMENTS
-      std::vector<std::string> substatements_;
-#else
-      std::vector<ref<statement>> substatements_;
-#endif
+      std::deque<ref<statement>> substatements_;
     };
 
     std::map<size_type, statement_data> labelstatements_;
@@ -441,12 +438,13 @@ namespace mli {
     new_move(alternative);
 
     alternative(const ref<substitution>& s) : substitution_(s) {}
+    alternative(const ref<formula>& g) : goal_(g) {}
     alternative(const ref<substitution>& s, const ref<formula>& g)
      : substitution_(s), goal_(g) {}
 
     virtual alternative& label(const ref<statement>&, level);           // For statements.
     virtual alternative& label(const ref<statement>&, level, degree);   // For definitions and deductions.
-    virtual alternative& sublabel(const std::string&, level);           // For substatements.
+    virtual alternative& sublabel(const ref<statement>&, level);        // For substatements.
 
     alternative add_goal(const ref<formula>& x) const;
 
@@ -530,8 +528,16 @@ namespace mli {
 
     virtual alternatives& label(const ref<statement>&, level);          // For statements.
     virtual alternatives& label(const ref<statement>&, level, degree);  // For definitions.
-    virtual alternatives& sublabel(const std::string&, level);           // For substatements.
+    virtual alternatives& sublabel(const ref<statement>&, level);       // For substatements.
+#if UNIFY_FALSE
+    virtual alternatives& sublabel(const std::string& ls, ref<formula> x, level lv) {
+      return sublabel(ref<statement>(make, ls, x), lv);
+    }
 
+    virtual alternatives& sublabel(const std::string& ls, level lv) {
+      return sublabel(ref<statement>(make, ls, ref<formula>{}), lv);
+    }
+#endif
     virtual alternatives& push_back(const alternative& a);
     virtual alternatives& append(const alternatives& as);
     
@@ -581,7 +587,13 @@ namespace mli {
   alternatives operator*(const alternatives& x, const alternatives& y);
 
 
-  alternatives merge(const alternatives& x, const alternatives& y, metalevel_t ml);
+  alternative merge(const alternative& x, const alternative& y,
+    const ref<formula>& h, const ref<formula>& b, metalevel_t ml,
+    const varied_type& vs, const varied_type& vrs);
+
+  alternatives merge(const alternatives& x, const alternatives& y,
+    const ref<formula>& h, const ref<formula>& b, metalevel_t ml,
+    const varied_type& vs, const varied_type& vrs);
 
 
   class proof : public unit {
@@ -685,6 +697,7 @@ namespace mli {
     typedef container_type::const_reverse_iterator const_reverse_iterator;
 
     container_type sequence_;
+    alternatives alternatives_;
 
     split_formula() = default;
     
@@ -752,62 +765,368 @@ namespace mli {
   }
 
 
-  template<class Construct>
+  // Precondition: iterator is not end, that is, no index component is end.
+  template<class Con, class Iter>
+  void increment(Con& vs, Iter& is) {
+
+    auto i = vs.rbegin();
+
+    for (auto k = is.rbegin(); k != is.rend(); ++k, ++i) {
+      ++*k;
+
+      // If k is the first element, let *k remain 'end' as a marker.
+      if (*k != i->end() || k == std::prev(is.rend()))
+        break;
+
+      *k = i->begin();
+    }
+  }
+
+
+  template<class Con, class Iter>
+  bool is_end(Con& vs, Iter& is) {
+    // The iterator is 'end' if first component is 'end', so check that one.
+    return (*is.begin() == vs.begin()->end());
+  }
+
+
+  // Container is a sequence container with value_type = ref<formula>.
+  // Construct is a class, such as a lambda, that converts a Container to the split class.
+  template<class Container, class Construct>
   split_formula split(
-      const Construct& c,
-      const ref<variable>& x, const ref<formula>& t, direction dr) {
-    if (trace_value & trace_split)
-      std::clog
-        << "split(), replacement "
-        << x << ", condition: " << t << ":\n"
-        << std::flush;
+    const Container& as, const Construct& c, unify_environment ta,
+    const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) {
+
+    if (trace_value & trace_split) {
+      std::lock_guard<std::recursive_mutex> guard(write_mutex);
+
+      std::clog << "Begin split(";
+
+      bool iter0 = true;
+
+      for (auto& a: as) {
+        if (iter0) iter0 = false;
+        else
+          std::clog << " : ";
+
+        std::clog << a;
+      }
+
+      std::clog << "), replacement "
+        << x << ", condition: " << t
+        << std::endl;
+    }
 
     split_formula sf; // Return value;
-    ref<formula> f = c();
 
-    if (trace_value & trace_split)
-      std::clog
-        << "  subformulas: none"
-        << "\n  construct :\n    "
-        << f
-        << std::endl;
+    std::list<split_formula> sfs;
 
-    sf.push_back(f);
+    for (auto& a: as)
+      sfs.push_back(a->split(ta, x, t, tt, dbp, lv, sl, dr));
+
+
+    if (trace_value & trace_split) {
+      std::lock_guard<std::recursive_mutex> guard(write_mutex);
+
+      std::clog << "split(";
+
+      bool iter0 = true;
+
+      for (auto& a: as) {
+        if (iter0) iter0 = false;
+        else
+          std::clog << " : ";
+
+        std::clog << a;
+      }
+
+      std::clog << "), replacement " << x << ", condition: " << t << ":\n";
+
+      size_t k = 0;
+
+      for (auto& i: sfs) {
+        std::clog << "  sf[" << std::to_string(k) << "]:\n" << i << std::endl;
+        ++k;
+      }
+
+      std::clog << std::endl;
+    }
+
+
+    std::list<split_formula::container_type::iterator> is;
+
+    for (auto& i: sfs)
+      is.push_back(i.sequence_.begin());
+
+    for (; !is_end(sfs, is); increment(sfs, is)) {
+      subformulas fs;
+      std::remove_cvref_t<decltype(as)> bs;
+      std::set<ref<variable>> vs;
+
+      for (auto& i: is) {
+        fs.append(std::get<0>(*i));
+
+        bs.push_back(std::get<1>(*i));
+
+        vs.insert(std::get<2>(*i).begin(), std::get<2>(*i).end());
+      }
+
+      ref<formula> f = c(bs);
+
+
+      if (trace_value & trace_split) {
+        std::lock_guard<std::recursive_mutex> guard(write_mutex);
+        std::clog << "  construct ";
+
+        bool iter0 = true;
+
+        for (auto& i: is) {
+          if (iter0) iter0 = false;
+          else
+            std::clog << " : ";
+
+          std::clog << std::get<1>(*i);
+        }
+
+        std::clog << "\n    " << f << "\n  concatenate: ";
+
+        iter0 = true;
+
+        for (auto& i: is) {
+          if (iter0) iter0 = false;
+          else
+            std::clog << " + ";
+
+          std::clog << std::get<0>(*i);
+        }
+
+        std::clog << " = " << fs << std::endl;
+      }
+
+
+      if (!!fs)
+        sf.push_back(fs, f, vs);
+    }
+
     return sf;
   }
 
 
-  template<class Construct>
+  // Precondition: iterator is not end, that is, no index component is end.
+  template<class Con, std::size_t N>
+  struct Split {
+    static void increment(Con& vs) {
+      ++std::get<N-1>(vs).second;
+
+      if (std::get<N-1>(vs).second != std::get<N-1>(vs).first.sequence_.end())
+        return;
+
+      std::get<N-1>(vs).second = std::get<N-1>(vs).first.sequence_.begin();
+
+      Split<Con, N-1>::increment(vs);
+    }
+
+    static bool is_end(Con& vs) {
+      // The iterator is 'end' if first component is 'end', so check that one.
+      if (std::get<N-1>(vs).second == std::get<N-1>(vs).first.sequence_.end())
+        return true;
+
+      return Split<Con, N-1>::is_end(vs);
+    }
+  };
+
+
+  // Precondition: iterator is not end, that is, no index component is end.
+  template<class Con>
+  struct Split<Con, 1> {
+    static void increment(Con& vs) {
+      ++std::get<0>(vs).second;
+    }
+
+    static bool is_end(Con& vs) {
+      // The iterator is 'end' if first component is 'end', so check that one.
+      return (std::get<0>(vs).second == std::get<0>(vs).first.sequence_.end());
+    }
+  };
+
+
+  struct print_sfs {
+    print_sfs(size_t) {}
+
+    template<typename A, typename... As>
+    print_sfs(size_t k, A& a, As&... as) {
+      std::clog << "  sf[" << std::to_string(k) << "]:\n" << a.first << std::endl;
+      print_sfs(k + 1, as...);
+    }
+
+    template<typename A, typename... As>
+    print_sfs(A& a, As&... as) : print_sfs(0, a, as...) {}
+  };
+
+
+  struct print_sfs_formulas {
+    print_sfs_formulas() {}
+
+    template<typename A>
+    print_sfs_formulas(A& a) {
+      std::clog << std::get<1>(*a.second) << std::flush;
+    }
+
+    template<typename A0, typename A1, typename... As>
+    print_sfs_formulas(A0& a0, A1& a1, As&... as) {
+      std::clog << std::get<1>(*a0.second) << " : " << std::flush;
+      print_sfs_formulas(a1, as...);
+    }
+  };
+
+
+  struct split_value_to_subformulas_list {
+    std::list<subformulas> list_;
+
+    template<typename... A>
+    split_value_to_subformulas_list(A&... as) {
+      list_ = std::list<subformulas>({std::get<0>(*as.second)...});
+    }
+  };
+
+
+  struct split_value_to_variable_set {
+    std::set<ref<variable>> set_;
+
+    template<typename... A>
+    split_value_to_variable_set(A&... as) {
+      auto vss = std::list<std::set<ref<variable>>>({std::get<2>(*as.second)...});
+      for (auto& i: vss)
+        set_.insert(i.begin(), i.end());
+    }
+  };
+
+
+  template<class B>
+  struct split_value_to_formula_tuple {
+    B tuple_;
+
+    template<typename... A>
+    split_value_to_formula_tuple(A&... as) {
+      tuple_ = std::make_tuple(std::get<1>(*as.second)...);
+    }
+  };
+
+
+  template<typename... A, class Construct>
   split_formula split(
-      const ref<formula>& a, unify_environment ta, const Construct& c,
-      const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) {
-    if (trace_value & trace_split)
-      std::clog
-        << "Begin split(" << a << "), replacement "
+    const Construct& c, unify_environment ta,
+    const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl,
+    direction dr, A... as) {
+
+    std::list<ref<formula>> as1; // For trace_split writing only.
+
+    if (trace_value & trace_split) {
+      std::lock_guard<std::recursive_mutex> guard(write_mutex);
+
+      as1 = {as...};
+
+      std::clog << "Begin split(";
+
+      bool iter0 = true;
+
+      for (auto& a: as1) {
+        if (iter0) iter0 = false;
+        else
+          std::clog << " : ";
+
+        std::clog << a << std::flush;
+      }
+
+      std::clog << "), replacement "
         << x << ", condition: " << t
         << std::endl;
+    }
+
 
     split_formula sf; // Return value;
-    split_formula sf1 = a->split(ta, x, t, tt, dbp, lv, sl, dr);
 
-    if (trace_value & trace_split)
-      std::clog
-        << "split(" << a << "), replacement "
-        << x << ", condition: " << t << ":\n"
-        << "  sf1:\n" << sf1
-        << std::flush;
+    // Make std::tuple<split_formula,...>.
+    auto 𝜆0 = [&](const ref<formula>& y) {
+      split_formula sf = y->split(ta, x, t, tt, dbp, lv, sl, dr);
+      // The pair must hold sf, as sf.sequence_.begin() refers to sf.sequence_, false in a copy of sf.
+      return std::make_pair(std::move(sf), sf.sequence_.begin());
+    };
 
-    for (auto& i: sf1) {
-      subformulas fs = std::get<0>(i);
-      ref<formula> f = c(std::get<1>(i));
-      std::set<ref<variable>> vs = std::get<2>(i);
+    std::tuple<A...> tp(as...);
+    using argument_tuple_type = decltype(tp);
 
-      if (trace_value & trace_split)
-        std::clog
-          << "\n  construct " << std::get<1>(i) << " :\n    "
-          << f
-          << "\n  " << fs
-          << std::endl;
+    auto sfs = std::make_tuple(𝜆0(as)...);
+    using sfs_type = decltype(sfs);
+
+
+    if (trace_value & trace_split) {
+      std::lock_guard<std::recursive_mutex> guard(write_mutex);
+
+      std::clog << "split(";
+
+      bool iter0 = true;
+
+      for (auto& a: as1) {
+        if (iter0) iter0 = false;
+        else
+          std::clog << " : ";
+
+        std::clog << a;
+      }
+
+      std::clog << "), replacement " << x << ", condition: " << t << ":\n";
+
+      std::make_from_tuple<print_sfs>(sfs);
+
+      std::clog << std::endl;
+    }
+
+
+    using Split_type = Split<decltype(sfs), std::tuple_size_v<sfs_type>>;
+
+    for (; !Split_type::is_end(sfs); Split_type::increment(sfs)) {
+      auto 𝜆1 = [&](const std::pair<split_formula, split_formula::container_type::iterator>& p) {
+        return *p.second;
+      };
+
+      std::list<subformulas> fss = std::make_from_tuple<split_value_to_subformulas_list>(sfs).list_;
+
+      subformulas fs;
+
+      for (auto& i: fss)
+        fs.append(i);
+
+
+      argument_tuple_type bs = std::make_from_tuple<split_value_to_formula_tuple<argument_tuple_type>>(sfs).tuple_;
+
+      ref<formula> f = std::apply(c, bs);
+
+
+      std::set<ref<variable>> vs = std::make_from_tuple<split_value_to_variable_set>(sfs).set_;
+
+
+      if (trace_value & trace_split) {
+        std::lock_guard<std::recursive_mutex> guard(write_mutex);
+        std::clog << "  construct ";
+
+        std::make_from_tuple<print_sfs_formulas>(sfs);
+
+        std::clog << "\n    " << f << "\n  concatenate: ";
+
+        bool iter0 = true;
+
+        for (auto& i: fss) {
+          if (iter0) iter0 = false;
+          else
+            std::clog << " + ";
+
+          std::clog << i;
+        }
+
+        std::clog << " = " << fs << std::endl;
+      }
+
 
       if (!!fs)
         sf.push_back(fs, f, vs);
@@ -818,52 +1137,20 @@ namespace mli {
 
 
   template<class Construct>
-  split_formula split(
-      const ref<formula>& a, const ref<formula>& b, unify_environment ta, const Construct& c,
-      const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) {
-    if (trace_value & trace_split)
-      std::clog
-        << "Begin split(" << a << " : " << b << "), replacement "
-        << x << ", condition: " << t
-        << std::endl;
+  split_formula split(const ref<formula>& a0, const Construct& c, unify_environment ta,
+    const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl,
+    direction dr) {
 
-    split_formula sf; // Return value;
-    split_formula sf1 = a->split(ta, x, t, tt, dbp, lv, sl, dr);
-    split_formula sf2 = b->split(ta, x, t, tt, dbp, lv, sl, dr);
-
-    if (trace_value & trace_split)
-      std::clog
-        << "split(" << a << " : " << b << "), replacement "
-        << x << ", condition: " << t << ":\n"
-        << "  sf1:\n" << sf1
-        << "  sf2:\n" << sf2
-        << std::flush;
-
-    for (auto& i: sf1) {
-      for (auto& j: sf2) {
-        subformulas fs;
-        fs.append(std::get<0>(i));
-        fs.append(std::get<0>(j));
-        ref<formula> f = c(std::get<1>(i), std::get<1>(j));
-        std::set<ref<variable>> vs = std::get<2>(i);
-        vs.insert(std::get<2>(j).begin(), std::get<2>(j).end());
-
-        if (trace_value & trace_split)
-          std::clog
-            << "  construct " << std::get<1>(i) << " : " << std::get<1>(j) << "\n    "
-            << f
-            << "\n  concatenate: " << std::get<0>(i) << " + " << std::get<0>(j) << ":"
-            << fs
-            << std::endl;
-
-        if (!!fs)
-          sf.push_back(fs, f, vs);
-      }
-    }
-
-    return sf;
+      return split(c, ta, x, t, tt, dbp, lv, sl, dr, a0);
   }
 
+
+  template<class Construct>
+  split_formula split(const std::tuple<ref<formula>, ref<formula>>& a, const Construct& c, unify_environment ta,
+    const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) {
+
+    return split(c, ta, x, t, tt, dbp, lv, sl, dr, std::get<0>(a), std::get<1>(a));
+  }
 
 } // namespace mli
 

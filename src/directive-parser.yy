@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2022 Hans Åberg.
+/* Copyright (C) 2017, 2021-2023 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -305,6 +305,7 @@
   all_key   "all"
   none_key  "none"
   no_key    "no"
+  use_key    "use"
 ;
 
 
@@ -322,6 +323,24 @@
   strict_key "strict"
 ;
 
+
+%token
+  logic_key "logic"
+  false_elimination_key "-𝕗"
+  false_introduction_key "+𝕗"
+  negation_elimination_key "-¬"
+  negation_elimination_in_premise_key "-¬⊢"
+  double_negation_elimination_key "-¬¬"
+  double_negation_elimination_in_premise_key "-¬¬⊢"
+  double_negation_introduction_key "+¬¬"
+  double_negation_introduction_in_premise_key "+¬¬⊢"
+  implication_elimination_key "-⇒"
+  implication_elimination_in_premise_key "-⇒⊢"
+  conjunction_elimination_key "-∧"
+  conjunction_elimination_in_premise_key "-∧⊢"
+  disjunction_elimination_key "-∨"
+  disjunction_elimination_in_premise_key "-∨⊢"
+;
 
 %token
   trace_key "trace"
@@ -621,6 +640,8 @@ command:
   | trace_statement {}
   | proof_strictness {}
   | limits {}
+  | logic_simplification {}
+  | implicit_logic_simplification {}
 ;
 
 
@@ -677,6 +698,7 @@ trace_type:
   | "structure" "type" { trace_flag = trace_structure_type; }
   | "thread" { trace_flag = trace_thread; }
   | "level" { trace_flag = trace_level; }
+  | "logic" { trace_flag = trace_logic; }
 ;
 
 
@@ -692,6 +714,66 @@ limits:
   | "sublevel" "max" natural_number_value[k] { sublevel_max = (size_type)ref_cast<integer&>($k.object); }
   | "proof" "count" natural_number_value[k] { proof_count = (size_type)ref_cast<integer&>($k.object); }
   | "unify" "count" "max" natural_number_value[k] { unify_count_max = (size_type)ref_cast<integer&>($k.object); }
+;
+
+
+logic_simplification:
+     "no" "logic" "-𝕗"  { false_elimination = false; }
+  |  "logic" "+𝕗"  { false_introduction = true; }
+  |  "no" "logic" "-¬¬"  { double_negation_elimination = false; }
+  |  "logic" "-¬¬"  { double_negation_elimination = true; }
+  |  "no" "logic" "-¬¬⊢"  { double_negation_elimination_in_premise = false; }
+  |  "logic" "-¬¬⊢"  { double_negation_elimination_in_premise = true; }
+  |  "no" "logic" "+¬¬⊢"  { double_negation_introduction_in_premise = false; }
+  |  "logic" "+¬¬⊢"  { double_negation_introduction_in_premise = true; }
+  |  "no" "logic" "-⇒"   { implication_elimination = false; }
+  |  "logic" "-⇒"   { implication_elimination = true; }
+  |  "no" "logic" "-⇒⊢"   { implication_elimination_in_premise = false; }
+  |  "logic" "-⇒⊢"   { implication_elimination_in_premise = true; }
+  |  "no" "logic" "-∧"  { conjunction_elimination = false; }
+  |  "logic" "-∧"  { conjunction_elimination = true; }
+  |  "no" "logic" "-∧⊢"  { conjunction_elimination_in_premise = false; }
+  |  "logic" "-∧⊢"  { conjunction_elimination_in_premise = true; }
+  |  "no" "logic" "-∨"  { disjunction_elimination = false; }
+  |  "logic" "-∨"  { disjunction_elimination = true; }
+  |  "no" "logic" "-∨⊢"  { disjunction_elimination_in_premise = false; }
+  |  "logic" "-∨⊢"  { disjunction_elimination_in_premise = true; }
+;
+
+
+implicit_logic_simplification:
+  "logic" implicit_logic_simplification_sequence
+;
+
+
+implicit_logic_simplification_sequence:
+    implicit_logic_simplification_item
+  | implicit_logic_simplification_sequence "," implicit_logic_simplification_item
+;
+
+
+implicit_logic_simplification_item:
+  logic_qualifier logic_type logic_name conclusion_or_premise
+;
+
+
+logic_qualifier:
+  "no"
+;
+
+
+logic_type:
+    "-"
+  | "+"
+;
+
+logic_name:
+  "-⇒⊢"
+;
+
+
+conclusion_or_premise:
+  "-∨⊢"
 ;
 
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2022 Hans Åberg.
+/* Copyright (C) 2017, 2021-2023 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -17,71 +17,92 @@
 
 #pragma once
 
-#include <new>
 
-#include <thread>
-#define GC_THREADS
-#include <gc/gc.h>
+#define USE_ATOMIC_REF 1
 
 
-// GC uncollectible allocations; to avoid memory leaks,
-// explicitly deallocate using operator delete.
-void* operator new(std::size_t n);
-void operator delete(void*) noexcept;
-void* operator new[](std::size_t n);
-void operator delete[](void*) noexcept;
+// Clang does not support C++20 std::atomic_ref.
+#if __clang__
+#undef USE_ATOMIC_REF
+#define USE_ATOMIC_REF 0
+#endif
+
+
+#if USE_ATOMIC_REF
+#include <atomic>
+
+// If no support for C++20 std::atomic_ref, use mutex instead.
+#ifndef __cpp_lib_atomic_ref
+#undef USE_ATOMIC_REF
+#define USE_ATOMIC_REF 0
+#endif
+
+#endif // USE_ATOMIC_REF
+
+#if !USE_ATOMIC_REF
+#include <mutex>
+
+extern std::mutex shared_mutex;
+
+
+namespace std {
+
+  template<class A> class atomic_ref;
+
+  template<>
+  class atomic_ref<size_t> {
+    size_t* tp;
+
+  public:
+    explicit atomic_ref(size_t& x) : tp(&x) {}
+
+    operator size_t() const noexcept { return *tp; }
+
+    size_t operator++() const noexcept {
+      std::lock_guard<std::mutex> guard(shared_mutex);
+      ++*tp;
+      return *tp;
+    }
+
+    size_t operator--() const noexcept {
+      std::lock_guard<std::mutex> guard(shared_mutex);
+      --*tp;
+      return *tp;
+    }
+  };
+
+} // namespace std
+
+#endif // USE_ATOMIC_REF
 
 
 // Placeholder value, to select GC collectible operator new.
-struct collect_t {};
-constexpr collect_t collect{};
+struct shared_t {};
+constexpr shared_t shared{};
 
 
-// GC collectible allocations; deallocated, if found, during GC time.
-// If finalized using finalize<A>, the destructor ~A will also be called.
-void* operator new(std::size_t n, collect_t);
+void* operator new(std::size_t n, shared_t, size_t);
+void operator delete(void* p, shared_t) noexcept;
 
-// Cannot be explicitly called: only invoked if an exception is thrown in operator new:
-void operator delete(void* p, collect_t) noexcept;
+// Stores a word att the bottom of the memory allocation for the reference count.
+inline void* operator new(std::size_t n, shared_t, size_t k = 0) {
+  // Allocate a word for the reference count value. Alignment usually fulfilled by:
+  // std::atomic_ref<size_t>::required_alignment <= __STDCPP_DEFAULT_NEW_ALIGNMENT__
+  void* p = operator new(n + sizeof(size_t));
 
+  *(size_t*)p = k; // Set reference count to 0: the class ref<A> increments it.
 
-namespace mli {
+  void* rp = static_cast<char*>(p) + sizeof(size_t);
 
-  // Register a finalizer cleanup function that calls the destructor A::~A().
-  // Return is the argument, so that the function can be chained with operator new:
-  //   return finalize(new A(...));
-  //
-  // Note: Function GC_register_finalizer_ignore_self causes warnings of the form:
-  //   GC Warning: Finalization cycle involving 0x<address>
-  // Therefore, GC_register_finalizer_no_order is used.
-  template<class A>
-  inline A* finalize(A* ap) {
-    GC_finalization_proc f0;  // Already registered finalization function.
-    void* dp0;                // Already registered finalization data.
-
-    void* base = GC_base((void*)ap);                // Base of allocated object.
-    void* diff = (void*)((char*)ap - (char*)base);  // Object displacement.
-
-    // Finalization cleanup function.
-    //   xp = pointer to allocated object
-    //   d = displacement to A* pointer.
-    GC_finalization_proc f1 = [](void* xp, void* d) {
-      A* bp = ((A*)((char*)xp + (ptrdiff_t)d));
-      ((A*)((char*)xp + (ptrdiff_t)d))->~A();
-      GC_register_finalizer_no_order(GC_base(xp), 0, 0, 0, 0);
-    };
-
-    if (0 != base)  {
-      GC_register_finalizer_no_order(base, f1, diff, &f0, &dp0);
-
-      if (0 != f0)
-        GC_register_finalizer_no_order(base, f0, dp0, 0, 0  );
-    }
-
-    return ap;
-  }
-
-} // namespace mli
+  return rp; // Return the base for the object allocation.
+}
 
 
+inline void operator delete(void* p, shared_t) noexcept {
+  if (p == nullptr)
+    return;
 
+  void* op = static_cast<char*>(p) - sizeof(size_t); // Original pointer.
+
+  operator delete(op);
+}

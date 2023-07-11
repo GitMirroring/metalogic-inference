@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2022 Hans Åberg.
+/* Copyright (C) 2017, 2021-2023 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -160,18 +160,6 @@ namespace mli {
   }
 
 
-  struct function_map_construct {
-    ref<variable> variable_;
-
-    function_map_construct(const ref<variable>& v)
-     : variable_(v) {}
-
-    ref<formula> operator()(const ref<formula>& x) const {
-      return ref<function_map>(make, variable_, x);
-    }
-  };
-
-
   split_formula function_map::split(unify_environment tg,
     const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
     split_formula sf(this);  // Return value.
@@ -181,7 +169,9 @@ namespace mli {
     if (!as.empty())
       sf.push_back(this, ref<formula>(x), tt.table_->find_local());
 
-    sf.append(mli::split(formula_, tg, function_map_construct(variable_), x, t, tt, dbp, lv, sl, dr));
+    auto 𝜆 = [&](const ref<formula>& x) { ref<function_map> r(*this); r->formula_ = x; return r; };
+
+    sf.append(mli::split(formula_, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
 
     return sf;
   }
@@ -320,13 +310,6 @@ namespace mli {
   }
 
 
-  struct composition_construct {
-    ref<formula> operator()(const ref<formula>& x, const ref<formula>& y) const {
-      return ref<function_composition>(make, ref<substitution>(x), ref<substitution>(y));
-    }
-  };
-
-
   split_formula function_composition::split(unify_environment tg,
     const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
     split_formula sf(this);  // Return value.
@@ -336,7 +319,12 @@ namespace mli {
     if (!as.empty())
       sf.push_back(this, ref<formula>(x), tt.table_->find_local());
 
-    sf.append(mli::split(ref<formula>(outer_), ref<formula>(inner_), tg, composition_construct(), x, t, tt, dbp, lv, sl, dr));
+    auto 𝜆 = [&](const ref<formula>& x, const ref<formula>& y) {
+      ref<function_composition> r(*this); r->outer_ = x; r->inner_ = y; return r;
+    };
+
+    sf.append(mli::split({outer_, inner_}, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
+
     return sf;
   }
 
@@ -528,13 +516,6 @@ namespace mli {
   }
 
 
-  struct function_application_construct {
-    ref<formula> operator()(const ref<formula>& x, const ref<formula>& y) const {
-      return ref<function_application>(make, x, y);
-    }
-  };
-
-
   split_formula function_application::split(unify_environment tg,
     const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
     split_formula sf(this);  // Return value.
@@ -544,7 +525,12 @@ namespace mli {
     if (!as.empty())
       sf.push_back(this, ref<formula>(x), tt.table_->find_local());
 
-    sf.append(mli::split(ref<formula>(function_), formula_, tg, function_application_construct(), x, t, tt, dbp, lv, sl, dr));
+    auto 𝜆 = [&](const ref<formula>& x, const ref<formula>& y) {
+      ref<function_application> r(*this); r->function_ = x; r->formula_ = y; return r;
+    };
+
+    sf.append(mli::split({function_, formula_}, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
+
     return sf;
   }
 

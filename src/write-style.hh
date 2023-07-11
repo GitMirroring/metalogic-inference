@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2022 Hans Åberg.
+/* Copyright (C) 2017, 2021-2023 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -56,7 +56,8 @@ namespace mli {
     trace_variable_label  = (trace_bit << 14),
     trace_structure_type  = (trace_bit << 15),
     trace_thread          = (trace_bit << 16),
-    trace_level           = (trace_bit << 17)
+    trace_level           = (trace_bit << 17),
+    trace_logic           = (trace_bit << 18)
   };
 
   using trace_type = uint32_t;
@@ -167,7 +168,6 @@ namespace mli {
       ss << std::hex << k;
       throw std::runtime_error("Value 0x" + ss.str() + " exceeds Unicode maximum 0x0010ffffu.");
     }
-
 
     size_t n = u8length(k); // Number of bytes required.
     std::string r(n, '\0'); // String of n bytes.

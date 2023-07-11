@@ -59,7 +59,7 @@ The last statement in the file tests/TK1.mli has a deliberate error in the proof
 
 -----
 
-Copyright (C) 2017, 2021-2022 Hans Åberg.
+Copyright (C) 2017, 2021-2023 Hans Åberg.
 
 This file is part of MLI, MetaLogic Inference.
 

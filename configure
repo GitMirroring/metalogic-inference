@@ -3781,7 +3781,7 @@ then :
   printf "%s\n" "#define HAVE_GMP_H 1" >>confdefs.h
 
 else $as_nop
-  as_fn_error $? "GMP not found; cf. https://gmplib.org/" "$LINENO" 5
+  as_fn_error $? "GMP header not found; cf. https://gmplib.org/" "$LINENO" 5
 fi
 
 done
@@ -3842,80 +3842,7 @@ then :
   test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 
 else $as_nop
-  as_fn_error $? "GMP not found; cf. https://gmplib.org/" "$LINENO" 5
-fi
-
-
-       for ac_header in gc/gc.h
-do :
-  ac_fn_cxx_check_header_compile "$LINENO" "gc/gc.h" "ac_cv_header_gc_gc_h" "$ac_includes_default"
-if test "x$ac_cv_header_gc_gc_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_GC_GC_H 1" >>confdefs.h
-
-else $as_nop
-  as_fn_error $? "Boehm GC not found; cf. https://www.hboehm.info/gc/" "$LINENO" 5
-fi
-
-done
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for library containing GC_gcollect" >&5
-printf %s "checking for library containing GC_gcollect... " >&6; }
-if test ${ac_cv_search_GC_gcollect+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  ac_func_search_save_LIBS=$LIBS
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-namespace conftest {
-  extern "C" int GC_gcollect ();
-}
-int
-main (void)
-{
-return conftest::GC_gcollect ();
-  ;
-  return 0;
-}
-_ACEOF
-for ac_lib in '' gc
-do
-  if test -z "$ac_lib"; then
-    ac_res="none required"
-  else
-    ac_res=-l$ac_lib
-    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
-  fi
-  if ac_fn_cxx_try_link "$LINENO"
-then :
-  ac_cv_search_GC_gcollect=$ac_res
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam \
-    conftest$ac_exeext
-  if test ${ac_cv_search_GC_gcollect+y}
-then :
-  break
-fi
-done
-if test ${ac_cv_search_GC_gcollect+y}
-then :
-
-else $as_nop
-  ac_cv_search_GC_gcollect=no
-fi
-rm conftest.$ac_ext
-LIBS=$ac_func_search_save_LIBS
-fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_GC_gcollect" >&5
-printf "%s\n" "$ac_cv_search_GC_gcollect" >&6; }
-ac_res=$ac_cv_search_GC_gcollect
-if test "$ac_res" != no
-then :
-  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
-
-else $as_nop
-  as_fn_error $? "Boehm GC not found; cf. https://www.hboehm.info/gc/" "$LINENO" 5
+  as_fn_error $? "GMP library not found; cf. https://gmplib.org/" "$LINENO" 5
 fi
 
 

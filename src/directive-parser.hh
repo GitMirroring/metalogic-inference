@@ -1,4 +1,4 @@
-// A Bison parser, made by GNU Bison 3.8.1.
+// A Bison parser, made by GNU Bison 3.8.2.
 
 // Skeleton interface for Bison LALR(1) parsers in C++
 
@@ -258,6 +258,7 @@ namespace mli {
 #endif
     /// Backward compatibility (Bison 3.8).
     typedef value_type semantic_type;
+
     /// Symbol locations.
     typedef location_t location_type;
 
@@ -301,140 +302,156 @@ namespace mli {
     all_key = 268,                 // "all"
     none_key = 269,                // "none"
     no_key = 270,                  // "no"
-    count_key = 271,               // "count"
-    max_key = 272,                 // "max"
-    level_key = 273,               // "level"
-    sublevel_key = 274,            // "sublevel"
-    proof_key = 275,               // "proof"
-    conditional_key = 276,         // "conditional"
-    strict_key = 277,              // "strict"
-    trace_key = 278,               // "trace"
-    untrace_key = 279,             // "untrace"
-    null_key = 280,                // "null"
-    empty_key = 281,               // "empty"
-    result_key = 282,              // "result"
-    solve_key = 283,               // "solve"
-    prooftree_key = 284,           // "prooftree"
-    unify_key = 285,               // "unify"
-    split_key = 286,               // "split"
-    substitute_key = 287,          // "substitute"
-    statement_key = 288,           // "statement"
-    database_key = 289,            // "database"
-    formula_key = 290,             // "formula"
-    unspecializable_key = 291,     // "unspecializable"
-    structure_key = 292,           // "structure"
-    thread_key = 293,              // "thread"
-    natural_number_value = 294,    // "natural number value"
-    integer_value = 295,           // "integer value"
-    include_key = 296,             // "include"
-    end_key = 297,                 // "end"
-    plain_name = 298,              // "name"
-    metapredicate_constant = 299,  // "metapredicate constant"
-    predicate_constant = 300,      // "predicate constant"
-    atom_constant = 301,           // "atom constant"
-    function_constant = 302,       // "function constant"
-    term_constant = 303,           // "term constant"
-    metaformula_variable = 304,    // "metaformula variable"
-    object_formula_variable = 305, // "object formula variable"
-    predicate_variable = 306,      // "predicate variable"
-    atom_variable = 307,           // "atom variable"
-    prefix_formula_variable = 308, // "prefix formula variable"
-    function_variable = 309,       // "function variable"
-    constant_variable = 310,       // "constant variable"
-    object_variable = 311,         // "object variable"
-    code_variable = 312,           // "code variable"
-    all_variable = 313,            // "all variable"
-    exist_variable = 314,          // "exist variable"
-    is_set_variable = 315,         // "Set variable"
-    set_variable = 316,            // "set variable"
-    set_variable_definition = 317, // "set variable definition"
-    implicit_set_variable = 318,   // "implicit set variable"
-    identifier_constant_key = 319, // "identifier constant"
-    identifier_variable_key = 320, // "identifier variable"
-    exist_key = 321,               // "∃"
-    logical_not_key = 322,         // "¬"
-    logical_and_key = 323,         // "∧"
-    logical_or_key = 324,          // "∨"
-    implies_key = 325,             // "⇒"
-    impliedby_key = 326,           // "⇐"
-    equivalent_key = 327,          // "⇔"
-    prefix_not_key = 328,          // prefix_not_key
-    prefix_and_key = 329,          // prefix_and_key
-    prefix_or_key = 330,           // prefix_or_key
-    prefix_implies_key = 331,      // prefix_implies_key
-    prefix_equivalent_key = 332,   // prefix_equivalent_key
-    less_key = 333,                // "<"
-    greater_key = 334,             // ">"
-    less_or_equal_key = 335,       // "≤"
-    greater_or_equal_key = 336,    // "≥"
-    not_less_key = 337,            // "≮"
-    not_greater_key = 338,         // "≯"
-    not_less_or_equal_key = 339,   // "≰"
-    not_greater_or_equal_key = 340, // "≱"
-    equal_key = 341,               // "="
-    not_equal_key = 342,           // "≠"
-    mapsto_key = 343,              // "↦"
-    degree_key = 344,              // "°"
-    factorial_key = 345,           // "!"
-    mult_key = 346,                // "⋅"
-    plus_key = 347,                // "+"
-    minus_key = 348,               // "-"
-    is_set_key = 349,              // "Set"
-    power_set_key = 350,           // "Pow"
-    empty_set_key = 351,           // "∅"
-    in_key = 352,                  // "∈"
-    not_in_key = 353,              // "∉"
-    set_complement_key = 354,      // "∁"
-    set_union_key = 355,           // "∪"
-    set_intersection_key = 356,    // "∩"
-    set_difference_key = 357,      // "∖"
-    set_union_operator_key = 358,  // "⋃"
-    set_intersection_operator_key = 359, // "⋂"
-    subset_key = 360,              // "⊆"
-    proper_subset_key = 361,       // "⊊"
-    superset_key = 362,            // "⊇"
-    proper_superset_key = 363,     // "⊋"
-    colon_key = 364,               // ":"
-    semicolon_key = 365,           // ";"
-    comma_key = 366,               // ","
-    period_key = 367,              // "."
-    left_parenthesis_key = 368,    // "("
-    right_parenthesis_key = 369,   // ")"
-    left_bracket_key = 370,        // "["
-    right_bracket_key = 371,       // "]"
-    left_angle_bracket_key = 372,  // "⟨"
-    right_angle_bracket_key = 373, // "⟩"
-    superscript_left_parenthesis_key = 374, // "⁽"
-    superscript_right_parenthesis_key = 375, // "⁾"
-    subscript_left_parenthesis_key = 376, // "₍"
-    subscript_right_parenthesis_key = 377, // "₎"
-    left_brace_key = 378,          // "{"
-    vertical_line_key = 379,       // "|"
-    right_brace_key = 380,         // "}"
-    tilde_key = 381,               // "~"
-    slash_key = 382,               // "/"
-    backslash_key = 383,           // "\\"
-    if_key = 384,                  // "if"
-    then_key = 385,                // "then"
-    else_key = 386,                // "else"
-    while_key = 387,               // "while"
-    do_key = 388,                  // "do"
-    loop_key = 389,                // "loop"
-    for_key = 390,                 // "for"
-    break_key = 391,               // "break"
-    continue_key = 392,            // "continue"
-    throw_key = 393,               // "throw"
-    try_key = 394,                 // "try"
-    catch_key = 395,               // "catch"
-    superscript_unsigned_integer_value = 410, // superscript_unsigned_integer_value
-    unary_minus = 411              // unary_minus
+    use_key = 271,                 // "use"
+    count_key = 272,               // "count"
+    max_key = 273,                 // "max"
+    level_key = 274,               // "level"
+    sublevel_key = 275,            // "sublevel"
+    proof_key = 276,               // "proof"
+    conditional_key = 277,         // "conditional"
+    strict_key = 278,              // "strict"
+    logic_key = 279,               // "logic"
+    false_elimination_key = 280,   // "-𝕗"
+    false_introduction_key = 281,  // "+𝕗"
+    negation_elimination_key = 282, // "-¬"
+    negation_elimination_in_premise_key = 283, // "-¬⊢"
+    double_negation_elimination_key = 284, // "-¬¬"
+    double_negation_elimination_in_premise_key = 285, // "-¬¬⊢"
+    double_negation_introduction_key = 286, // "+¬¬"
+    double_negation_introduction_in_premise_key = 287, // "+¬¬⊢"
+    implication_elimination_key = 288, // "-⇒"
+    implication_elimination_in_premise_key = 289, // "-⇒⊢"
+    conjunction_elimination_key = 290, // "-∧"
+    conjunction_elimination_in_premise_key = 291, // "-∧⊢"
+    disjunction_elimination_key = 292, // "-∨"
+    disjunction_elimination_in_premise_key = 293, // "-∨⊢"
+    trace_key = 294,               // "trace"
+    untrace_key = 295,             // "untrace"
+    null_key = 296,                // "null"
+    empty_key = 297,               // "empty"
+    result_key = 298,              // "result"
+    solve_key = 299,               // "solve"
+    prooftree_key = 300,           // "prooftree"
+    unify_key = 301,               // "unify"
+    split_key = 302,               // "split"
+    substitute_key = 303,          // "substitute"
+    statement_key = 304,           // "statement"
+    database_key = 305,            // "database"
+    formula_key = 306,             // "formula"
+    unspecializable_key = 307,     // "unspecializable"
+    structure_key = 308,           // "structure"
+    thread_key = 309,              // "thread"
+    natural_number_value = 310,    // "natural number value"
+    integer_value = 311,           // "integer value"
+    include_key = 312,             // "include"
+    end_key = 313,                 // "end"
+    plain_name = 314,              // "name"
+    metapredicate_constant = 315,  // "metapredicate constant"
+    predicate_constant = 316,      // "predicate constant"
+    atom_constant = 317,           // "atom constant"
+    function_constant = 318,       // "function constant"
+    term_constant = 319,           // "term constant"
+    metaformula_variable = 320,    // "metaformula variable"
+    object_formula_variable = 321, // "object formula variable"
+    predicate_variable = 322,      // "predicate variable"
+    atom_variable = 323,           // "atom variable"
+    prefix_formula_variable = 324, // "prefix formula variable"
+    function_variable = 325,       // "function variable"
+    constant_variable = 326,       // "constant variable"
+    object_variable = 327,         // "object variable"
+    code_variable = 328,           // "code variable"
+    all_variable = 329,            // "all variable"
+    exist_variable = 330,          // "exist variable"
+    is_set_variable = 331,         // "Set variable"
+    set_variable = 332,            // "set variable"
+    set_variable_definition = 333, // "set variable definition"
+    implicit_set_variable = 334,   // "implicit set variable"
+    identifier_constant_key = 335, // "identifier constant"
+    identifier_variable_key = 336, // "identifier variable"
+    exist_key = 337,               // "∃"
+    logical_not_key = 338,         // "¬"
+    logical_and_key = 339,         // "∧"
+    logical_or_key = 340,          // "∨"
+    implies_key = 341,             // "⇒"
+    impliedby_key = 342,           // "⇐"
+    equivalent_key = 343,          // "⇔"
+    prefix_not_key = 344,          // prefix_not_key
+    prefix_and_key = 345,          // prefix_and_key
+    prefix_or_key = 346,           // prefix_or_key
+    prefix_implies_key = 347,      // prefix_implies_key
+    prefix_equivalent_key = 348,   // prefix_equivalent_key
+    less_key = 349,                // "<"
+    greater_key = 350,             // ">"
+    less_or_equal_key = 351,       // "≤"
+    greater_or_equal_key = 352,    // "≥"
+    not_less_key = 353,            // "≮"
+    not_greater_key = 354,         // "≯"
+    not_less_or_equal_key = 355,   // "≰"
+    not_greater_or_equal_key = 356, // "≱"
+    equal_key = 357,               // "="
+    not_equal_key = 358,           // "≠"
+    mapsto_key = 359,              // "↦"
+    degree_key = 360,              // "°"
+    factorial_key = 361,           // "!"
+    mult_key = 362,                // "⋅"
+    plus_key = 363,                // "+"
+    minus_key = 364,               // "-"
+    is_set_key = 365,              // "Set"
+    power_set_key = 366,           // "Pow"
+    empty_set_key = 367,           // "∅"
+    in_key = 368,                  // "∈"
+    not_in_key = 369,              // "∉"
+    set_complement_key = 370,      // "∁"
+    set_union_key = 371,           // "∪"
+    set_intersection_key = 372,    // "∩"
+    set_difference_key = 373,      // "∖"
+    set_union_operator_key = 374,  // "⋃"
+    set_intersection_operator_key = 375, // "⋂"
+    subset_key = 376,              // "⊆"
+    proper_subset_key = 377,       // "⊊"
+    superset_key = 378,            // "⊇"
+    proper_superset_key = 379,     // "⊋"
+    colon_key = 380,               // ":"
+    semicolon_key = 381,           // ";"
+    comma_key = 382,               // ","
+    period_key = 383,              // "."
+    left_parenthesis_key = 384,    // "("
+    right_parenthesis_key = 385,   // ")"
+    left_bracket_key = 386,        // "["
+    right_bracket_key = 387,       // "]"
+    left_angle_bracket_key = 388,  // "⟨"
+    right_angle_bracket_key = 389, // "⟩"
+    superscript_left_parenthesis_key = 390, // "⁽"
+    superscript_right_parenthesis_key = 391, // "⁾"
+    subscript_left_parenthesis_key = 392, // "₍"
+    subscript_right_parenthesis_key = 393, // "₎"
+    left_brace_key = 394,          // "{"
+    vertical_line_key = 395,       // "|"
+    right_brace_key = 396,         // "}"
+    tilde_key = 397,               // "~"
+    slash_key = 398,               // "/"
+    backslash_key = 399,           // "\\"
+    if_key = 400,                  // "if"
+    then_key = 401,                // "then"
+    else_key = 402,                // "else"
+    while_key = 403,               // "while"
+    do_key = 404,                  // "do"
+    loop_key = 405,                // "loop"
+    for_key = 406,                 // "for"
+    break_key = 407,               // "break"
+    continue_key = 408,            // "continue"
+    throw_key = 409,               // "throw"
+    try_key = 410,                 // "try"
+    catch_key = 411,               // "catch"
+    superscript_unsigned_integer_value = 426, // superscript_unsigned_integer_value
+    unary_minus = 427              // unary_minus
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
     };
 
     /// Token kind, as returned by yylex.
-    typedef token::yytokentype token_kind_type;
+    typedef token::token_kind_type token_kind_type;
 
     /// Backward compatibility alias (Bison 3.6).
     typedef token_kind_type token_type;
@@ -444,7 +461,7 @@ namespace mli {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 157, ///< Number of tokens.
+        YYNTOKENS = 173, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -462,160 +479,184 @@ namespace mli {
         S_all_key = 13,                          // "all"
         S_none_key = 14,                         // "none"
         S_no_key = 15,                           // "no"
-        S_count_key = 16,                        // "count"
-        S_max_key = 17,                          // "max"
-        S_level_key = 18,                        // "level"
-        S_sublevel_key = 19,                     // "sublevel"
-        S_proof_key = 20,                        // "proof"
-        S_conditional_key = 21,                  // "conditional"
-        S_strict_key = 22,                       // "strict"
-        S_trace_key = 23,                        // "trace"
-        S_untrace_key = 24,                      // "untrace"
-        S_null_key = 25,                         // "null"
-        S_empty_key = 26,                        // "empty"
-        S_result_key = 27,                       // "result"
-        S_solve_key = 28,                        // "solve"
-        S_prooftree_key = 29,                    // "prooftree"
-        S_unify_key = 30,                        // "unify"
-        S_split_key = 31,                        // "split"
-        S_substitute_key = 32,                   // "substitute"
-        S_statement_key = 33,                    // "statement"
-        S_database_key = 34,                     // "database"
-        S_formula_key = 35,                      // "formula"
-        S_unspecializable_key = 36,              // "unspecializable"
-        S_structure_key = 37,                    // "structure"
-        S_thread_key = 38,                       // "thread"
-        S_natural_number_value = 39,             // "natural number value"
-        S_integer_value = 40,                    // "integer value"
-        S_include_key = 41,                      // "include"
-        S_end_key = 42,                          // "end"
-        S_plain_name = 43,                       // "name"
-        S_metapredicate_constant = 44,           // "metapredicate constant"
-        S_predicate_constant = 45,               // "predicate constant"
-        S_atom_constant = 46,                    // "atom constant"
-        S_function_constant = 47,                // "function constant"
-        S_term_constant = 48,                    // "term constant"
-        S_metaformula_variable = 49,             // "metaformula variable"
-        S_object_formula_variable = 50,          // "object formula variable"
-        S_predicate_variable = 51,               // "predicate variable"
-        S_atom_variable = 52,                    // "atom variable"
-        S_prefix_formula_variable = 53,          // "prefix formula variable"
-        S_function_variable = 54,                // "function variable"
-        S_constant_variable = 55,                // "constant variable"
-        S_object_variable = 56,                  // "object variable"
-        S_code_variable = 57,                    // "code variable"
-        S_all_variable = 58,                     // "all variable"
-        S_exist_variable = 59,                   // "exist variable"
-        S_is_set_variable = 60,                  // "Set variable"
-        S_set_variable = 61,                     // "set variable"
-        S_set_variable_definition = 62,          // "set variable definition"
-        S_implicit_set_variable = 63,            // "implicit set variable"
-        S_identifier_constant_key = 64,          // "identifier constant"
-        S_identifier_variable_key = 65,          // "identifier variable"
-        S_exist_key = 66,                        // "∃"
-        S_logical_not_key = 67,                  // "¬"
-        S_logical_and_key = 68,                  // "∧"
-        S_logical_or_key = 69,                   // "∨"
-        S_implies_key = 70,                      // "⇒"
-        S_impliedby_key = 71,                    // "⇐"
-        S_equivalent_key = 72,                   // "⇔"
-        S_prefix_not_key = 73,                   // prefix_not_key
-        S_prefix_and_key = 74,                   // prefix_and_key
-        S_prefix_or_key = 75,                    // prefix_or_key
-        S_prefix_implies_key = 76,               // prefix_implies_key
-        S_prefix_equivalent_key = 77,            // prefix_equivalent_key
-        S_less_key = 78,                         // "<"
-        S_greater_key = 79,                      // ">"
-        S_less_or_equal_key = 80,                // "≤"
-        S_greater_or_equal_key = 81,             // "≥"
-        S_not_less_key = 82,                     // "≮"
-        S_not_greater_key = 83,                  // "≯"
-        S_not_less_or_equal_key = 84,            // "≰"
-        S_not_greater_or_equal_key = 85,         // "≱"
-        S_equal_key = 86,                        // "="
-        S_not_equal_key = 87,                    // "≠"
-        S_mapsto_key = 88,                       // "↦"
-        S_degree_key = 89,                       // "°"
-        S_factorial_key = 90,                    // "!"
-        S_mult_key = 91,                         // "⋅"
-        S_plus_key = 92,                         // "+"
-        S_minus_key = 93,                        // "-"
-        S_is_set_key = 94,                       // "Set"
-        S_power_set_key = 95,                    // "Pow"
-        S_empty_set_key = 96,                    // "∅"
-        S_in_key = 97,                           // "∈"
-        S_not_in_key = 98,                       // "∉"
-        S_set_complement_key = 99,               // "∁"
-        S_set_union_key = 100,                   // "∪"
-        S_set_intersection_key = 101,            // "∩"
-        S_set_difference_key = 102,              // "∖"
-        S_set_union_operator_key = 103,          // "⋃"
-        S_set_intersection_operator_key = 104,   // "⋂"
-        S_subset_key = 105,                      // "⊆"
-        S_proper_subset_key = 106,               // "⊊"
-        S_superset_key = 107,                    // "⊇"
-        S_proper_superset_key = 108,             // "⊋"
-        S_colon_key = 109,                       // ":"
-        S_semicolon_key = 110,                   // ";"
-        S_comma_key = 111,                       // ","
-        S_period_key = 112,                      // "."
-        S_left_parenthesis_key = 113,            // "("
-        S_right_parenthesis_key = 114,           // ")"
-        S_left_bracket_key = 115,                // "["
-        S_right_bracket_key = 116,               // "]"
-        S_left_angle_bracket_key = 117,          // "⟨"
-        S_right_angle_bracket_key = 118,         // "⟩"
-        S_superscript_left_parenthesis_key = 119, // "⁽"
-        S_superscript_right_parenthesis_key = 120, // "⁾"
-        S_subscript_left_parenthesis_key = 121,  // "₍"
-        S_subscript_right_parenthesis_key = 122, // "₎"
-        S_left_brace_key = 123,                  // "{"
-        S_vertical_line_key = 124,               // "|"
-        S_right_brace_key = 125,                 // "}"
-        S_tilde_key = 126,                       // "~"
-        S_slash_key = 127,                       // "/"
-        S_backslash_key = 128,                   // "\\"
-        S_if_key = 129,                          // "if"
-        S_then_key = 130,                        // "then"
-        S_else_key = 131,                        // "else"
-        S_while_key = 132,                       // "while"
-        S_do_key = 133,                          // "do"
-        S_loop_key = 134,                        // "loop"
-        S_for_key = 135,                         // "for"
-        S_break_key = 136,                       // "break"
-        S_continue_key = 137,                    // "continue"
-        S_throw_key = 138,                       // "throw"
-        S_try_key = 139,                         // "try"
-        S_catch_key = 140,                       // "catch"
-        S_141_ = 141,                            // "⊩"
-        S_142_ = 142,                            // "⊣"
-        S_143_ = 143,                            // "⊢"
-        S_144_free_in_ = 144,                    // "free in"
-        S_145_free_for_ = 145,                   // "free for"
-        S_146_in_ = 146,                         // "in"
-        S_147_not_ = 147,                        // "not"
-        S_148_ = 148,                            // "≔"
-        S_149_ = 149,                            // "≕"
-        S_150_ = 150,                            // "≝"
-        S_151_ = 151,                            // "≡"
-        S_152_ = 152,                            // "≢"
-        S_153_ = 153,                            // "≣"
-        S_154_ = 154,                            // "≣̷"
-        S_superscript_unsigned_integer_value = 155, // superscript_unsigned_integer_value
-        S_unary_minus = 156,                     // unary_minus
-        S_YYACCEPT = 157,                        // $accept
-        S_file = 158,                            // file
-        S_file_contents = 159,                   // file_contents
-        S_command = 160,                         // command
-        S_diagnostic_statement = 161,            // diagnostic_statement
-        S_diagnostic_type = 162,                 // diagnostic_type
-        S_diagnostic = 163,                      // diagnostic
-        S_trace_statement = 164,                 // trace_statement
-        S_trace_qualifier = 165,                 // trace_qualifier
-        S_trace_type = 166,                      // trace_type
-        S_proof_strictness = 167,                // proof_strictness
-        S_limits = 168,                          // limits
-        S_integer = 169                          // integer
+        S_use_key = 16,                          // "use"
+        S_count_key = 17,                        // "count"
+        S_max_key = 18,                          // "max"
+        S_level_key = 19,                        // "level"
+        S_sublevel_key = 20,                     // "sublevel"
+        S_proof_key = 21,                        // "proof"
+        S_conditional_key = 22,                  // "conditional"
+        S_strict_key = 23,                       // "strict"
+        S_logic_key = 24,                        // "logic"
+        S_false_elimination_key = 25,            // "-𝕗"
+        S_false_introduction_key = 26,           // "+𝕗"
+        S_negation_elimination_key = 27,         // "-¬"
+        S_negation_elimination_in_premise_key = 28, // "-¬⊢"
+        S_double_negation_elimination_key = 29,  // "-¬¬"
+        S_double_negation_elimination_in_premise_key = 30, // "-¬¬⊢"
+        S_double_negation_introduction_key = 31, // "+¬¬"
+        S_double_negation_introduction_in_premise_key = 32, // "+¬¬⊢"
+        S_implication_elimination_key = 33,      // "-⇒"
+        S_implication_elimination_in_premise_key = 34, // "-⇒⊢"
+        S_conjunction_elimination_key = 35,      // "-∧"
+        S_conjunction_elimination_in_premise_key = 36, // "-∧⊢"
+        S_disjunction_elimination_key = 37,      // "-∨"
+        S_disjunction_elimination_in_premise_key = 38, // "-∨⊢"
+        S_trace_key = 39,                        // "trace"
+        S_untrace_key = 40,                      // "untrace"
+        S_null_key = 41,                         // "null"
+        S_empty_key = 42,                        // "empty"
+        S_result_key = 43,                       // "result"
+        S_solve_key = 44,                        // "solve"
+        S_prooftree_key = 45,                    // "prooftree"
+        S_unify_key = 46,                        // "unify"
+        S_split_key = 47,                        // "split"
+        S_substitute_key = 48,                   // "substitute"
+        S_statement_key = 49,                    // "statement"
+        S_database_key = 50,                     // "database"
+        S_formula_key = 51,                      // "formula"
+        S_unspecializable_key = 52,              // "unspecializable"
+        S_structure_key = 53,                    // "structure"
+        S_thread_key = 54,                       // "thread"
+        S_natural_number_value = 55,             // "natural number value"
+        S_integer_value = 56,                    // "integer value"
+        S_include_key = 57,                      // "include"
+        S_end_key = 58,                          // "end"
+        S_plain_name = 59,                       // "name"
+        S_metapredicate_constant = 60,           // "metapredicate constant"
+        S_predicate_constant = 61,               // "predicate constant"
+        S_atom_constant = 62,                    // "atom constant"
+        S_function_constant = 63,                // "function constant"
+        S_term_constant = 64,                    // "term constant"
+        S_metaformula_variable = 65,             // "metaformula variable"
+        S_object_formula_variable = 66,          // "object formula variable"
+        S_predicate_variable = 67,               // "predicate variable"
+        S_atom_variable = 68,                    // "atom variable"
+        S_prefix_formula_variable = 69,          // "prefix formula variable"
+        S_function_variable = 70,                // "function variable"
+        S_constant_variable = 71,                // "constant variable"
+        S_object_variable = 72,                  // "object variable"
+        S_code_variable = 73,                    // "code variable"
+        S_all_variable = 74,                     // "all variable"
+        S_exist_variable = 75,                   // "exist variable"
+        S_is_set_variable = 76,                  // "Set variable"
+        S_set_variable = 77,                     // "set variable"
+        S_set_variable_definition = 78,          // "set variable definition"
+        S_implicit_set_variable = 79,            // "implicit set variable"
+        S_identifier_constant_key = 80,          // "identifier constant"
+        S_identifier_variable_key = 81,          // "identifier variable"
+        S_exist_key = 82,                        // "∃"
+        S_logical_not_key = 83,                  // "¬"
+        S_logical_and_key = 84,                  // "∧"
+        S_logical_or_key = 85,                   // "∨"
+        S_implies_key = 86,                      // "⇒"
+        S_impliedby_key = 87,                    // "⇐"
+        S_equivalent_key = 88,                   // "⇔"
+        S_prefix_not_key = 89,                   // prefix_not_key
+        S_prefix_and_key = 90,                   // prefix_and_key
+        S_prefix_or_key = 91,                    // prefix_or_key
+        S_prefix_implies_key = 92,               // prefix_implies_key
+        S_prefix_equivalent_key = 93,            // prefix_equivalent_key
+        S_less_key = 94,                         // "<"
+        S_greater_key = 95,                      // ">"
+        S_less_or_equal_key = 96,                // "≤"
+        S_greater_or_equal_key = 97,             // "≥"
+        S_not_less_key = 98,                     // "≮"
+        S_not_greater_key = 99,                  // "≯"
+        S_not_less_or_equal_key = 100,           // "≰"
+        S_not_greater_or_equal_key = 101,        // "≱"
+        S_equal_key = 102,                       // "="
+        S_not_equal_key = 103,                   // "≠"
+        S_mapsto_key = 104,                      // "↦"
+        S_degree_key = 105,                      // "°"
+        S_factorial_key = 106,                   // "!"
+        S_mult_key = 107,                        // "⋅"
+        S_plus_key = 108,                        // "+"
+        S_minus_key = 109,                       // "-"
+        S_is_set_key = 110,                      // "Set"
+        S_power_set_key = 111,                   // "Pow"
+        S_empty_set_key = 112,                   // "∅"
+        S_in_key = 113,                          // "∈"
+        S_not_in_key = 114,                      // "∉"
+        S_set_complement_key = 115,              // "∁"
+        S_set_union_key = 116,                   // "∪"
+        S_set_intersection_key = 117,            // "∩"
+        S_set_difference_key = 118,              // "∖"
+        S_set_union_operator_key = 119,          // "⋃"
+        S_set_intersection_operator_key = 120,   // "⋂"
+        S_subset_key = 121,                      // "⊆"
+        S_proper_subset_key = 122,               // "⊊"
+        S_superset_key = 123,                    // "⊇"
+        S_proper_superset_key = 124,             // "⊋"
+        S_colon_key = 125,                       // ":"
+        S_semicolon_key = 126,                   // ";"
+        S_comma_key = 127,                       // ","
+        S_period_key = 128,                      // "."
+        S_left_parenthesis_key = 129,            // "("
+        S_right_parenthesis_key = 130,           // ")"
+        S_left_bracket_key = 131,                // "["
+        S_right_bracket_key = 132,               // "]"
+        S_left_angle_bracket_key = 133,          // "⟨"
+        S_right_angle_bracket_key = 134,         // "⟩"
+        S_superscript_left_parenthesis_key = 135, // "⁽"
+        S_superscript_right_parenthesis_key = 136, // "⁾"
+        S_subscript_left_parenthesis_key = 137,  // "₍"
+        S_subscript_right_parenthesis_key = 138, // "₎"
+        S_left_brace_key = 139,                  // "{"
+        S_vertical_line_key = 140,               // "|"
+        S_right_brace_key = 141,                 // "}"
+        S_tilde_key = 142,                       // "~"
+        S_slash_key = 143,                       // "/"
+        S_backslash_key = 144,                   // "\\"
+        S_if_key = 145,                          // "if"
+        S_then_key = 146,                        // "then"
+        S_else_key = 147,                        // "else"
+        S_while_key = 148,                       // "while"
+        S_do_key = 149,                          // "do"
+        S_loop_key = 150,                        // "loop"
+        S_for_key = 151,                         // "for"
+        S_break_key = 152,                       // "break"
+        S_continue_key = 153,                    // "continue"
+        S_throw_key = 154,                       // "throw"
+        S_try_key = 155,                         // "try"
+        S_catch_key = 156,                       // "catch"
+        S_157_ = 157,                            // "⊩"
+        S_158_ = 158,                            // "⊣"
+        S_159_ = 159,                            // "⊢"
+        S_160_free_in_ = 160,                    // "free in"
+        S_161_free_for_ = 161,                   // "free for"
+        S_162_in_ = 162,                         // "in"
+        S_163_not_ = 163,                        // "not"
+        S_164_ = 164,                            // "≔"
+        S_165_ = 165,                            // "≕"
+        S_166_ = 166,                            // "≝"
+        S_167_ = 167,                            // "≡"
+        S_168_ = 168,                            // "≢"
+        S_169_ = 169,                            // "≣"
+        S_170_ = 170,                            // "≣̷"
+        S_superscript_unsigned_integer_value = 171, // superscript_unsigned_integer_value
+        S_unary_minus = 172,                     // unary_minus
+        S_YYACCEPT = 173,                        // $accept
+        S_file = 174,                            // file
+        S_file_contents = 175,                   // file_contents
+        S_command = 176,                         // command
+        S_diagnostic_statement = 177,            // diagnostic_statement
+        S_diagnostic_type = 178,                 // diagnostic_type
+        S_diagnostic = 179,                      // diagnostic
+        S_trace_statement = 180,                 // trace_statement
+        S_trace_qualifier = 181,                 // trace_qualifier
+        S_trace_type = 182,                      // trace_type
+        S_proof_strictness = 183,                // proof_strictness
+        S_limits = 184,                          // limits
+        S_logic_simplification = 185,            // logic_simplification
+        S_implicit_logic_simplification = 186,   // implicit_logic_simplification
+        S_implicit_logic_simplification_sequence = 187, // implicit_logic_simplification_sequence
+        S_implicit_logic_simplification_item = 188, // implicit_logic_simplification_item
+        S_logic_qualifier = 189,                 // logic_qualifier
+        S_logic_type = 190,                      // logic_type
+        S_logic_name = 191,                      // logic_name
+        S_conclusion_or_premise = 192,           // conclusion_or_premise
+        S_integer = 193                          // integer
       };
     };
 
@@ -638,7 +679,7 @@ namespace mli {
       typedef Base super_type;
 
       /// Default constructor.
-      basic_symbol ()
+      basic_symbol () YY_NOEXCEPT
         : value ()
         , location ()
       {}
@@ -668,6 +709,8 @@ namespace mli {
       {
         clear ();
       }
+
+
 
       /// Destroy contents, and record that is empty.
       void clear () YY_NOEXCEPT
@@ -706,22 +749,24 @@ namespace mli {
     /// Type access provider for token (enum) based symbols.
     struct by_kind
     {
-      /// Default constructor.
-      by_kind ();
-
-#if 201103L <= YY_CPLUSPLUS
-      /// Move constructor.
-      by_kind (by_kind&& that);
-#endif
-
-      /// Copy constructor.
-      by_kind (const by_kind& that);
-
       /// The symbol kind as needed by the constructor.
       typedef token_kind_type kind_type;
 
+      /// Default constructor.
+      by_kind () YY_NOEXCEPT;
+
+#if 201103L <= YY_CPLUSPLUS
+      /// Move constructor.
+      by_kind (by_kind&& that) YY_NOEXCEPT;
+#endif
+
+      /// Copy constructor.
+      by_kind (const by_kind& that) YY_NOEXCEPT;
+
       /// Constructor from (external) token numbers.
-      by_kind (kind_type t);
+      by_kind (kind_type t) YY_NOEXCEPT;
+
+
 
       /// Record that this symbol is empty.
       void clear () YY_NOEXCEPT;
@@ -839,19 +884,19 @@ namespace mli {
 
     /// Whether the given \c yypact_ value indicates a defaulted state.
     /// \param yyvalue   the value to check
-    static bool yy_pact_value_is_default_ (int yyvalue);
+    static bool yy_pact_value_is_default_ (int yyvalue) YY_NOEXCEPT;
 
     /// Whether the given \c yytable_ value indicates a syntax error.
     /// \param yyvalue   the value to check
-    static bool yy_table_value_is_error_ (int yyvalue);
+    static bool yy_table_value_is_error_ (int yyvalue) YY_NOEXCEPT;
 
     static const signed char yypact_ninf_;
     static const signed char yytable_ninf_;
 
     /// Convert a scanner token kind \a t to a symbol kind.
     /// In theory \a t should be a token_kind_type, but character literals
-    /// are valid, yet not members of the token_type enum.
-    static symbol_kind_type yytranslate_ (int t);
+    /// are valid, yet not members of the token_kind_type enum.
+    static symbol_kind_type yytranslate_ (int t) YY_NOEXCEPT;
 
     /// Convert the symbol name \a n to a form suitable for a diagnostic.
     static std::string yytnamerr_ (const char *yystr);
@@ -989,7 +1034,7 @@ namespace mli {
       typedef typename S::size_type size_type;
       typedef typename std::ptrdiff_t index_type;
 
-      stack (size_type n = 200)
+      stack (size_type n = 200) YY_NOEXCEPT
         : seq_ (n)
       {}
 
@@ -1068,7 +1113,7 @@ namespace mli {
       class slice
       {
       public:
-        slice (const stack& stack, index_type range)
+        slice (const stack& stack, index_type range) YY_NOEXCEPT
           : stack_ (stack)
           , range_ (range)
         {}
@@ -1118,14 +1163,14 @@ namespace mli {
     void yypush_ (const char* m, state_type s, YY_MOVE_REF (symbol_type) sym);
 
     /// Pop \a n symbols from the stack.
-    void yypop_ (int n = 1);
+    void yypop_ (int n = 1) YY_NOEXCEPT;
 
     /// Constants.
     enum
     {
-      yylast_ = 67,     ///< Last index in yytable_.
-      yynnts_ = 13,  ///< Number of nonterminal symbols.
-      yyfinal_ = 31 ///< Termination state number.
+      yylast_ = 102,     ///< Last index in yytable_.
+      yynnts_ = 21,  ///< Number of nonterminal symbols.
+      yyfinal_ = 50 ///< Termination state number.
     };
 
 
@@ -1138,7 +1183,7 @@ namespace mli {
 
 #line 22 "../../mli-root/src/directive-parser.yy"
 } // mli
-#line 1142 "../../mli-root/src/directive-parser.hh"
+#line 1187 "../../mli-root/src/directive-parser.hh"
 
 
 // "%code provides" blocks.
@@ -1167,7 +1212,7 @@ namespace mli {
   } // namespace mli
 
 
-#line 1171 "../../mli-root/src/directive-parser.hh"
+#line 1216 "../../mli-root/src/directive-parser.hh"
 
 
 #endif // !YY_MLI_MLI_ROOT_SRC_DIRECTIVE_PARSER_HH_INCLUDED

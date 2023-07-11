@@ -1,0 +1,331 @@
+This is LuaTeX, Version 1.17.0 (TeX Live 2023)  (format=luatex 2023.5.30)  11 JUL 2023 14:52
+ restricted system commands enabled.
+**mli.tex
+(./mli.tex
+(/usr/local/texlive/2023/texmf-dist/tex/luatex/luaotfload/luaotfload.sty
+(/usr/local/texlive/2023/texmf-dist/tex/latex/base/ltluatex.tex
+File: ltluatex.tex 2022/10/03 v1.2a LuaTeX support for plain TeX (core) 
+\e@alloc@attribute@count=\count277
+\e@alloc@ccodetable@count=\count278
+\e@alloc@luafunction@count=\count279
+\e@alloc@whatsit@count=\count280
+\e@alloc@bytecode@count=\count281
+\e@alloc@luachunk@count=\count282
+\catcodetable@initex=\catcodetable1
+\catcodetable@string=\catcodetable2
+\catcodetable@latex=\catcodetable3
+\catcodetable@atletter=\catcodetable4
+)
+Lua module: luaotfload 2022-10-03 3.23 Lua based OpenType font support
+Lua module: lualibs 2022-10-04 2.75 ConTeXt Lua standard libraries.
+Lua module: lualibs-extended 2022-10-04 2.75 ConTeXt Lua libraries -- extended c
+ollection.
+luaotfload | conf : Root cache directory is "/Users/haberg/Library/texlive/2023/
+texmf-var/luatex-cache/generic/names".
+luaotfload | init : Loading fontloader "fontloader-2022-10-03.lua" from kpse-res
+olved path "/usr/local/texlive/2023/texmf-dist/tex/luatex/luaotfload/fontloader-
+2022-10-03.lua".
+Lua-only attribute luaotfload@noligature = 1
+luaotfload | init : Context OpenType loader version 3.120
+Inserting `luaotfload.node_processor' in `pre_linebreak_filter'.
+Inserting `luaotfload.node_processor' in `hpack_filter'.
+Inserting `luaotfload.glyph_stream' in `glyph_stream_provider'.
+Inserting `luaotfload.define_font' in `define_font'.
+Lua-only attribute luaotfload_color_attribute = 2
+luaotfload | conf : Root cache directory is "/Users/haberg/Library/texlive/2023/
+texmf-var/luatex-cache/generic/names".
+Lua-only attribute luaotfload.letterspace_done = 3
+Inserting `luaotfload.aux.set_sscale_dimens' in `luaotfload.patch_font'.
+Inserting `luaotfload.aux.set_font_index' in `luaotfload.patch_font'.
+Inserting `luaotfload.aux.patch_cambria_domh' in `luaotfload.patch_font'.
+Inserting `luaotfload.aux.fixup_fontdata' in `luaotfload.patch_font_unsafe'.
+Inserting `luaotfload.aux.set_capheight' in `luaotfload.patch_font'.
+Inserting `luaotfload.aux.set_xheight' in `luaotfload.patch_font'.
+Inserting `luaotfload.rewrite_fontname' in `luaotfload.patch_font'.)
+(./luatex-math-modified.tex
+luaotfload | db : Font names database loaded from /Users/haberg/Library/texlive/
+2023/texmf-var/luatex-cache/generic/names/luaotfload-names.luc.gz
+\everymathrm=\toks13
+\everymathmit=\toks14
+\everymathcal=\toks15
+\everymathit=\toks16
+\everymathsl=\toks17
+\everymathbf=\toks18
+\everymathbi=\toks19
+\everymathtt=\toks20
+) (./texinfo.tex
+Loading texinfo [version 2017-08-23.19]:
+\outerhsize=\dimen256
+\outervsize=\dimen257
+\cornerlong=\dimen258
+\cornerthick=\dimen259
+\topandbottommargin=\dimen260
+\bindingoffset=\dimen261
+\normaloffset=\dimen262
+\txipagewidth=\dimen263
+\txipageheight=\dimen264
+\headlinebox=\box256
+\footlinebox=\box257
+\margin=\insert252
+\EMsimple=\toks21
+\groupbox=\box258
+\groupinvalidhelp=\toks22
+\mil=\dimen265
+\exdentamount=\skip256
+\inmarginspacing=\skip257
+\centerpenalty=\count283
+ pdf,
+\tempnum=\count284
+\lnkcount=\count285
+\filename=\toks23
+\filenamelength=\count286
+\pgn=\count287
+\toksA=\toks24
+\toksB=\toks25
+\toksC=\toks26
+\toksD=\toks27
+\boxA=\box259
+\boxB=\box260
+\countA=\count288
+\nopdfimagehelp=\toks28
+ fonts,
+\textleading=\dimen266
+\sffam=\fam8
+ markup,
+\fontdepth=\count289
+ glyphs,
+\errorbox=\box261
+
+page headings,
+\titlepagetopglue=\skip258
+\titlepagebottomglue=\skip259
+\evenheadline=\toks29
+\oddheadline=\toks30
+\evenfootline=\toks31
+\oddfootline=\toks32
+ tables,
+\tableindent=\dimen267
+\itemindent=\dimen268
+\itemmargin=\dimen269
+\itemmax=\dimen270
+\itemno=\count290
+\multitableparskip=\skip260
+\multitableparindent=\skip261
+\multitablecolspace=\dimen271
+\multitablelinespace=\skip262
+\colcount=\count291
+\everytab=\toks33
+ conditionals,
+\doignorecount=\count292
+ indexing,
+\dummybox=\box262
+\whatsitskip=\skip263
+\whatsitpenalty=\count293
+\entryrightmargin=\dimen272
+\thinshrinkable=\skip264
+\entrybox=\box263
+\delayedbox=\box264
+\interbox=\box265
+\secondaryindent=\skip265
+\partialpage=\box266
+\doublecolumnhsize=\dimen273
+\savedtopmark=\toks34
+\savedfirstmark=\toks35
+\balancedcolumns=\box267
+ sectioning,
+\unnumberedno=\count294
+\chapno=\count295
+\secno=\count296
+\subsecno=\count297
+\subsubsecno=\count298
+\appendixno=\count299
+\absseclevel=\count300
+\secbase=\count301
+\chapheadingskip=\skip266
+\secheadingskip=\skip267
+\subsecheadingskip=\skip268
+ toc,
+\tocfile=\write0
+\contentsrightmargin=\skip269
+\savepageno=\count302
+\lastnegativepageno=\count303
+\tocindent=\dimen274
+ environments,
+\lispnarrowing=\skip270
+\envskipamount=\skip271
+\circthick=\dimen275
+\cartouter=\dimen276
+\cartinner=\dimen277
+\normbskip=\skip272
+\normpskip=\skip273
+\normlskip=\skip274
+\lskip=\skip275
+\rskip=\skip276
+\nonfillparindent=\dimen278
+\tabw=\dimen279
+\verbbox=\box268
+
+defuns,
+\defbodyindent=\skip277
+\defargsindent=\skip278
+\deflastargmargin=\skip279
+\defunpenalty=\count304
+\parencount=\count305
+\brackcount=\count306
+ macros,
+\savedcatcodeone=\count307
+\savedcatcodetwo=\count308
+\paramno=\count309
+\macname=\toks36
+ cross references,
+\auxfile=\write1
+\savesfregister=\count310
+\toprefbox=\box269
+\printedrefnamebox=\box270
+\infofilenamebox=\box271
+\printedmanualbox=\box272
+ insertions,
+\footnoteno=\count311
+\SAVEfootins=\box273
+\SAVEmargin=\box274
+
+(/usr/local/texlive/2023/texmf-dist/tex/generic/epsf/epsf.tex
+This is `epsf.tex' v2.7.4 <14 February 2011>
+\epsffilein=\read1
+\epsfframemargin=\dimen280
+\epsfframethickness=\dimen281
+\epsfrsize=\dimen282
+\epsftmp=\dimen283
+\epsftsize=\dimen284
+\epsfxsize=\dimen285
+\epsfysize=\dimen286
+\pspoints=\dimen287
+)
+\noepsfhelp=\toks37
+ localization,
+\nolanghelp=\toks38
+\countUTFx=\count312
+\countUTFy=\count313
+\countUTFz=\count314
+ formatting,
+\defaultparindent=\dimen288
+ and turning on texinfo input format.)
+(/usr/local/texlive/2023/texmf-dist/tex/texinfo/txi-en.tex)
+texinfo.tex: doing @include of version.texi
+
+ (./version.texi)
+@cpindfile=@write2
+
+\openout2 = mli.cp
+
+Writing index file mli.cp
+[1{/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+[2
+Missing character: There is no ^^W (U+0017) in font file:STIX-Regular.otf:+liga;
++kern;+tlig;+trep!
+] [-1] [-2] (Introduction)
+\openout0 = mli.toc
+
+\openout1 = mli.aux
+ (Conditions for Using MLI) [1] [2]
+(GNU GENERAL PUBLIC LICENSE) [3] [4]
+texinfo.tex: doing @include of gpl-3.0.texi
+
+ (./gpl-3.0.texi [5] [6] [7] [8] [9]
+[10] [11] [12] [13]) Chapter 1 [14] [15]
+Cross reference values unknown; you must run TeX again. [16] [17] [18]
+Chapter 2 [19] [20] [21] [22]
+Overfull \hbox (13.21094pt too wide) in paragraph at lines 675--675
+ []@tentt [𝑨₂₁ $@mathfonttextupright ↦$ @tentt 𝑨₃₀ [] (𝑩₃
+₀ [] 𝑨₃₀)][𝑨₃₀ $@mathfonttextupright ↦$ @tentt 𝑨₃₁][
+𝑩₃₀ $@mathfonttextupright ↦$ @tentt 𝑩₃₁][𝑨₃₁ $@mathfontt
+extupright ↦$ @tentt 𝑪₃₁][𝑨₂₀ $@mathfonttextupright ↦$ @tentt
+ 𝑪₃₁][𝑩₃₁ $@mathfonttextupright ↦$ @tentt 𝑩₂₀ [] 𝑪
+₃₁][𝑪₃₁ $@mathfonttextupright ↦$ @tentt 𝑨][] 
+
+@hbox(7.36+2.37)x433.62, glue set - 1.0, direction TLT
+.@glue(@leftskip) 28.90755
+.@localpar
+..@localinterlinepenalty=0
+..@localbrokenpenalty=0
+..@localleftbox=null
+..@localrightbox=null
+.@hbox(0.0+0.0)x0.0, direction TLT
+.@tentt [
+.@tentt 𝑨
+.etc.
+
+[23]
+Overfull \hbox (13.21094pt too wide) in paragraph at lines 726--726
+ []@tentt [𝑨₂₁ $@mathfonttextupright ↦$ @tentt 𝑨₃₀ [] (𝑩₃
+₀ [] 𝑨₃₀)][𝑨₃₀ $@mathfonttextupright ↦$ @tentt 𝑨₃₁][
+𝑩₃₀ $@mathfonttextupright ↦$ @tentt 𝑩₃₁][𝑨₃₁ $@mathfontt
+extupright ↦$ @tentt 𝑪₃₁][𝑨₂₀ $@mathfonttextupright ↦$ @tentt
+ 𝑪₃₁][𝑩₃₁ $@mathfonttextupright ↦$ @tentt 𝑩₂₀ [] 𝑪
+₃₁][𝑪₃₁ $@mathfonttextupright ↦$ @tentt 𝑨][] 
+
+@hbox(7.36+2.37)x433.62, glue set - 1.0, direction TLT
+.@glue(@leftskip) 28.90755
+.@localpar
+..@localinterlinepenalty=0
+..@localbrokenpenalty=0
+..@localleftbox=null
+..@localrightbox=null
+.@hbox(0.0+0.0)x0.0, direction TLT
+.@tentt [
+.@tentt 𝑨
+.etc.
+
+[24]
+Overfull \hbox (13.21094pt too wide) in paragraph at lines 785--785
+ []@tentt [𝑨₂₁ $@mathfonttextupright ↦$ @tentt 𝑨₃₀ [] (𝑩₃
+₀ [] 𝑨₃₀)][𝑨₃₀ $@mathfonttextupright ↦$ @tentt 𝑨₃₁][
+𝑩₃₀ $@mathfonttextupright ↦$ @tentt 𝑩₃₁][𝑨₃₁ $@mathfontt
+extupright ↦$ @tentt 𝑪₃₁][𝑨₂₀ $@mathfonttextupright ↦$ @tentt
+ 𝑪₃₁][𝑩₃₁ $@mathfonttextupright ↦$ @tentt 𝑩₂₀ [] 𝑪
+₃₁][𝑪₃₁ $@mathfonttextupright ↦$ @tentt 𝑨][] 
+
+@hbox(7.36+2.37)x433.62, glue set - 1.0, direction TLT
+.@glue(@leftskip) 28.90755
+.@localpar
+..@localinterlinepenalty=0
+..@localbrokenpenalty=0
+..@localleftbox=null
+..@localrightbox=null
+.@hbox(0.0+0.0)x0.0, direction TLT
+.@tentt [
+.@tentt 𝑨
+.etc.
+
+[25] Chapter 3 [26] Chapter 4 [27] [28] Chapter 5 [29] [30] Chapter 6 [31]
+[32] Chapter 7 [33] [34] Appendix A [35] [36] Appendix B [37] [38]
+(Bibliography) [39] [40] (Index of Terms) [41] [42]
+No file mli.cps.
+[43] [44])
+
+Here is how much of LuaTeX's memory you used:
+ 3778 strings out of 496314
+ 100000,106986 words of node,token memory allocated
+ 777 words of node memory still in use:
+   8 hlist, 4 vlist, 5 rule, 1 disc, 1 local_par, 8 glue, 11 kern, 1 penalty, 25
+ glyph, 11 attribute, 41 glue_spec, 11 attribute_list, 1 pdf_literal nodes
+   avail lists: 1:1,2:552,3:292,4:42,5:797,6:40,7:5334,8:14,9:210,10:23,11:430
+ 5750 multiletter control sequences out of 65536+600000
+ 159 fonts using 16810173 bytes
+ 60i,5n,30p,1242b,590s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/local/texlive/2023/texmf-dist/fonts/opentype/public/stix/STIXMath-Regular.
+otf></usr/local/texlive/2023/texmf-dist/fonts/opentype/public/stix2-otf/STIXTwoM
+ath-Regular.otf></usr/local/texlive/2023/texmf-dist/fonts/opentype/public/stix/S
+TIX-Regular.otf></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmbx12.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmr10.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+r9.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl10
+.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl9.pf
+b>
+Output written on mli.pdf (48 pages, 193518 bytes).
+
+PDF statistics: 292 PDF objects out of 1000 (max. 8388607)
+ 222 compressed objects within 3 object streams
+ 72 named destinations out of 1000 (max. 131072)
+ 16 words of extra memory for PDF output out of 10000 (max. 100000000)
+

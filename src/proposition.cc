@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2022 Hans Åberg.
+/* Copyright (C) 2017, 2021-2023 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -66,6 +66,7 @@ namespace mli {
           break;
       }
         case conjecture_:  os << "conjecture"; break;
+        case implicit_:  os << "implicit"; break;
       }
 
     if (show_type && show_name)
@@ -414,6 +415,7 @@ namespace mli {
 #if 1
     // debug-mli
     if (trace_value & trace_unify) {
+      std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog << "proof_line::prove B0: " << *this << std::endl;
       std::clog << "proof_line::prove B1: " << statement_ << std::endl;
       std::clog << "proof_line::prove B2: " << st << std::endl;
@@ -639,6 +641,7 @@ namespace mli {
 
     // debug-mli
     if (trace_value & trace_unify) {
+      std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::cout << "theorem::prove B0: " << *this << std::endl;
       std::cout << "theorem::prove B1: " << statement_ << std::endl;
       std::cout << "theorem::prove B2: " << st << std::endl;

@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2022 Hans Åberg.
+/* Copyright (C) 2017, 2021-2023 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -64,17 +64,34 @@
 
 #define UNIFY_FALSE 1
 
-// If the inference unification of heads produce a condition that is not
-// provables or a premise, it should be out into the head of the new goal:
-#define NEW_HEAD_CONDITION 0
+// In inference::unify, head alternatives are expanded to get goals and premises to pass to body unification.
+#define NEW_UNIFY_BODY 1
 
-#define NEW_SUBSTATEMENTS 1
+  // yip != nullptr, then tt.target_ == goal, as called so from mli::unify:
+#define USE_UNIFY_BODY_A1 0   // metalevel_ == yip->metalevel_
+#define USE_UNIFY_BODY_A2 0   // metalevel_ < yip->metalevel_
+#define USE_UNIFY_BODY_A3 0   // metalevel_ > yip->metalevel_
+
+  // yip == nullptr:
+#define USE_UNIFY_BODY_B 0    // tt.target_ == goal
+#define USE_UNIFY_BODY_C 0    // tt.target_ == fact
+
 
 // Implicit unification reductions.
-#define IMPLICATION_ELIMINATION 0
+#define IMPLICATION_ELIMINATION 1
 
 
 #define EXPLICIT_SUBSTITUTION_SIMPLIFICATION 1
+
+// Proved inferences reduced to the empty formula, or removed.
+#define SIMPLIFY_PROVED_INFERENCE 0
+
+// Use val<A>.
+#define USE_VAL 1
+
+
+// Optimization in 'split': If t and *this unify, then *this can be replaced by x.
+#define SPLIT_CONTAINER 0
 
 
 namespace mli {
@@ -100,6 +117,14 @@ namespace mli {
 
   extern bool strict_proof;
 
+
+  extern bool false_elimination, false_introduction;
+  extern bool negation_elimination, negation_elimination_in_premise;
+  extern bool double_negation_elimination, double_negation_elimination_in_premise;
+  extern bool double_negation_introduction, double_negation_introduction_in_premise;
+  extern bool implication_elimination, implication_elimination_in_premise;
+  extern bool conjunction_elimination, conjunction_elimination_in_premise;
+  extern bool disjunction_elimination, disjunction_elimination_in_premise;
 
   // A class as to avoid the enum sequence::type implicitly converted to metalevel_t.
   class metalevel_t {
@@ -292,13 +317,6 @@ namespace mli {
   using varied_premise_type = std::map<size_type, std::set<ref<variable>>>;
 
 
-  // Macros simplifying virtual copy and move operators, usage, in class A declaration:
-  //   new_copy(A);
-  //   new_move(A);
-  #define new_copy(A)  virtual A* new_p() const& { return new (collect) A(*this); }
-  #define new_move(A)  virtual A* new_p() && { return new (collect) A(std::move(*this)); }
-
-
   // The root class of the dynamic polymorphic hierarchy.
   class unit {
     typedef unsigned long count_type;
@@ -327,8 +345,16 @@ namespace mli {
     // Instead of writing these explicitly, the following macros may be used
     //   new_copy(A);
     //   new_move(A);
-    virtual unit* new_p() const& { return new (collect) unit(*this); }
-    virtual unit* new_p() && { return new (collect) unit(std::move(*this)); }
+
+    // Macros simplifying virtual copy and move operators, usage, in class A declaration:
+    //   new_copy(A);
+    //   new_move(A);
+    #define new_copy(A)  virtual A* new_p(size_t k = 0) const& { return new (shared, k) A(*this); }
+    #define new_move(A)  virtual A* new_p(size_t k = 0) && { return new (shared, k) A(std::move(*this)); }
+
+    new_copy(unit);
+    new_move(unit);
+
 
     // Semantic comparison.
     virtual order compare(const unit& x) const { return equal; }
@@ -518,6 +544,7 @@ namespace mli {
     // An empty formula has no goals, so x is the only new goal:
     virtual ref<formula> add_goal(const ref<formula>& x) const { return x; }
 
+
     // Add y as a premise to *this, creating inferences as necessary.
     // An empty formula is proved, so needs no premises:
     virtual ref<formula> add_premise(const ref<formula>& x, metalevel_t,
@@ -567,9 +594,18 @@ namespace mli {
     // True if and only if object is (formula) set end marker.
     virtual bool is_end_of_formula_sequence() const { return false; }
 
+
     // Logic unification helper functions.
+
+    virtual bool is_false() const { return false; }
+    virtual bool is_true() const { return false; }
+    virtual bool is_undefined () const { return false; }
+
     virtual bool is_negation() const { return false; }
+    virtual bool is_double_negation() const { return false; }
     virtual bool is_implication() const { return false; }
+    virtual bool is_conjunction() const { return false; }
+    virtual bool is_disjunction() const { return false; }
 
     // If true, can unify directly with top level logic expression without simplification:
     virtual bool is_specializable_formula_variable() const { return false; }
@@ -660,6 +696,9 @@ namespace mli {
 
   // Unifying a formula x with a list of formulas ys:
   alternatives unify(const ref<formula>& x, unify_environment tx, const std::list<ref<formula>>& ys, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr);
+
+  // Implicit logic unification:
+  alternatives logic_unify(const ref<formula>& x, unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl);
 
 
   // A formula x to be proved x (is a goal), referencing a database dbr of proved statements.
@@ -784,7 +823,7 @@ namespace mli {
 
     order compare(const unit& x) const override { return statement_->compare(x); }
 
-    void write(std::ostream& os, write_style) const override { os << "empty statement"; }
+    void write(std::ostream& os, write_style) const override { os << name_; }
   };
 
 
@@ -1065,13 +1104,14 @@ namespace mli {
     unify_environment substitute(ref<substitution> s);
   };
 
+
   // A class push_pound element makes sure that the stack is popped
   // when the C++ environment it is in expires.
   class push_bound {
     unify_environment* uf_;
   public:
-    push_bound() : uf_(0) {}
-    ~push_bound() { if (uf_ != 0)  uf_->pop(); }
+    push_bound() = delete; // Ensures pointer uf_ != nullptr.
+    ~push_bound() { uf_->pop(); }
 
     push_bound(unify_environment& uf) : uf_(&uf) { uf_->push(); }
   };
@@ -1132,6 +1172,12 @@ namespace mli {
 
 
     virtual formula::type get_formula_type() const override { return to_formula_type(type_); }
+
+
+    bool is_false() const override { return name == "𝕗"; }
+    bool is_true() const override { return  name == "𝕥"; }
+    bool is_undefined() const override { return  name == "𝕦"; }
+
 
     virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
@@ -1221,7 +1267,6 @@ namespace mli {
     formula::type get_formula_type() const override;
 
     void push_back(const ref<formula>& t) { formulas_.push_back(t); }
-    void reverse() { formulas_.reverse(); }
 
     virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
     virtual split_formula split(unify_environment, const ref<variable>&, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
@@ -1331,7 +1376,18 @@ namespace mli {
     virtual metalevel_t metalevel() const override { return metalevel_; }
 
     bool is_negation() const override { return *atom == constant("¬", constant::logic_function); }
+    bool is_double_negation() const override {
+      if (is_negation()) {
+        sequence* sqp = ref_cast<sequence*>(argument);
+        if (sqp != nullptr && sqp->formulas_.size() == 1)
+          return sqp->formulas_.front()->is_negation();
+      }
+      return false;
+    }
+
     bool is_implication() const override { return *atom == constant("⇒", constant::logic_function); }
+    bool is_conjunction() const override { return *atom == constant("∧", constant::logic_function); }
+    bool is_disjunction() const override { return *atom == constant("∨", constant::logic_function); }
 
     virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
     virtual split_formula split(unify_environment, const ref<variable>&, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
@@ -1388,7 +1444,7 @@ namespace mli {
      : variable_(v), formula_(f), type_(bt) {}
 
     bound_formula(const ref<variable>& v, const ref<formula>& d, const ref<formula>& f, const bound_formula::type& bt, bind b = 0)
-     : variable_(v), domain_(d), formula_(f), type_(bt) {}
+     : variable_(v), domain_(d), formula_(f), type_(bt), bind_(b) {}
 
 
     bound_formula(const variable_list& vs, const ref<formula>& f);
@@ -1583,6 +1639,14 @@ namespace mli {
   // If both x and y are formula sequences, they are concatenated into a single formula sequence.
   ref<formula> concatenate(const ref<formula>& x, const ref<formula>& y);
 
+  inline ref<formula> concatenate(const ref<formula>& x, const ref<formula>& y, const ref<formula>& z) {
+    return concatenate(concatenate(x, y), z);
+  }
+
+
+  // Concatenate the inference varied_type for use in a merge of inferences.
+  varied_type concatenate(const varied_type& x, const varied_type& y);
+
 
   // End of formula sequence marker object □. Used in a unification with a formula sequence
   // variable 𝜞 when determining its unifying components, adding last a substitution [𝜞 ↦ □].
@@ -1660,7 +1724,7 @@ namespace mli {
 
 
     // Varied variable premises arguments not attached to a number in a conclusion
-    // formula sequence, so it is set to :
+    // formula sequence, so it is set to 0:
 
     inference(const ref<formula>& h, const ref<formula>& b, metalevel_t ml, const varied_premise_type& vs)
      : head_(h), body_(b), metalevel_(ml) { if(!vs.empty()) varied_[0] = vs; }
@@ -1686,6 +1750,9 @@ namespace mli {
     { return ref_cast<formula_sequence*>(head_) != nullptr || head_->unexpanded(); }
 
     ref<formula> expand(size_type) const override;
+
+    // Implementation in substitution.cc.
+    inference& append(const ref<formula>& x);
 
     ref<formula> add_premise(const ref<formula>& x, metalevel_t,
       const varied_type& vs, const varied_type& vrs) const override;

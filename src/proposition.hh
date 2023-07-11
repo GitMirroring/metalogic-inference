@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2022 Hans Åberg.
+/* Copyright (C) 2017, 2021-2023 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -27,7 +27,7 @@ namespace mli {
 
   class supposition : public statement {
   public:
-    enum type { postulate_, conjecture_ };
+    enum type { postulate_, conjecture_, implicit_ };
     type type_ = postulate_;
     
     bool write_postulate_ = false;

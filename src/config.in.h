@@ -1,8 +1,5 @@
 /* src/config.in.h.  Generated from configure.ac by autoheader.  */
 
-/* Define to 1 if you have the <gc/gc.h> header file. */
-#undef HAVE_GC_GC_H
-
 /* Define to 1 if you have the <gmp.h> header file. */
 #undef HAVE_GMP_H
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2022 Hans Åberg.
+/* Copyright (C) 2017, 2021-2023 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -226,6 +226,7 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 "all" { return mli::directive_parser::token::all_key; }
 "none" { return mli::directive_parser::token::none_key; }
 "no" { return mli::directive_parser::token::no_key; }
+"use" { return mli::directive_parser::token::use_key; }
 
 
 "null" { return mli::directive_parser::token::null_key; }
@@ -243,6 +244,27 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 "unspecializable" { return mli::directive_parser::token::unspecializable_key; }
 "structure" { return mli::directive_parser::token::structure_key; }
 "thread" { return mli::directive_parser::token::thread_key; }
+
+"logic" { return mli::directive_parser::token::logic_key; }
+
+"-𝕗" { return mli::directive_parser::token::false_elimination_key; }
+"+𝕗" { return mli::directive_parser::token::false_introduction_key; }
+
+"-¬" { return mli::directive_parser::token::negation_elimination_key; }
+"-¬⊢" { return mli::directive_parser::token::negation_elimination_in_premise_key; }
+
+"-¬¬" { return mli::directive_parser::token::double_negation_elimination_key; }
+"-¬¬⊢" { return mli::directive_parser::token::double_negation_elimination_in_premise_key; }
+"+¬¬" { return mli::directive_parser::token::double_negation_introduction_key; }
+"+¬¬⊢" { return mli::directive_parser::token::double_negation_introduction_in_premise_key; }
+
+"-⇒" { return mli::directive_parser::token::implication_elimination_key; }
+"-⇒⊢" { return mli::directive_parser::token::implication_elimination_in_premise_key; }
+
+"-∧" { return mli::directive_parser::token::conjunction_elimination_key; }
+"-∧⊢" { return mli::directive_parser::token::conjunction_elimination_in_premise_key; }
+"-∨" { return mli::directive_parser::token::disjunction_elimination_key; }
+"-∨⊢" { return mli::directive_parser::token::disjunction_elimination_in_premise_key; }
 
 
 "include"    { get_text; return mli::directive_parser::token::include_key; }
