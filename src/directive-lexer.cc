@@ -1282,7 +1282,7 @@ static const flex_int16_t yy_chk[2923] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "../../mli-root/src/directive-lexer.ll"
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -2107,7 +2107,7 @@ YY_RULE_SETUP
 #line 356 "../../mli-root/src/directive-lexer.ll"
 {
   get_text;
-  yylval.object = ref<integer>(mli::make, yytext);
+  yylval.object = val<integer>(mli::make, yytext);
   return mli::directive_parser::token::natural_number_value;
 }
 	YY_BREAK
@@ -2116,7 +2116,7 @@ YY_RULE_SETUP
 #line 362 "../../mli-root/src/directive-lexer.ll"
 {
   get_text;
-  yylval.object = ref<integer>(make, yytext);
+  yylval.object = val<integer>(make, yytext);
   return mli::directive_parser::token::integer_value;
 }
 	YY_BREAK

@@ -118,7 +118,7 @@
     directive_parser::token_type directive_define_variable(semantic_type& yylval) {
       if (statement_substitution_context) {
         statement_substitution_context = false;
-        std::optional<std::pair<directive_parser::token_type, mli::ref<mli::unit>>> x = mli::directive_symbol_table.find_top(yylval.text);
+        std::optional<std::pair<directive_parser::token_type, mli::ref6<mli::unit>>> x = mli::directive_symbol_table.find_top(yylval.text);
         if (!x)  return mli::directive_parser::token::plain_name;
         yylval.object = x->second;
         yylval.number = x->first;
@@ -128,7 +128,7 @@
       if (declaration_context)
         return mli::directive_parser::token::plain_name;
 
-      std::optional<std::pair<mli::directive_parser::token_type, mli::ref<mli::unit>>> x = mli::directive_symbol_table.find(yylval.text);
+      std::optional<std::pair<mli::directive_parser::token_type, mli::ref6<mli::unit>>> x = mli::directive_symbol_table.find(yylval.text);
 
 
       if (!x) {
@@ -138,7 +138,7 @@
 
         // Bound variable case: Create a limited variable og bind 1, insert at the secondary
         // (bound variable) stack level.
-        ref<variable> v;
+        val<variable> v;
         v->bind_ = 1;
         directive_symbol_table.insert(yylval.text, {directive_bound_variable_type, v});
 
@@ -149,7 +149,7 @@
       }
 
 
-      mli::variable* vp = mli::ref_cast<mli::variable*>(x->second);
+      mli::variable* vp = mli::dyn_cast<mli::variable*>(x->second);
 
       if (vp != nullptr
         && (vp->depth_ == -1 || directive_bound_variable_type != mli::free_variable_context)) {
@@ -160,7 +160,7 @@
           // Check if it is a variable which is declared without definition, in which case make
           // a copy with right proof depth, insert it in the symbol table, and change x->second
           // so subsequently the new copy is used instead of the original lookup value.
-          mli::ref<mli::variable> v(make, *vp);
+          mli::val<mli::variable> v(make, *vp);
 
           directive_symbol_table.insert_or_assign(yylval.text, {x->first, v});
 
@@ -177,7 +177,7 @@
           //   If defined, return it (do nothing, as x is already set to it).
 
           if (!vp->is_limited()) {
-            mli::ref<mli::variable> v(make, *vp);
+            mli::val<mli::variable> v(make, *vp);
             v->metatype_ = variable::limited_;
             v->bind_ = 1;
 
@@ -186,7 +186,7 @@
             x->second = v;
           }
           else if (vp->depth_ == -1) {
-            mli::ref<mli::variable> v(make, *vp);
+            mli::val<mli::variable> v(make, *vp);
 
             directive_symbol_table.insert_or_assign(yylval.text, {x->first, v});
 
@@ -1028,31 +1028,31 @@ namespace mli {
 
   case 43: // limits: "thread" "count" integer
 #line 712 "../../mli-root/src/directive-parser.yy"
-                                { thread_count = (difference_type)ref_cast<integer&>(yystack_[0].value.object); }
+                                { thread_count = (difference_type)dyn_cast<integer&>(yystack_[0].value.object); }
 #line 1033 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 44: // limits: "level" "max" "natural number value"
 #line 713 "../../mli-root/src/directive-parser.yy"
-                                          { level_max = (size_type)ref_cast<integer&>(yystack_[0].value.object); }
+                                          { level_max = (size_type)dyn_cast<integer&>(yystack_[0].value.object); }
 #line 1039 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 45: // limits: "sublevel" "max" "natural number value"
 #line 714 "../../mli-root/src/directive-parser.yy"
-                                             { sublevel_max = (size_type)ref_cast<integer&>(yystack_[0].value.object); }
+                                             { sublevel_max = (size_type)dyn_cast<integer&>(yystack_[0].value.object); }
 #line 1045 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 46: // limits: "proof" "count" "natural number value"
 #line 715 "../../mli-root/src/directive-parser.yy"
-                                            { proof_count = (size_type)ref_cast<integer&>(yystack_[0].value.object); }
+                                            { proof_count = (size_type)dyn_cast<integer&>(yystack_[0].value.object); }
 #line 1051 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 47: // limits: "unify" "count" "max" "natural number value"
 #line 716 "../../mli-root/src/directive-parser.yy"
-                                                  { unify_count_max = (size_type)ref_cast<integer&>(yystack_[0].value.object); }
+                                                  { unify_count_max = (size_type)dyn_cast<integer&>(yystack_[0].value.object); }
 #line 1057 "../../mli-root/src/directive-parser.cc"
     break;
 

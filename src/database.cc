@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -39,7 +39,7 @@ namespace mli {
   }
 
 
-  alternatives sequence_database::unify(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives sequence_database::unify(unify_environment tt, const val<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
 
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
@@ -74,12 +74,12 @@ namespace mli {
       if ((*i)->get_statement_type() == a_definition)
         continue; // Do not look at definitions; these are expanded during unification.
 
-      ref<statement> ls = ref<statement>((*i)->rename(lv, 0));
+      val<statement> ls = val<statement>((*i)->rename(lv, 0));
 
       alternatives bs = mli::unify(ls, tt, x, tx, dbp, lv, sl, dr);
 
       if (trace_value & trace_unify) {
-        ref<formula> f = ls->get_formula();
+        val<formula> f = ls->get_formula();
         std::lock_guard<std::recursive_mutex> guard(write_mutex);
         std::clog << "sequence_database::unify(\n  " << x << ";\n  " << f << "):" << bs << std::endl;
       }
@@ -95,7 +95,7 @@ namespace mli {
   }
 
 
-  alternatives sequence_database::unify(const ref<formula>& x, unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives sequence_database::unify(const val<formula>& x, unify_environment tx, const val<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
 
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
@@ -120,42 +120,42 @@ namespace mli {
   }
 
 
-  ref<formula> sequence_database::rename(level lv, degree sl) const {
-    ref<sequence_database> dp(make, *this);
-    ref<formula> rt(dp);
+  val<formula> sequence_database::rename(level lv, degree sl) const {
+    ref2<sequence_database> dp(make, *this);
+    val<formula> rt(dp);
     const_sequence_iterator i = sequence_table_.begin(), i1 = sequence_table_.end();
     sequence_iterator j = dp->sequence_table_.begin(), j1 = dp->sequence_table_.end();
     for (; i != i1; ++i, ++j)
-      (*j) = ref<statement>((*i)->rename(lv, sl));
+      (*j) = val<statement>((*i)->rename(lv, sl));
     return rt;
   }
 
 
-  ref<formula> sequence_database::add_exception_set(variable_map& vm) const {
-    ref<sequence_database> dp(make, *this);
-    ref<formula> rt(dp);
+  val<formula> sequence_database::add_exception_set(variable_map& vm) const {
+    ref2<sequence_database> dp(make, *this);
+    val<formula> rt(dp);
     const_sequence_iterator i = sequence_table_.begin(), i1 = sequence_table_.end();
     sequence_iterator j = dp->sequence_table_.begin(), j1 = dp->sequence_table_.end();
     for (; i != i1; ++i, ++j)
-      (*j) = ref<statement>((*i)->add_exception_set(vm));
+      (*j) = val<statement>((*i)->add_exception_set(vm));
     return rt;
   }
 
 
 
-  ref<formula> sequence_database::substitute(const ref<substitution>& s, substitute_environment vt) const {
-    ref<sequence_database> dp(make, *this);
+  val<formula> sequence_database::substitute(const val<substitution>& s, substitute_environment vt) const {
+    ref2<sequence_database> dp(make, *this);
     const_sequence_iterator i = sequence_table_.begin(), i1 = sequence_table_.end();
     sequence_iterator j = dp->sequence_table_.begin(), j1 = dp->sequence_table_.end();
 
     for (; i != i1; ++i, ++j)
-      (*j) = ref<statement>((*i)->substitute(s, vt));
+      (*j) = val<statement>((*i)->substitute(s, vt));
 
     return dp;
   }
 
 
-  bool sequence_database::insert(const ref<statement>& x) {
+  bool sequence_database::insert(const ref4<statement>& x) {
     if (name_table_.find(x->name()) != name_table_.end()) {
       std::cerr << "sequence_database::insert: not using statement name duplicate " << x->name() << "." << std::endl;
       return false;
@@ -164,18 +164,18 @@ namespace mli {
     name_table_[x->name()] = x;
     sequence_table_.push_back(x);
     if (!has_definition_)
-      has_definition_ = (ref_cast<definition*>(x) != 0);
+      has_definition_ = (dyn_cast<definition*>(x) != 0);
     return true;
   }
 
 
-  void sequence_database::insert(const ref<sequence_database>& x) {
+  void sequence_database::insert(const ref2<sequence_database>& x) {
     for (auto& i: x->sequence_table_)
       insert(i);
   }
 
 
-  std::optional<ref<statement>> sequence_database::find(const std::string& name, level lv) {
+  std::optional<ref4<statement>> sequence_database::find(const std::string& name, level lv) {
     if (trace_value & trace_statement)
       std::clog << "sequence_database::find " << name << ", level " << lv.top << ": " << std::flush;
 
@@ -251,7 +251,7 @@ namespace mli {
 
   // Implementation of class sublevel_database.
 
-  alternatives sublevel_database::unify(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives sublevel_database::unify(unify_environment tt, const val<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
@@ -286,7 +286,7 @@ namespace mli {
   }
 
 
-  alternatives sublevel_database::unify(const ref<formula>& x, unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives sublevel_database::unify(const val<formula>& x, unify_environment tx, const val<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
@@ -321,40 +321,40 @@ namespace mli {
   }
 
 
-  ref<formula> sublevel_database::rename(level lv, degree sl) const {
-    ref<sublevel_database> dp(make, *this);
+  val<formula> sublevel_database::rename(level lv, degree sl) const {
+    ref3<sublevel_database> dp(make, *this);
 
     auto i = table_.begin(), i1 = table_.end();
     auto j = dp->table_.begin();
 
     for (; i != i1; ++i, ++j)
-      *j = ref<database>((*i)->rename(lv, sl));
+      *j = val<database>((*i)->rename(lv, sl));
 
     return dp;
   }
 
 
-  ref<formula> sublevel_database::add_exception_set(variable_map& vm) const {
-    ref<sublevel_database> dp(make, *this);
+  val<formula> sublevel_database::add_exception_set(variable_map& vm) const {
+    ref3<sublevel_database> dp(make, *this);
 
     auto i = table_.begin(), i1 = table_.end();
     auto j = dp->table_.begin();
 
     for (; i != i1; ++i, ++j)
-      *j = ref<database>((*i)->add_exception_set(vm));
+      *j = val<database>((*i)->add_exception_set(vm));
 
     return dp;
   }
 
 
-  ref<formula> sublevel_database::substitute(const ref<substitution>& s, substitute_environment vt) const {
-    ref<sublevel_database> dp(make, *this);
+  val<formula> sublevel_database::substitute(const val<substitution>& s, substitute_environment vt) const {
+    ref3<sublevel_database> dp(make, *this);
 
     auto i = table_.begin(), i1 = table_.end();
     auto j = dp->table_.begin();
 
     for (; i != i1; ++i, ++j)
-      *j = ref<database>((*i)->substitute(s, vt));
+      *j = val<database>((*i)->substitute(s, vt));
 
     return dp;
   }
@@ -375,7 +375,7 @@ namespace mli {
   }
 
 
-  bool sublevel_database::insert(const ref<statement>& s) {
+  bool sublevel_database::insert(const ref4<statement>& s) {
     // Rewrite this so that statements are always inserted:
     if (table_.empty())
      return false;
@@ -383,7 +383,7 @@ namespace mli {
   }
 
 
-  std::optional<ref<statement>> sublevel_database::find(const std::string& name, level lv) {
+  std::optional<ref4<statement>> sublevel_database::find(const std::string& name, level lv) {
     if (lv.sub < table_.size())
       return table_[lv.sub]->find(name, lv);
     return table_.back()->find(name, lv);
@@ -430,14 +430,14 @@ namespace mli {
 
   // Implementation of class level_database.
 
-  alternatives level_database::unify(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives level_database::unify(unify_environment tt, const val<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
     if (lv.top <= get_level())
       return table_[lv.top - 1]->unify(tt, x, tx, dbp, lv, sl, dr);
     return table_.back()->unify(tt, x, tx, dbp, lv, sl, dr);
   }
 
 
-  alternatives level_database::unify(const ref<formula>& x, unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives level_database::unify(const val<formula>& x, unify_environment tx, const val<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
@@ -452,40 +452,40 @@ namespace mli {
   }
 
 
-  ref<formula> level_database::rename(level lv, degree sl) const {
-    ref<level_database> dp(make, *this);
+  val<formula> level_database::rename(level lv, degree sl) const {
+    ref5<level_database> dp(make, *this);
 
     auto i = table_.begin(), i1 = table_.end();
     auto j = dp->table_.begin();
 
     for (; i != i1; ++i, ++j)
-      *j = ref<database>((*i)->rename(lv, sl));
+      *j = val<database>((*i)->rename(lv, sl));
 
     return dp;
   }
 
 
-  ref<formula> level_database::add_exception_set(variable_map& vm) const {
-    ref<level_database> dp(make, *this);
+  val<formula> level_database::add_exception_set(variable_map& vm) const {
+    ref5<level_database> dp(make, *this);
 
     auto i = table_.begin(), i1 = table_.end();
     auto j = dp->table_.begin();
 
     for (; i != i1; ++i, ++j)
-      *j = ref<database>((*i)->add_exception_set(vm));
+      *j = val<database>((*i)->add_exception_set(vm));
 
     return dp;
   }
 
 
-  ref<formula> level_database::substitute(const ref<substitution>& s, substitute_environment vt) const {
-    ref<level_database> dp(make, *this);
+  val<formula> level_database::substitute(const val<substitution>& s, substitute_environment vt) const {
+    ref5<level_database> dp(make, *this);
 
     auto i = table_.begin(), i1 = table_.end();
     auto j = dp->table_.begin();
 
     for (; i != i1; ++i, ++j)
-      *j = ref<database>((*i)->substitute(s, vt));
+      *j = val<database>((*i)->substitute(s, vt));
 
     return dp;
   }
@@ -513,7 +513,7 @@ namespace mli {
   }
 
 
-  bool level_database::insert(const ref<statement>& s) {
+  bool level_database::insert(const ref4<statement>& s) {
     // Rewrite this so that statements are always inserted:
     if (table_.empty())
      return false;
@@ -521,7 +521,7 @@ namespace mli {
   }
 
 
-  std::optional<ref<statement>> level_database::find(const std::string& name, level lv) {
+  std::optional<ref4<statement>> level_database::find(const std::string& name, level lv) {
     if (lv.top <= get_level())
       return table_[lv.top - 1]->find(name, lv);
     return table_.back()->find(name, lv);
@@ -580,7 +580,7 @@ namespace mli {
   }
 
 
-  alternatives sequential_database::unify(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives sequential_database::unify(unify_environment tt, const val<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
 
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
@@ -608,8 +608,8 @@ namespace mli {
       if ((*i)->get_statement_type() == a_definition)
         continue; // Do not look at definitions; these are expanded during unification.
 
-      ref<statement> ls = ref<statement>((*i)->rename(lv, 0));
-      ref<formula> f = ls->get_formula();
+      val<statement> ls = val<statement>((*i)->rename(lv, 0));
+      val<formula> f = ls->get_formula();
 
       alternatives s = mli::unify(f, tt, x, tx, dbp, lv, sl, dr);
 
@@ -630,7 +630,7 @@ namespace mli {
   }
 
 
-  alternatives sequential_database::unify(const ref<formula>& x, unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives sequential_database::unify(const val<formula>& x, unify_environment tx, const val<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
 
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
@@ -655,39 +655,39 @@ namespace mli {
   }
 
 
-  ref<formula> sequential_database::rename(level lv, degree sl) const {
-    ref<sequential_database> dp(make, *this);
-    ref<formula> rt(dp);
+  val<formula> sequential_database::rename(level lv, degree sl) const {
+    val<sequential_database> dp(make, *this);
+    val<formula> rt(dp);
     const_sequential_iterator i = sequential_table_.begin(), i1 = sequential_table_.end();
     sequential_iterator j = dp->sequential_table_.begin(), j1 = dp->sequential_table_.end();
     for (; i != i1; ++i, ++j)
-      (*j) = ref<statement>((*i)->rename(lv, sl));
+      (*j) = val<statement>((*i)->rename(lv, sl));
     return rt;
   }
 
 
-  ref<formula> sequential_database::add_exception_set(variable_map& vm) const {
-    ref<sequential_database> dp(make, *this);
-    ref<formula> rt(dp);
+  val<formula> sequential_database::add_exception_set(variable_map& vm) const {
+    val<sequential_database> dp(make, *this);
+    val<formula> rt(dp);
     const_sequential_iterator i = sequential_table_.begin(), i1 = sequential_table_.end();
     sequential_iterator j = dp->sequential_table_.begin(), j1 = dp->sequential_table_.end();
     for (; i != i1; ++i, ++j)
-      (*j) = ref<statement>((*i)->add_exception_set(vm));
+      (*j) = val<statement>((*i)->add_exception_set(vm));
     return rt;
   }
 
 
-  ref<formula> sequential_database::substitute(const ref<substitution>& s, substitute_environment vt) const {
-    ref<sequential_database> dp(make, *this);
+  val<formula> sequential_database::substitute(const val<substitution>& s, substitute_environment vt) const {
+    val<sequential_database> dp(make, *this);
     const_sequential_iterator i = sequential_table_.begin(), i1 = sequential_table_.end();
     sequential_iterator j = dp->sequential_table_.begin(), j1 = dp->sequential_table_.end();
     for (; i != i1; ++i, ++j)
-      (*j) = ref<statement>((*i)->substitute(s, vt));
+      (*j) = val<statement>((*i)->substitute(s, vt));
     return dp;
   }
 
 
-  bool sequential_database::insert(const ref<statement>& x) {
+  bool sequential_database::insert(const ref4<statement>& x) {
     if (x->name().empty()) {
       std::cerr << "sequential_database::insert: no name of " << x << std::endl;
       return false;
@@ -701,12 +701,12 @@ namespace mli {
     name_table_[x->name()] = x;
     sequential_table_.push_back(x);
     if (!has_definition_)
-      has_definition_ = (ref_cast<definition*>(x) != 0);
+      has_definition_ = (dyn_cast<definition*>(x) != 0);
     return true;
   }
 
 
-  std::optional<ref<statement>> sequential_database::find(const std::string& name, level lv) {
+  std::optional<ref4<statement>> sequential_database::find(const std::string& name, level lv) {
     if (trace_value & trace_statement)
       std::clog << "sequential_database::find " << name << ", level " << lv.sub << ": " << std::flush;
 
@@ -758,8 +758,8 @@ namespace mli {
 
   // Implementation of class theory.
 
-  std::optional<ref<statement>> theory::find(const std::string& name, level lv) {
-    std::optional<ref<statement>> p = sequential_database::find(name, lv);
+  std::optional<ref4<statement>> theory::find(const std::string& name, level lv) {
+    std::optional<ref4<statement>> p = sequential_database::find(name, lv);
     if (!p) {
       for (auto& i: includes_) {
         p = i->find(name, lv);
@@ -809,7 +809,7 @@ namespace mli {
 
 
 
-  bool theory_database::insert(const ref<theory>& t) {
+  bool theory_database::insert(const ref1<theory>& t) {
     if (t->name().empty()) {
       std::cerr << "theory_database::insert: no name of " << t << std::endl;
       return false;
@@ -824,7 +824,7 @@ namespace mli {
   }
 
 
-  std::optional<ref<theory>> theory_database::find(const std::string& name) {
+  std::optional<ref1<theory>> theory_database::find(const std::string& name) {
     if (trace_value & trace_statement)
       std::clog << "theory_database::find " << name << ": " << std::flush;
     name_iterator i = name_table_.find(name);

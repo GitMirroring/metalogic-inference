@@ -1,4 +1,4 @@
-# Copyright (C) 2017, 2021-2023 Hans Åberg.
+# Copyright (C) 2017, 2021-2024 Hans Åberg.
 #
 # This file is part of MLI, MetaLogic Inference.
 #
@@ -29,9 +29,6 @@ AC_SUBST(examplesdir, [${docdir}])
 
 AC_LANG(C++)
 AC_PROG_CXX
-
-AC_CHECK_HEADERS([gmp.h], [], [AC_MSG_ERROR([GMP header not found; cf. https://gmplib.org/])])
-AC_SEARCH_LIBS([__gmpz_init], [gmp], [], [AC_MSG_ERROR([GMP library not found; cf. https://gmplib.org/])])
 
 AM_MISSING_PROG(HELP2MAN, help2man, $missing_dir)
 

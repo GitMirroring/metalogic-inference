@@ -10,12 +10,9 @@ For basic building and installation, see below. See the file INSTALL for more de
 
 * Requirements
 
-MLI requires: C++17 compiler, the Boehm GC [1], and the GMP multiprecision library [2]. If one wants to compile beyond what is included in the distribution, Flex is needed to compile lexer.ll, and Bison to compile parser.yy.
+MLI requires: C++20 compiler. If one wants to compile beyond what is included in the distribution, Flex is needed to compile lexer.ll, and Bison to compile parser.yy.
 
-Note: MLI compiles on MacOS 10.13.4 using GCC g++ 7.3.0 and clang++, GMP 6.1.2, Flex 2.5.37, and Bison 3.0.4.
-
-1. https://www.hboehm.info/gc/
-2. https://gmplib.org/
+Note: MLI compiles on MacOS using GCC g++ and clang++, Flex, and Bison.
 
 
 * Simple build and installation
@@ -59,7 +56,7 @@ The last statement in the file tests/TK1.mli has a deliberate error in the proof
 
 -----
 
-Copyright (C) 2017, 2021-2023 Hans Åberg.
+Copyright (C) 2017, 2021-2024 Hans Åberg.
 
 This file is part of MLI, MetaLogic Inference.
 

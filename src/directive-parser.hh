@@ -68,7 +68,7 @@
     public:
       long number = 0;
       std::string text;
-      mli::ref<mli::unit> object;
+      mli::ref6<mli::unit> object;
 
       semantic_type() {}
     };
@@ -1196,7 +1196,7 @@ namespace mli {
     // For statements (theorems, definitions), pushed before the symbol declarations
     // (after the label), and if there is a proof, popped where it ends:
 
-    using symbol_table_t = mli::table_stack<std::string, std::pair<mli::directive_parser::token_type, mli::ref<mli::unit>>>;
+    using symbol_table_t = mli::table_stack<std::string, std::pair<mli::directive_parser::token_type, mli::ref6<mli::unit>>>;
 
     extern symbol_table_t directive_symbol_table;
 

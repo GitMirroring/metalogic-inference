@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -37,12 +37,13 @@
 %define parse.trace
 %define parse.error verbose
 
-%define api.value.type {mli::semantic_type}
+%define api.value.type variant
 
 %code requires {
   #include "MLI.hh"
   #include "database.hh"
   #include "basictype.hh"
+  #include "proposition.hh"
 
   #include "location-type.hh"
 
@@ -58,20 +59,21 @@
 
   namespace mli {
 
-    class semantic_type {
-    public:
-      long number = 0;
-      std::string text;
-      mli::ref<mli::unit> object;
+    class database_lexer;
 
-      semantic_type() {}
-    };
+  } // namespace mli
+
+} // %code requires
 
 
+%code provides {
+  namespace mli {
     class database_lexer : public yyFlexLexer {
     public:
-      mli::semantic_type* yylvalp = nullptr;
-      mli::location_type* yyllocp = nullptr;
+      using semantic_value = database_parser::value_type;
+
+      semantic_value* yylvalp = nullptr;
+      location_type* yyllocp = nullptr;
 
       database_lexer() {};
 
@@ -81,24 +83,18 @@
 
       std::istream& in() { return yyin; }
 
-      int operator()(mli::semantic_type* x) { yylvalp = x;  return yylex(); }
-      int operator()(mli::semantic_type* x, mli::location_type* y) { yylvalp = x;  yyllocp = y;  return yylex(); }
+      int operator()(semantic_value* x) { yylvalp = x;  return yylex(); }
+      int operator()(semantic_value* x, location_type* y) { yylvalp = x;  yyllocp = y;  return yylex(); }
     };
 
-  } // namespace mli
-
-} // %code requires
-
-
-%code provides {
-
-  namespace mli {
 
     // Symbol table: Pushed & popped at lexical environment boundaries.
     // For statements (theorems, definitions), pushed before the symbol declarations
     // (after the label), and if there is a proof, popped where it ends:
 
-    using symbol_table_t = mli::table_stack<std::string, std::pair<mli::database_parser::token_type, mli::ref<mli::unit>>>;
+    using symbol_table_data = val<unit>;
+    using symbol_table_value = std::pair<database_parser::token_type, symbol_table_data>;
+    using symbol_table_t = table_stack<std::string, symbol_table_value>;
 
     extern symbol_table_t symbol_table;
 
@@ -108,12 +104,12 @@
 
     constexpr database_parser::token_type free_variable_context = database_parser::token_type(0);
 
-    database_parser::token_type define_variable(semantic_type& yylval);
+    database_parser::token_type define_variable(const std::string& text, database_parser::value_type& yylval);
 
     extern kleenean unused_variable;
 
-    int directive_read(std::istream& is, mli::location_type& loc);
-    int directive_read(const std::string& str, mli::location_type&);
+    int directive_read(std::istream& is, location_type& loc);
+    int directive_read(const std::string& str, location_type&);
 
   } // namespace mli
 
@@ -164,7 +160,6 @@
   extern std::set<std::string> clp_parser_variables;
 
 
-
   namespace mli {
 
     kleenean unused_variable = false;
@@ -172,31 +167,30 @@
 
     symbol_table_t symbol_table;
 
-    std::set<ref<variable>> statement_variables_;
+    std::set<val<variable>> statement_variables_;
 
-    ref<theory> theory_;  // Theory to enter propositions into.
-    ref<database> theorem_theory_;  // Theory used for a theorem proof.
+    ref1<theory> theory_;  // Theory to enter propositions into.
+    val<database> theorem_theory_;  // Theory used for a theorem proof.
 
     // Stacks to handle nested statements and their proofs:
-    std::vector<ref<statement>> statement_stack_; // Pushed & popped at statement boundaries.
-
+    std::vector<ref4<statement>> statement_stack_; // Pushed & popped at statement boundaries.
 
     // Pushed & popped at proof boundaries:
-    mli::table_stack<std::string, ref<statement>> proofline_stack_; // Proof line table.
+    table_stack<std::string, ref4<statement>> proofline_stack_; // Proof line table.
 
     // The proofe depth is used for nested proof variable renumbering.
     // Incremented at the beginning of a theorem or subtheorem, and decremented at the proof end.
     depth proof_depth = 0, proof_depth0 = 0;
 
 
-    mli::database_parser::token_type to_token(variable::type t) {
+    database_parser::token_type to_token(variable::type t) {
       switch (t) {
-        case variable::formula_:       return mli::database_parser::token::object_formula_variable;
-        case variable::predicate_:     return mli::database_parser::token::predicate_variable;
-        case variable::atom_:          return mli::database_parser::token::atom_variable;
-        case variable::function_:      return mli::database_parser::token::function_variable;
-        case variable::object_:        return mli::database_parser::token::object_variable;
-        default:                       return mli::database_parser::token::token_error;
+        case variable::formula_:       return database_parser::token::object_formula_variable;
+        case variable::predicate_:     return database_parser::token::predicate_variable;
+        case variable::atom_:          return database_parser::token::atom_variable;
+        case variable::function_:      return database_parser::token::function_variable;
+        case variable::object_:        return database_parser::token::object_variable;
+        default:                       return database_parser::token::token_error;
       }
     }
 
@@ -205,64 +199,70 @@
     // should be inserted in the symbol table:
     database_parser::token_type bound_variable_type = database_parser::token_type(0);
 
-    ref<formula> head(const statement& x) {
-      auto xp = ref_cast<inference*>(x.statement_);
+    val<formula> head(const statement& x) {
+      auto xp = dyn_cast<inference*>(x.statement_);
       if (xp != nullptr)
         return xp->head_;
       return x.statement_;
     }
 
 
-    database_parser::token_type define_variable(semantic_type& yylval) {
+    database_parser::token_type define_variable(const std::string& text, database_parser::value_type& yylval) {
       if (statement_substitution_context) {
         statement_substitution_context = false;
-        std::optional<std::pair<database_parser::token_type, mli::ref<mli::unit>>> x = mli::symbol_table.find_top(yylval.text);
-        if (!x)  return mli::database_parser::token::plain_name;
-        yylval.object = x->second;
-        yylval.number = x->first;
+        std::optional<symbol_table_value> x = symbol_table.find_top(text);
+
+        if (!x) {
+          yylval.emplace<std::string>(text);
+          return database_parser::token::plain_name;
+        }
+
+        yylval.emplace<val<unit>>(x->second);
+
         return x->first;
       }
 
-      if (declaration_context)
-        return mli::database_parser::token::plain_name;
+      if (declaration_context) {
+        yylval.emplace<std::string>(text);
+        return database_parser::token::plain_name;
+      }
 
-      std::optional<std::pair<mli::database_parser::token_type, mli::ref<mli::unit>>> x = mli::symbol_table.find(yylval.text);
-
+      std::optional<symbol_table_value> x = symbol_table.find(text);
 
       if (!x) {
         // Not a bound variable case:
-        if (bound_variable_type == mli::free_variable_context)
-          return mli::database_parser::token::plain_name;
+        if (bound_variable_type == free_variable_context) {
+          yylval.emplace<std::string>(text);
+          return database_parser::token::plain_name;
+        }
 
         // Bound variable case: Create a limited variable of bind 1, insert at the secondary
         // (bound variable) stack level.
-        ref<variable> v = ref<variable>(make, yylval.text, variable::limited_, variable::object_, proof_depth);
+        val<variable> v = val<variable>(make, text, variable::limited_, variable::object_, proof_depth);
 
         v->bind_ = 1;
-        symbol_table.insert(yylval.text, {bound_variable_type, v});
+        symbol_table.insert(text, {bound_variable_type, v});
 
-        yylval.object = v;
-        yylval.number = bound_variable_type;
+        yylval.emplace<val<unit>>(v);
 
         return bound_variable_type;
       }
 
-
-      mli::variable* vp = mli::ref_cast<mli::variable*>(x->second);
+      variable* vp = dyn_cast<variable*>(x->second);
 
       if (vp != nullptr
-        && (vp->depth_ == -1 || bound_variable_type != mli::free_variable_context)) {
+        && (vp->depth_ == -1 || bound_variable_type != free_variable_context)) {
 
-        if (bound_variable_type == mli::free_variable_context) {
+        if (bound_variable_type == free_variable_context) {
           // Case definition of a free variable:
 
           // Check if it is a variable which is declared without definition, in which case make
           // a copy with right proof depth, insert it in the symbol table, and change x->second
           // so subsequently the new copy is used instead of the original lookup value.
-          mli::ref<mli::variable> v(make, *vp);
+          val<variable> v(make, *vp);
           v->depth_ = proof_depth;
 
-          symbol_table.insert_or_assign(yylval.text, {x->first, v});
+          symbol_table.insert_or_assign(text, {x->first, v});
 
           x->second = v;
         }
@@ -277,33 +277,31 @@
           //   If defined, return it (do nothing, as x is already set to it).
 
           if (!vp->is_limited()) {
-            mli::ref<mli::variable> v(make, *vp);
+            val<variable> v(make, *vp);
             v->depth_ = proof_depth;
             v->metatype_ = variable::limited_;
             v->bind_ = 1;
 
-            symbol_table.insert(yylval.text, {x->first, v});
+            symbol_table.insert(text, {x->first, v});
 
             x->second = v;
           }
           else if (vp->depth_ == -1) {
-            mli::ref<mli::variable> v(make, *vp);
+            val<variable> v(make, *vp);
             v->depth_ = proof_depth;
 
-            symbol_table.insert_or_assign(yylval.text, {x->first, v});
+            symbol_table.insert_or_assign(text, {x->first, v});
 
             x->second = v;
           }
 
-          yylval.object = x->second;
-          yylval.number = x->first;
+          yylval.emplace<val<unit>>(x->second);
 
           return bound_variable_type;
         }
       }
 
-      yylval.object = x->second;
-      yylval.number = x->first;
+      yylval.emplace<val<unit>>(x->second);
 
       return x->first;
     }
@@ -329,7 +327,7 @@
 %token rule_key "rule"
 %token conjecture_key "conjecture"
 
-%token theorem_key "theorem"
+%token <theorem::type> theorem_key "theorem"
 
 %token proof_key "proof"
 %token end_of_proof_key "∎"
@@ -337,7 +335,7 @@
 %token by_key "by"
 
 %token premise_key "premise"
-%token result_key "result"
+%token <std::string> result_key "result"
 
 
 /* Metalogic symbols: */
@@ -370,57 +368,57 @@
 
 
 /* Identifiers & labels: */
-%token plain_name "name"
-%token label_key "label"
+%token <std::string> plain_name "name"
+%token <std::string> label_key "label"
 
 /* Metaconstants: */
-%token metapredicate_constant "metapredicate constant"
+%token <val<unit>> metapredicate_constant "metapredicate constant"
 
 /* Functions */
-%token function_key "function"
-%token predicate_key "predicate"
+%token <val<unit>> function_key "function"
+%token <val<unit>> predicate_key "predicate"
 
 /* Logic (object, non-term) constants: */
-%token predicate_constant "predicate constant"
-%token atom_constant "atom constant"
+%token <val<unit>> predicate_constant "predicate constant"
+%token <val<unit>> atom_constant "atom constant"
 
 /* Terms constants: */
-%token function_constant "function constant"
-%token term_constant "term constant"
+%token <val<unit>> function_constant "function constant"
+%token <val<unit>> term_constant "term constant"
 
 /* Metavariables: */
 
-%token metaformula_variable "metaformula variable"
-%token object_formula_variable "object formula variable"
-%token predicate_variable "predicate variable"
-%token atom_variable "atom variable"
+%token <val<unit>> metaformula_variable "metaformula variable"
+%token <val<unit>> object_formula_variable "object formula variable"
+%token <val<unit>> predicate_variable "predicate variable"
+%token <val<unit>> atom_variable "atom variable"
 
-%token prefix_formula_variable "prefix formula variable"
+%token <val<unit>> prefix_formula_variable "prefix formula variable"
 
-%token function_variable "function variable"
+%token <val<unit>> function_variable "function variable"
 
 
 /* Object variables: */
 
-%token object_variable "object variable"
+%token <val<unit>> object_variable "object variable"
 
 /* Hoare logic code variable */
-%token code_variable "code variable"
+%token <val<unit>> code_variable "code variable"
 
 
-%token all_variable "all variable"
-%token exist_variable "exist variable"
+%token <val<unit>> all_variable "all variable"
+%token <val<unit>> exist_variable "exist variable"
 
 /* The function map variable is the 𝒙 in 𝒙 ↦ 𝑨. */
-%token function_map_variable "function map variable"
+%token <val<unit>> function_map_variable "function map variable"
 
-%token is_set_variable "Set variable"
-%token set_variable "set variable"
-%token set_variable_definition "set variable definition"
-%token implicit_set_variable "implicit set variable"
+%token <val<unit>> is_set_variable "Set variable"
+%token <val<unit>> set_variable "set variable"
+%token <val<unit>> set_variable_definition "set variable definition"
+%token <val<unit>> implicit_set_variable "implicit set variable"
 
 /* Declarators: constants and variables. */
-  /* Generic tokens, returned for any idenitified constant or variable.
+  /* Generic tokens, returned for any identified constant or variable.
      The exact type is then sorted out by the token type stored lookup table,
      and returned in the semantic value. */
 %token identifier_constant_key "identifier constant"
@@ -428,25 +426,25 @@
 %token identifier_function_key "identifier function"
 
   /* Keys for labeling identifiers constant or variable.
-%token constant_key "constant"
-%token variable_key "variable"
+%token <val<unit>> constant_key "constant"
+%token <val<unit>> variable_key "variable"
 */
 
 
 /* Declarators: quantifiers. */
 
-%token all_key "∀"
-%token exist_key "∃"
+%token <std::string> all_key "∀"
+%token <std::string> exist_key "∃"
 
 
 /* Formula logic: */
 
-%token logical_not_key "¬"
-%token logical_and_key "∧"
-%token logical_or_key "∨"
-%token implies_key "⇒"
-%token impliedby_key "⇐"
-%token equivalent_key "⇔"
+%token <std::string> logical_not_key "¬"
+%token <std::string> logical_and_key "∧"
+%token <std::string> logical_or_key "∨"
+%token <std::string> implies_key "⇒"
+%token <std::string> impliedby_key "⇐"
+%token <std::string> equivalent_key "⇔"
 
 /* Prefix logic notation: */
 %token prefix_not_key
@@ -458,26 +456,26 @@
 
 /* Formula functions: */
 
-%token natural_numner_key "ℕ"
+%token <std::string> natural_number_key "ℕ"
 
-%token less_key "<"
-%token greater_key ">"
-%token less_or_equal_key "≤"
-%token greater_or_equal_key "≥"
+%token <std::string> less_key "<"
+%token <std::string> greater_key ">"
+%token <std::string> less_or_equal_key "≤"
+%token <std::string> greater_or_equal_key "≥"
 
-%token not_less_key "≮"
-%token not_greater_key "≯"
-%token not_less_or_equal_key "≰"
-%token not_greater_or_equal_key "≱"
+%token <std::string> not_less_key "≮"
+%token <std::string> not_greater_key "≯"
+%token <std::string> not_less_or_equal_key "≰"
+%token <std::string> not_greater_or_equal_key "≱"
 
-%token equal_key "="
-%token not_equal_key "≠"
+%token <std::string> equal_key "="
+%token <std::string> not_equal_key "≠"
 
-%token divides_key "∣"
-%token not_divides_key "∤"
+%token <std::string> divides_key "∣"
+%token <std::string> not_divides_key "∤"
 
-%token mapsto_key "↦"
-%token Mapsto_key "⤇"
+%token <std::string> mapsto_key "↦"
+%token <std::string> Mapsto_key "⤇"
 
 /* Boldface 𝛌 for function maps of the form 𝛌 𝒙 ↦ 𝑨 implicitly declaring 𝒙. */
 %token function_map_prefix_key "𝛌"
@@ -487,21 +485,21 @@
 
 %token subscript_x_key "ₓ"
 
-%token natural_number_value "natural number value"
-%token integer_value   "integer value"
+%token <std::pair<std::string, integer>> natural_number_value "natural number value"
+%token <integer> integer_value "integer value"
 
-%token subscript_natural_number_value "subscript natural number value"
-%token subscript_integer_value   "subscript integer value"
+%token <integer> subscript_natural_number_value "subscript natural number value"
+%token <integer> subscript_integer_value "subscript integer value"
 
-%token superscript_natural_number_value "superscript natural number value"
-%token superscript_integer_value   "superscript integer value"
+%token <integer> superscript_natural_number_value "superscript natural number value"
+%token <integer> superscript_integer_value "superscript integer value"
 
 
-%token factorial_key "!"
+%token <std::string> factorial_key "!"
 
-%token mult_key "⋅"
-%token plus_key "+"
-%token minus_key "-"
+%token <std::string> mult_key "⋅"
+%token <std::string> plus_key "+"
+%token <std::string> minus_key "-"
 
 /* Set theory: */
 %token is_set_key "Set"
@@ -509,22 +507,22 @@
 
 %token empty_set_key "∅"
 
-%token in_key "∈"
-%token not_in_key "∉"
+%token <std::string> in_key "∈"
+%token <std::string> not_in_key "∉"
 
-%token set_complement_key "∁"
-%token set_union_key "∪"
-%token set_intersection_key "∩"
-%token set_difference_key "∖"
+%token <std::string> set_complement_key "∁"
+%token <std::string> set_union_key "∪"
+%token <std::string> set_intersection_key "∩"
+%token <std::string> set_difference_key "∖"
 
 /* Set unary prefix operators: */
-%token set_union_operator_key "⋃"
-%token set_intersection_operator_key "⋂"
+%token <std::string> set_union_operator_key "⋃"
+%token <std::string> set_intersection_operator_key "⋂"
 
-%token subset_key "⊆"
-%token proper_subset_key "⊊"
-%token superset_key "⊇"
-%token proper_superset_key "⊋"
+%token <std::string> subset_key "⊆"
+%token <std::string> proper_subset_key "⊊"
+%token <std::string> superset_key "⊇"
+%token <std::string> proper_superset_key "⊋"
 
 
 /* Miscellaneous symbols: */
@@ -553,8 +551,8 @@
 
 %token tilde_key "~"
 
-%token slash_key "/"
-%token backslash_key "\\"
+%token <std::string> slash_key "/"
+%token <std::string> backslash_key "\\"
 
 
 /* Code keywords */
@@ -574,6 +572,143 @@
 %token try_key "try"
 %token catch_key "catch"
 
+%nterm file
+%nterm file_contents
+%nterm command
+%nterm <ref6<unit>> metaformula_substitution_sequence
+%nterm <ref6<unit>> substitution_for_metaformula
+%nterm <ref6<unit>> metaformula_substitution
+%nterm <ref6<unit>> formula_substitution_sequence
+%nterm <ref6<unit>> substitution_for_formula
+%nterm <ref6<unit>> formula_substitution
+%nterm <ref6<unit>> term_substitution_sequence
+%nterm <ref6<unit>> term_substitution
+%nterm <ref6<unit>> predicate_function_application
+%nterm <ref6<unit>> term_function_application
+%nterm <ref6<unit>> theory
+%nterm <std::pair<std::string, bool>> end_theory_name
+%nterm <ref6<unit>> include_theories
+%nterm <ref6<unit>> include_theory
+%nterm <std::string> theory_name
+%nterm <ref6<unit>> theory_body
+%nterm <ref6<unit>> formal_system
+%nterm <ref6<unit>> formal_system_body
+%nterm <ref6<unit>> formal_system_body_item
+%nterm <ref6<unit>> theory_body_list
+%nterm <ref6<unit>> theory_body_item
+%nterm <ref6<unit>> postulate
+%nterm <ref6<unit>> conjecture
+%nterm <val<definition>> definition_labelstatement
+%nterm <std::string> statement_name
+%nterm <ref6<unit>> theorem
+%nterm <ref6<unit>> theorem_statement
+%nterm <std::pair<theorem::type, std::string>> theorem_head
+%nterm <ref6<unit>> proof
+%nterm <ref6<unit>> compound-proof
+%nterm <ref6<unit>> proof_head
+%nterm <ref6<unit>> proof_lines
+%nterm <std::string> statement_label
+%nterm <ref6<unit>> proof_line
+%nterm <std::string> subproof_statement
+%nterm <ref6<unit>> proof_of_conclusion
+%nterm <std::string> optional-result
+%nterm <ref6<unit>> find_statement
+%nterm <ref6<unit>> find_statement_list
+%nterm <ref6<unit>> find_statement_sequence
+%nterm <ref6<unit>> find_definition_sequence
+%nterm <ref6<unit>> find_statement_item
+%nterm <ref6<unit>> find_statement_name
+%nterm <ref6<unit>> statement
+%nterm <ref6<unit>> definition_statement
+%nterm <ref6<unit>> identifier_declaration
+%nterm <ref6<unit>> declarator_list
+%nterm <ref6<unit>> declarator_identifier_list
+%nterm <ref6<unit>> identifier_function_list
+%nterm <ref6<unit>> identifier_function_name
+/*
+%nterm <ref6<unit>> constant_identifier_declaration
+%nterm <ref6<unit>> constant_declarator_list
+%nterm <ref6<unit>> constant_declarator_identifier_list
+*/
+%nterm <ref6<unit>> identifier_constant_list
+%nterm <ref6<unit>> identifier_constant_name
+%nterm <ref6<unit>> identifier_variable_list
+%nterm <ref6<unit>> identifier_variable_name
+%nterm <ref6<unit>> definition
+%nterm <ref6<unit>> metaformula_definition
+%nterm <ref6<unit>> object_formula_definition
+%nterm <ref6<unit>> term_definition
+%nterm <ref6<unit>> metaformula
+%nterm <ref6<unit>> pure_metaformula
+%nterm <ref6<unit>> optional_varied_variable_matrix
+%nterm <ref6<unit>> varied_variable_conclusions
+%nterm <ref6<unit>> varied_variable_conclusion
+%nterm <ref6<unit>> varied_variable_premises
+%nterm <ref6<unit>> varied_variable_premise
+%nterm <ref6<unit>> varied_variable_set
+%nterm <ref6<unit>> varied_variable
+%nterm <ref6<unit>> optional_varied_in_reduction_variable_matrix
+%nterm <ref6<unit>> varied_in_reduction_variable_conclusions
+%nterm <ref6<unit>> varied_in_reduction_variable_conclusion
+%nterm <ref6<unit>> varied_in_reduction_variable_premises
+%nterm <ref6<unit>> varied_in_reduction_variable_premise
+%nterm <ref6<unit>> varied_in_reduction_variable_set
+%nterm <ref6<unit>> varied_in_reduction_variable
+/*
+%nterm <ref6<unit>> optional_varied_in_reduction_variable_sequence
+*/
+%nterm <ref6<unit>> simple_metaformula
+%nterm <ref6<unit>> atomic_metaformula
+%nterm <ref6<unit>> special_metaformula
+%nterm <ref6<unit>> meta_object_free
+%nterm <ref6<unit>> metapredicate
+%nterm <ref6<unit>> metapredicate_function
+%nterm <ref6<unit>> metapredicate_argument
+%nterm <ref6<unit>> metapredicate_argument_body
+%nterm <ref6<unit>> object_formula
+%nterm <ref6<unit>> hoare_triple
+/*
+%nterm <ref6<unit>> code
+*/
+%nterm <ref6<unit>> code_statement
+%nterm <ref6<unit>> code_sequence
+%nterm <ref6<unit>> code_term
+%nterm <ref6<unit>> very_simple_formula
+%nterm <ref6<unit>> quantized_formula
+%nterm <ref6<unit>> simple_formula
+%nterm <ref6<unit>> quantized_body
+%nterm <ref6<unit>> atomic_formula
+%nterm <ref6<unit>> predicate
+%nterm <ref6<unit>> predicate_expression
+%nterm <ref6<unit>> predicate_identifier
+%nterm <integer> optional_superscript_natural_number_value
+/*
+%nterm <ref6<unit>> optional_subscript_natural_number_value
+*/
+%nterm <ref6<unit>> logic_formula
+%nterm <ref6<unit>> prefix_logic_formula
+%nterm <ref6<unit>> quantizer_declaration
+%nterm <ref6<unit>> quantized_variable_list
+%nterm <ref6<unit>> all_variable_list
+%nterm <ref6<unit>> exist_variable_list
+%nterm <ref6<unit>> exclusion_set
+%nterm <ref6<unit>> exclusion_list
+%nterm <ref6<unit>> all_identifier_list
+%nterm <ref6<unit>> exist_identifier_list
+%nterm <ref6<unit>> optional_in_term
+%nterm <ref6<unit>> tuple
+%nterm <ref6<unit>> tuple_body
+%nterm <ref6<unit>> term
+%nterm <ref6<unit>> simple_term
+%nterm <ref6<unit>> term_identifier
+%nterm <ref6<unit>> variable_exclusion_set
+%nterm <ref6<unit>> variable_exclusion_list
+%nterm <ref6<unit>> bound_variable
+%nterm <ref6<unit>> function_term
+%nterm <ref6<unit>> set_term
+%nterm <ref6<unit>> implicit_set_identifier_list
+%nterm <ref6<unit>> set_member_list
+%nterm <ref6<unit>> function_term_identifier
 
 
 /* Precedence rules: Lower to higher; values used for writing.
@@ -646,7 +781,7 @@
 %%
 
 file:
-    %empty
+    %empty {}
   | file_contents {}
   | error {
       declaration_context = false;
@@ -668,113 +803,113 @@ command:
 
 
 metaformula_substitution_sequence:
-    substitution_for_metaformula[x] { $$.object = $x.object; }
+    substitution_for_metaformula[x] { $$ = $x; }
   | metaformula_substitution_sequence[x] substitution_for_metaformula[y] {
-      $$.object =  ref<substitution>($x.object) * ref<substitution>($y.object);
+      $$ =  val<substitution>($x) * val<substitution>($y);
     }
 ;
 
 
 substitution_for_metaformula:
-    metaformula_substitution[x] { $$.object = $x.object; }
-  | formula_substitution[x] { $$.object = $x.object; }
-  | term_substitution[x] { $$.object = $x.object; }
+    metaformula_substitution[x] { $$ = $x; }
+  | formula_substitution[x] { $$ = $x; }
+  | term_substitution[x] { $$ = $x; }
 ;
 
 
 metaformula_substitution:
     "[" metaformula_variable[x] "⤇" metaformula[y] "]" {
-      ref<variable> v($x.object);
-      ref<formula> f($y.object);
-      $$.object = ref<explicit_substitution>(make, v, f);
+      val<variable> v($x);
+      val<formula> f($y);
+      $$ = val<explicit_substitution>(make, v, f);
     }
 ;
 
 
 formula_substitution_sequence:
-    substitution_for_formula[x] { $$.object = $x.object; }
+    substitution_for_formula[x] { $$ = $x; }
   | formula_substitution_sequence[x] substitution_for_formula[y] {
-      $$.object = ref<substitution>($x.object) * ref<substitution>($y.object);
+      $$ = val<substitution>($x) * val<substitution>($y);
     }
 ;
 
 
 substitution_for_formula:
-    formula_substitution[x] { $$.object = $x.object; }
-  | term_substitution[x] { $$.object = $x.object; }
+    formula_substitution[x] { $$ = $x; }
+  | term_substitution[x] { $$ = $x; }
 ;
 
 
 formula_substitution:
     "[" object_formula_variable[x] "⤇" object_formula[y] "]" {
-      ref<variable> v($x.object);
-      ref<formula> f($y.object);
-      $$.object = ref<explicit_substitution>(make, v, f);
+      val<variable> v($x);
+      val<formula> f($y);
+      $$ = val<explicit_substitution>(make, v, f);
     }
   | "[" predicate_variable[x] "⤇" predicate[y] "]" {
-      ref<variable> v($x.object);
-      ref<formula> f($y.object);
-      $$.object = ref<explicit_substitution>(make, v, f);
+      val<variable> v($x);
+      val<formula> f($y);
+      $$ = val<explicit_substitution>(make, v, f);
     }
   | "[" atom_variable[x] "⤇" atom_constant[y] "]" {
-      ref<variable> v($x.object);
-      ref<formula> f($y.object);
-      $$.object = ref<explicit_substitution>(make, v, f);
+      val<variable> v($x);
+      val<formula> f($y);
+      $$ = val<explicit_substitution>(make, v, f);
     }
 ;
 
 
 term_substitution_sequence:
-    term_substitution[x] { $$.object = $x.object; }
+    term_substitution[x] { $$ = $x; }
   | term_substitution_sequence[x] term_substitution[y] {
-      $$.object = ref<substitution>($x.object) * ref<substitution>($y.object);
+      $$ = val<substitution>($x) * val<substitution>($y);
     }
 ;
 
 
 term_substitution:
     "[" term_identifier[x] "⤇" term[y] "]" {
-      ref<variable> v($x.object);
-      ref<formula> f($y.object);
-      $$.object = ref<explicit_substitution>(make, v, f);
+      val<variable> v($x);
+      val<formula> f($y);
+      $$ = val<explicit_substitution>(make, v, f);
     }
 ;
 
 
 predicate_function_application:
     "(" object_variable[x] "↦" object_formula[f] ")" tuple[a] {
-      $$.object = ref<function_application>(make, ref<function_map>(make, $x.object, $f.object), $a.object);
+      $$ = val<function_application>(make, val<function_map>(make, $x, $f), $a);
     }
   | "(" "𝛌" function_map_variable[x] "↦" object_formula[f] { symbol_table.pop_level(); } ")" tuple[a] {
-      $$.object = ref<function_application>(make, ref<function_map>(make, $x.object, $f.object), $a.object);
+      $$ = val<function_application>(make, val<function_map>(make, $x, $f), $a);
     }
-  | predicate_key[p] tuple[a] { $$.object = ref<function_application>(make, $p.object, $a.object); }
+  | predicate_key[p] tuple[a] { $$ = val<function_application>(make, $p, $a); }
 ;
 
 
 term_function_application:
     "(" object_variable[x] "↦" term[f] ")" tuple[a] {
-      $$.object = ref<function_application>(make, ref<function_map>(make, $x.object, $f.object), $a.object);
+      $$ = val<function_application>(make, val<function_map>(make, $x, $f), $a);
     }
   | "(" "𝛌" function_map_variable[x] "↦" term[f] { symbol_table.pop_level(); } ")" tuple[a] {
-      $$.object = ref<function_application>(make, ref<function_map>(make, $x.object, $f.object), $a.object);
+      $$ = val<function_application>(make, val<function_map>(make, $x, $f), $a);
     }
-  | function_key[p] tuple[a] { $$.object = ref<function_application>(make, $p.object, $a.object); }
+  | function_key[p] tuple[a] { $$ = val<function_application>(make, $p, $a); }
 ;
 
 
 theory:
     "theory" statement_name[x]
-    "." { theory_ = ref<theory>(make, $x.text);
+    "." { theory_ = ref1<theory>(make, $x);
           yypval.insert(theory_);
           symbol_table.push_level();
     }
     include_theories
     theory_body
     "end" "theory" end_theory_name[y] "." {
-      if ($y.number != 0 && $x.text != $y.text) {
-        mli::database_parser::error(@y, "warning: Name mismatch, theory " + $x.text
-          + ", end theory " + $y.text + ".");
+      if ($y.second && $x != $y.first) {
+        database_parser::error(@y, "warning: Name mismatch, theory " + $x
+          + ", end theory " + $y.first + ".");
       }
 
       symbol_table.pop_level();
@@ -783,22 +918,22 @@ theory:
 
 
 end_theory_name:
-    %empty             { $$.number = 0; }
-  | statement_name[x]  { $$.text = $x.text; $$.number = 1; }
+    %empty             { $$ = std::make_pair(std::string{}, false); }
+  | statement_name[x]  { $$ = std::make_pair($x, true); }
 ;
 
 
 include_theories:
-    %empty
+    %empty {}
   | include_theories include_theory {}
 ;
 
 include_theory:
    "include" "theory" theory_name[x] "." {
-      std::optional<ref<theory>> th = yypval.find($x.text);
+      std::optional<ref1<theory>> th = yypval.find($x);
 
       if (!th)
-        throw syntax_error(@x, "Include theory " + $x.text + " not found.");
+        throw syntax_error(@x, "Include theory " + $x + " not found.");
 
       theory_->insert(*th);
     }
@@ -826,20 +961,20 @@ formal_system:
 
 
 formal_system_body:
-    %empty
+    %empty {}
   | formal_system_body formal_system_body_item {}
 ;
 
 
 formal_system_body_item:
     identifier_declaration {}
-  | postulate[x] { theory_->insert(ref<statement>($x.object)); }
-  | definition_labelstatement[x] { theory_->insert(ref<statement>($x.object)); }
+  | postulate[x] { theory_->insert(ref4<statement>($x)); }
+  | definition_labelstatement[x] { theory_->insert(ref4<statement>($x)); }
 ;
 
 
 theory_body_list:
-    %empty
+    %empty {}
   | theory_body_list theory_body_item {}
 ;
 
@@ -850,11 +985,11 @@ theory_body_list:
    postulates, so if more postulates are added after the metatheorem,
    it becomes not true with respect to all postulates in the theory. */
 theory_body_item:
-    theorem[x] { theory_->insert(ref<statement>($x.object)); }
+    theorem[x] { theory_->insert(ref4<statement>($x)); }
   | identifier_declaration {}
-  | conjecture[x] { theory_->insert(ref<statement>($x.object)); }
+  | conjecture[x] { theory_->insert(ref4<statement>($x)); }
 /*| constant_identifier_declaration {} */
-  | definition_labelstatement[x] { theory_->insert(ref<statement>($x.object)); }
+  | definition_labelstatement[x] { theory_->insert(ref4<statement>($x)); }
 ;
 
 
@@ -863,7 +998,7 @@ postulate:
     "." { symbol_table.push_level(); }
     statement[y] "." {
       symbol_table.pop_level();
-      $$.object = ref<supposition>(make, supposition::postulate_, $x.text, $y.object, true);
+      $$ = val<supposition>(make, supposition::postulate_, $x, $y, true);
     }
   | conjecture
   | "axiom" statement_name[x]
@@ -871,24 +1006,24 @@ postulate:
     statement[y] "." {
       symbol_table.pop_level();
 
-      ref<formula> f($y.object);
+      val<formula> f($y);
 
       if (!f->is_axiom())
         throw syntax_error(@y, "Axiom statement not an object formula.");
 
-      $$.object = ref<supposition>(make, supposition::postulate_, $x.text, f);
+      $$ = val<supposition>(make, supposition::postulate_, $x, f);
     }
   | "rule" statement_name[x]
     "." { symbol_table.push_level(); }
     statement[y] "." {
       symbol_table.pop_level();
 
-      ref<formula> f($y.object);
+      val<formula> f($y);
 
       if (!f->is_rule())
         throw syntax_error(@y, "Rule statement not an inference.");
 
-      $$.object = ref<supposition>(make, supposition::postulate_, $x.text, f);
+      $$ = val<supposition>(make, supposition::postulate_, $x, f);
     }
 ;
 
@@ -898,7 +1033,7 @@ conjecture:
     "." { symbol_table.push_level(); }
     statement[y] "." {
       symbol_table.pop_level();
-      $$.object = ref<supposition>(make, supposition::conjecture_, $x.text, $y.object, true);
+      $$ = val<supposition>(make, supposition::conjecture_, $x, $y, true);
     }
 ;
 
@@ -907,23 +1042,22 @@ definition_labelstatement:
     "." { symbol_table.push_level(); }
     definition_statement[y] "." {
       symbol_table.pop_level();
-      $$.text = $x.text;
-      $$.object = ref<definition>(make, $x.text, $y.object);
+      $$ = val<definition>(make, $x, $y);
     }
 ;
 
 
 statement_name:
-    "name"[x] { $$.text = $x.text; }
-  | "label"[x] { $$.text = $x.text; }
-  | "natural number value"[x] { $$.text = $x.text; }
+    "name"[x] { $$ = $x; }
+  | "label"[x] { $$ = $x; }
+  | "natural number value"[x] { $$ = $x.first; }
 ;
 
 
 theorem:
     theorem_statement proof {
-      $$.object = statement_stack_.back();
-      ref<statement> t($$.object); // The theorem.
+      $$ = statement_stack_.back();
+      ref4<statement> t($$); // The theorem.
       t->prove(proof_count);     // Attempt to prove the theorem.
       symbol_table.pop_level();
       statement_stack_.pop_back();
@@ -934,8 +1068,7 @@ theorem:
 theorem_statement:
     theorem_head[x] statement[y] {
       symbol_table_t::table& top = symbol_table.top();
-      ref<theorem> tr(make,
-        theorem::type($x.number), $x.text, $y.object, theory_, proof_depth);
+      val<theorem> tr(make,  $x.first, $x.second, $y, theory_, proof_depth);
       statement_stack_.back() = tr;
       theorem_theory_ = tr->get_theory();
     }
@@ -944,17 +1077,17 @@ theorem_statement:
 
 theorem_head:
     "theorem"[x] statement_name[y] "." {
-      $$.text = $y.text;
-      $$.number = $x.number;
+      $$.second = $y;
+      $$.first = $x;
       symbol_table.push_level();
-      statement_stack_.push_back(ref<statement>());
+      statement_stack_.push_back(ref4<statement>());
     }
 ;
 
 
 proof:
     compound-proof
-  | {
+  | <ref6<unit>>{
       ++proof_depth;
       symbol_table.push_level();
       proofline_stack_.push_level();
@@ -973,7 +1106,7 @@ compound-proof:
       symbol_table.pop_level();
       proofline_stack_.pop_level();
     }
-  | "∎"
+  | "∎" {}
 ;
 
 
@@ -987,14 +1120,14 @@ proof_head:
 
 
 proof_lines:
-    %empty
+    %empty {}
   | proof_lines proof_line {}
 ;
 
 
 statement_label:
     statement_name[x] "." {
-      $$.text = $x.text;
+      $$ = $x;
       symbol_table.push_level();
     }
 ;
@@ -1005,78 +1138,72 @@ proof_line:
       // Handles explicit find_statement substitutions A[x⤇e].
       proofline_database_context = false;
 
-      theorem& t = ref_cast<theorem&>(statement_stack_.back());
+      theorem& t = dyn_cast<theorem&>(statement_stack_.back());
 
       bool concluding = false;
 
-      if (t.get_formula() == $y.object || head(t) == $y.object)
+      if (t.get_formula() == $y || head(t) == $y)
         concluding = true;
 
-      if (!concluding && $x.text == "conclusion")
+      if (!concluding && $x == "conclusion")
         throw syntax_error(@x, "Proof line name “conclusion” used when not the theorem conclusion.");
 
-      if (!concluding && $x.text == "result")
+      if (!concluding && $x == "result")
         throw syntax_error(@x, "Proof line name “result” used when not the theorem result.");
 
-      symbol_table_t::table& top = symbol_table.top();
-
-      ref<statement> proof_line =
+      ref4<statement> proof_line =
         t.push_back(
-          $x.text, ref<formula>($y.object), ref<database>($z.object), concluding, proof_depth);
+          $x, val<formula>($y), val<database>($z), concluding, proof_depth);
 
       symbol_table.pop_level();
 
-      if (!proofline_stack_.insert($x.text, proof_line)) {
-        if ($x.text.empty())
+      if (!proofline_stack_.insert($x, proof_line)) {
+        if ($x.empty())
           throw syntax_error(@x, "Proof line empty name “” used.");
         else
-          throw syntax_error(@x, "Proof line name " + $x.text  + " already given to a proof line.");
+          throw syntax_error(@x, "Proof line name " + $x  + " already given to a proof line.");
       }
     }
-  | subproof[x] {
-      theorem& t = ref_cast<theorem&>(statement_stack_.back());
-      ref<statement> proof_line = t.push_back(ref<statement>($x.object));
-      if (!proofline_stack_.insert($x.text, proof_line)) {
-        if ($x.text.empty())
+
+  | subproof_statement[x] compound-proof {
+    ref4<statement> top = statement_stack_.back();
+    symbol_table.pop_level();
+    statement_stack_.pop_back();
+
+    theorem& t = dyn_cast<theorem&>(statement_stack_.back());
+      ref4<statement> proof_line = t.push_back(ref4<statement>(top));
+      if (!proofline_stack_.insert($x, proof_line)) {
+        if ($x.empty())
           throw syntax_error(@x, "Proof line empty name “” used.");
         else
-          throw syntax_error(@x, "Proof line name " + $x.text  + " already given to a proof line.");
+          throw syntax_error(@x, "Proof line name " + $x  + " already given to a proof line.");
       }
     }
+
   | {} identifier_declaration {}
 /* | { proof_depth0 = proof_depth; proof_depth = -1; } identifier_declaration { proof_depth = proof_depth0; } */
 
 /*| constant_identifier_declaration {} */
   | definition_labelstatement[x] {
-      theorem& t = ref_cast<theorem&>(statement_stack_.back());
-      ref<statement> proof_line = t.push_back(ref<statement>($x.object));
+      theorem& t = dyn_cast<theorem&>(statement_stack_.back());
+      ref4<statement> proof_line = t.push_back(ref4<statement>($x));
 
-      if (!proofline_stack_.insert($x.text, proof_line)) {
-        if ($x.text.empty())
+      if (!proofline_stack_.insert(proof_line->name_, proof_line)) {
+        if (proof_line->name_.empty())
           throw syntax_error(@x, "Proof line name “” used.");
         else
-          throw syntax_error(@x, "Proof line name " + $x.text  + " already given to a proof line.");
+          throw syntax_error(@x, "Proof line name " + proof_line->name_  + " already given to a proof line.");
       }
     }
   | proof_of_conclusion {}
 ;
 
 
-subproof:
-    subproof_statement[x] compound-proof {
-      $$.text = $x.text;
-      $$.object = statement_stack_.back();
-      symbol_table.pop_level();
-      statement_stack_.pop_back();
-    }
-;
-
-
 subproof_statement:
     statement_label[x] statement[y] {
-      $$.text = $x.text;
+      $$ = $x;
       symbol_table_t::table& top = symbol_table.top();
-      ref<theorem> tp(make, theorem::claim_, $x.text, $y.object, theory_, proof_depth);
+      val<theorem> tp(make, theorem::claim_, $x, $y, theory_, proof_depth);
       statement_stack_.push_back(tp);
     }
 ;
@@ -1086,113 +1213,113 @@ proof_of_conclusion:
     optional-result[x] "by" find_statement[y] "." {
       proofline_database_context = false;
 
-      theorem& t = ref_cast<theorem&>(statement_stack_.back());
-      ref<statement> proof_line =
-        t.push_back($x.text, t.get_formula(), ref<database>($y.object), true, proof_depth);
+      theorem& t = dyn_cast<theorem&>(statement_stack_.back());
+      ref4<statement> proof_line =
+        t.push_back($x, t.get_formula(), val<database>($y), true, proof_depth);
     }
 ;
 
 
 optional-result:
-    %empty        { $$.text = "result"; }
+    %empty        { $$ = "result"; }
   | "result"[x]   { $$ = $x; }
 ;
 
 
 find_statement:
-    find_statement_list[x] { $$.object = ref<level_database>(make, ref<database>($x.object)); }
+    find_statement_list[x] { $$ = ref5<level_database>(make, val<database>($x)); }
   | find_statement[x] ":" find_statement_list[y] {
-      ref<level_database>($x.object)->push_back(ref<database>($y.object));
-      $$.object = $x.object;
+      ref5<level_database>($x)->push_back(val<database>($y));
+      $$ = $x;
     }
 ;
 
 
 find_statement_list:
     find_statement_sequence[x] {
-      $$.object = ref<sublevel_database>(make, ref<sequence_database>($x.object));
+      $$ = ref3<sublevel_database>(make, ref2<sequence_database>($x));
     }
   | find_statement_list[x] ";" find_statement_sequence[y] {
-      ref<sublevel_database>($x.object)->push_back(ref<database>($y.object));
-      $$.object = $x.object;
+      ref3<sublevel_database>($x)->push_back(val<database>($y));
+      $$ = $x;
     }
 ;
 
 
 find_statement_sequence:
-    %empty        { $$.object = ref<sequence_database>(make); }
+    %empty        { $$ = ref2<sequence_database>(make); }
   | find_statement_item[x] {
-      $$.object = ref<sequence_database>(make, ref<statement>($x.object)); }
+      $$ = ref2<sequence_database>(make, ref4<statement>($x)); }
   | find_statement_item[x] "₍" find_definition_sequence[y] "₎" {
-      $$.object = ref<sequence_database>(make, ref<statement>($x.object));
-      ref<sequence_database>($$.object)->insert(ref<sequence_database>($y.object));
+      $$ = ref2<sequence_database>(make, ref4<statement>($x));
+      ref2<sequence_database>($$)->insert(ref2<sequence_database>($y));
     }
   | find_statement_sequence[x] "," find_statement_item[y] {
-      ref<sequence_database>($x.object)->insert(ref<statement>($y.object));
-      $$.object = $x.object;
+      ref2<sequence_database>($x)->insert(ref4<statement>($y));
+      $$ = $x;
     }
   | find_statement_sequence[x] "," find_statement_item[y] "₍" find_definition_sequence[z] "₎" {
-      $$.object = $x.object;
-      ref<sequence_database>($$.object)->insert(ref<statement>($y.object));
-      ref<sequence_database>($$.object)->insert(ref<sequence_database>($z.object));
+      $$ = $x;
+      ref2<sequence_database>($$)->insert(ref4<statement>($y));
+      ref2<sequence_database>($$)->insert(ref2<sequence_database>($z));
     }
 ;
 
 
 find_definition_sequence:
     find_statement_item[x] {
-      $$.object = ref<sequence_database>(make, ref<statement>($x.object)); }
+      $$ = ref2<sequence_database>(make, ref4<statement>($x)); }
   | find_definition_sequence[x] "," find_statement_item[y] {
-      ref<sequence_database>($x.object)->insert(ref<statement>($y.object));
-      $$.object = $x.object;
+      ref2<sequence_database>($x)->insert(ref4<statement>($y));
+      $$ = $x;
     }
 ;
 
 
 find_statement_item:
     find_statement_name[x] {
-      $$.object = $x.object;
+      $$ = $x;
     }
   | "premise" {
-      $$.object = ref<premise>(make, statement_stack_.back());
+      $$ = val<premise>(make, statement_stack_.back());
     }
   | "premise" statement_name[x] {
       auto i = statement_stack_.rbegin();
 
       // Search stack from top for statement name:
       for (; i != statement_stack_.rend(); ++i)
-        if ((*i)->name() == $x.text) {
-          $$.object = ref<premise>(make, *i);
+        if ((*i)->name() == $x) {
+          $$ = val<premise>(make, *i);
           break;
         }
 
       if (i == statement_stack_.rend())
-        throw syntax_error(@x, "Proof line premise " + $x.text  + " not found.");
+        throw syntax_error(@x, "Proof line premise " + $x  + " not found.");
     }
   | "premise" statement_name[x] subscript_natural_number_value[k] {
       auto i = statement_stack_.rbegin();
 
       // Search stack from top for statement name:
       for (; i != statement_stack_.rend(); ++i)
-        if ((*i)->name() == $x.text) {
-          size_type k = (size_type)ref_cast<integer&>($k.object);
-          $$.object = ref<premise>(make, *i, k);
+        if ((*i)->name() == $x) {
+          size_type k = (size_type)$k;
+          $$ = val<premise>(make, *i, k);
           break;
         }
 
       if (i == statement_stack_.rend())
-        throw syntax_error(@x, "Proof line premise " + $x.text  + " not found.");
+        throw syntax_error(@x, "Proof line premise " + $x  + " not found.");
     }
   | "premise" "⊢" {
       // As the implicit premise is automatically resolved in inference::unify, any
       // formula that does not produce illegal alternatives will suffice:
-      $$.object = ref<premise>(make);
+      $$ = val<premise>(make);
     }
   | "premise" "⊢" subscript_natural_number_value[k] {
       // As the implicit premise is automatically resolved in inference::unify, any
       // formula that does not produce illegal alternatives will suffice:
-      size_type k = (size_type)ref_cast<integer&>($k.object);
-      $$.object = ref<premise>(make, k);
+      size_type k = (size_type)$k;
+      $$ = val<premise>(make, k);
     }
 ;
 
@@ -1200,32 +1327,32 @@ find_statement_item:
 find_statement_name:
     statement_name[x] {
       // Accept also non-proved statements (as actual proving will come later):
-      std::optional<ref<statement>> st;
-      st = proofline_stack_.find($x.text);
+      std::optional<ref4<statement>> st;
+      st = proofline_stack_.find($x);
 
       if (!st)
-        st = theorem_theory_->find($x.text, 0);
+        st = theorem_theory_->find($x, 0);
 
       if (!st)
         throw syntax_error(@x,
-          "statement name " + $x.text + " not found earlier in proof, in premises or theory.");
+          "statement name " + $x + " not found earlier in proof, in premises or theory.");
 
-      $$.object = *st;
+      $$ = *st;
     }
-  | statement_name[x] {
+  | statement_name[x] <ref6<unit>>{
       // Accept also non-proved statements (as actual proving will come later):
-      std::optional<ref<statement>> st;
-      st = proofline_stack_.find($x.text);
+      std::optional<ref4<statement>> st;
+      st = proofline_stack_.find($x);
       if (!st)
-        st = theorem_theory_->find($x.text, 0);
+        st = theorem_theory_->find($x, 0);
 
       if (!st)
         throw syntax_error(@x,
-          "statement name " + $x.text + " not found earlier in proof, in premises or theory.");
+          "statement name " + $x + " not found earlier in proof, in premises or theory.");
 
-      $$.object = *st;
+      $$ = *st;
       // Find the variables of *st and record them for use in the substitution domain checks:
-      ref<statement> pr = *st;
+      ref4<statement> pr = *st;
       statement_variables_.clear();
       pr->declared(statement_variables_);
       // Then push the declared *st variables & constants onto symbol_table
@@ -1237,12 +1364,12 @@ find_statement_name:
 
     metaformula_substitution_sequence[z] {
       // The try-catch checks whether the statement-substitution is legal:
-      ref<statement> p($y.object);
-      ref<substitution> s($z.object);
+      ref4<statement> p($y);
+      val<substitution> s($z);
       try {
-        $$.object = ref<statement_substitution>(make, p, s);
+        $$ = val<statement_substitution>(make, p, s);
       } catch (illegal_substitution&) {
-        mli::database_parser::error(@z, "Proposition substitute error.");
+        database_parser::error(@z, "Proposition substitute error.");
         p->write(std::cerr,
           write_style(write_name | write_type | write_statement));
         std::cerr << "\n  " << s << std::endl;
@@ -1254,20 +1381,20 @@ find_statement_name:
 
 
 statement:
-    metaformula[x] { $$.object = ref<formula>($x.object)->set_bind(); }
+    metaformula[x] { $$ = dyn_cast<formula&>($x).set_bind(); }
   | identifier_declaration metaformula[x] {
-      ref<formula> f($x.object);
-      $$.object = f->set_bind();
+      val<formula> f($x);
+      $$ = f->set_bind();
 
       if (unused_variable != false) {
-        std::set<ref<variable>> vs;
+        std::set<val<variable>> vs;
         f->contains(vs, occurrence::declared);
 
-        std::set<ref<variable>> vr;  // Redundant variables.
+        std::set<val<variable>> vr;  // Redundant variables.
 
         for (auto& i: symbol_table.top()) {
           try {
-            ref<variable> v(i.second.second);
+            val<variable> v(i.second.second);
             if (vs.find(v) == vs.end())
               vr.insert(v);
           }
@@ -1289,7 +1416,7 @@ statement:
         std::string ds = "Declared variable" + err + " not used in statement.";
 
         if (unused_variable != true)
-          mli::database_parser::error(@x, "warning: " + ds);
+          database_parser::error(@x, "warning: " + ds);
         else
           throw syntax_error(@x, ds);
         }
@@ -1299,9 +1426,9 @@ statement:
 
 
 definition_statement:
-    definition[x] { $$.object = ref<formula>($x.object)->set_bind(); }
+    definition[x] { $$ = dyn_cast<formula&>($x).set_bind(); }
   | identifier_declaration definition[x] {
-      $$.object = ref<formula>($x.object)->set_bind();
+      $$ = dyn_cast<formula&>($x).set_bind();
     }
 ;
 
@@ -1341,14 +1468,14 @@ identifier_function_name:
     ":" { bound_variable_type = database_parser::token::function_map_variable; }
     function_map_variable[y] "↦" object_formula[f] {
       // Check if name already has top level definition:
-      std::optional<std::pair<int, mli::ref<mli::unit>>> x0 = mli::symbol_table.find_top($x.text);
+      std::optional<symbol_table_value> x0 = symbol_table.find_top($x);
       if (x0) {
-        throw syntax_error(@x, "Name " + $x.text + " already defined in this scope as "
+        throw syntax_error(@x, "Name " + $x + " already defined in this scope as "
           + symbol_name((symbol_kind_type)x0->first) + ".");
       }
 
-      symbol_table.insert($x.text, {current_declared_token,
-        ref<function_map>(make, $y.object, $f.object)});
+      symbol_table.insert($x, {current_declared_token,
+        val<function_map>(make, $y, $f)});
     }
 ;
 
@@ -1380,14 +1507,14 @@ identifier_constant_list:
 identifier_constant_name:
     "name"[x] {
       // Check if name already has top level definition:
-      std::optional<std::pair<int, mli::ref<mli::unit>>> x0 = mli::symbol_table.find_top($x.text);
+      std::optional<symbol_table_value> x0 = symbol_table.find_top($x);
       if (x0) {
-        throw syntax_error(@x, "Name " + $x.text + " already defined in this scope as "
+        throw syntax_error(@x, "Name " + $x + " already defined in this scope as "
           + symbol_name((symbol_kind_type)x0->first) + ".");
       }
 
-      symbol_table.insert($x.text, {declared_token,
-        ref<constant>(make, $x.text, constant::type(declared_type))});
+      symbol_table.insert($x, {declared_token,
+        val<constant>(make, $x, constant::type(declared_type))});
     }
 ;
 
@@ -1401,59 +1528,59 @@ identifier_variable_list:
 identifier_variable_name:
     "name"[x] {
       // Check if name already has top level definition:
-      std::optional<std::pair<int, mli::ref<mli::unit>>> x0 = mli::symbol_table.find_top($x.text);
+      std::optional<symbol_table_value> x0 = symbol_table.find_top($x);
       if (x0) {
-        throw syntax_error(@x, "Name " + $x.text + " already defined in this scope as "
+        throw syntax_error(@x, "Name " + $x + " already defined in this scope as "
           + symbol_name((symbol_kind_type)x0->first) + ".");
       }
 
-      symbol_table.insert($x.text, {declared_token,
-       ref<variable>(make, $x.text, variable::ordinary_, variable::type(declared_type), -1)});
+      symbol_table.insert($x, {declared_token,
+       val<variable>(make, $x, variable::ordinary_, variable::type(declared_type), -1)});
     }
   | "°" "name"[x] {
       // Check if name already has top level definition:
-      std::optional<std::pair<int, mli::ref<mli::unit>>> x0 = mli::symbol_table.find_top($x.text);
+      std::optional<symbol_table_value> x0 = symbol_table.find_top($x);
       if (x0) {
-        throw syntax_error(@x, "Name " + $x.text + " already defined in this scope as "
+        throw syntax_error(@x, "Name " + $x + " already defined in this scope as "
           + symbol_name((symbol_kind_type)x0->first) + ".");
       }
 
-      symbol_table.insert($x.text, {declared_token,
-        ref<variable>(make, $x.text, variable::limited_, variable::type(declared_type), -1)});
+      symbol_table.insert($x, {declared_token,
+        val<variable>(make, $x, variable::limited_, variable::type(declared_type), -1)});
     }
   | "•" "name"[x] {
       // Check if name already has top level definition:
-      std::optional<std::pair<int, mli::ref<mli::unit>>> x0 = mli::symbol_table.find_top($x.text);
+      std::optional<symbol_table_value> x0 = symbol_table.find_top($x);
       if (x0) {
-        throw syntax_error(@x, "Name " + $x.text + " already defined in this scope as "
+        throw syntax_error(@x, "Name " + $x + " already defined in this scope as "
           + symbol_name((symbol_kind_type)x0->first) + ".");
       }
 
-      symbol_table.insert($x.text, {declared_token,
-        ref<variable>(make, $x.text, variable::term_, variable::type(declared_type), -1)});
+      symbol_table.insert($x, {declared_token,
+        val<variable>(make, $x, variable::term_, variable::type(declared_type), -1)});
     }
 ;
 
 
 definition:
-    metaformula_definition[x] { $$.object = $x.object; }
-  | object_formula_definition[x] { $$.object = $x.object; }
-  | term_definition[x] { $$.object = $x.object; }
+    metaformula_definition[x] { $$ = $x; }
+  | object_formula_definition[x] { $$ = $x; }
+  | term_definition[x] { $$ = $x; }
 ;
 
 
 metaformula_definition:
     pure_metaformula[x] "≔" pure_metaformula[y] {
-      $$.object = ref<abbreviation>(make, ref<formula>($x.object), ref<formula>($y.object), ref<formula>(),
+      $$ = val<abbreviation>(make, val<formula>($x), val<formula>($y), val<formula>(),
         formula::logic, formula_definition_oprec);
     }
   | pure_metaformula[x] "≕" pure_metaformula[y] {
-      $$.object = ref<abbreviation>(make, ref<formula>($y.object), ref<formula>($x.object), ref<formula>(),
+      $$ = val<abbreviation>(make, val<formula>($y), val<formula>($x), val<formula>(),
        formula::logic, formula_definition_oprec);
   }
 /*
   | metaformula[x] "⊢" metaformula[y] "≔" metaformula[z] {
-      $$.object = ref<abbreviation>(make, ref<formula>($y.object), ref<formula>($z.object), ref<formula>($x.object),
+      $$ = val<abbreviation>(make, val<formula>($y), val<formula>($z), val<formula>($x),
         object_formula_type_, formula_definition_oprec); }
 */
 ;
@@ -1461,16 +1588,16 @@ metaformula_definition:
 
 object_formula_definition:
     object_formula[x] "≔" object_formula[y] {
-      $$.object = ref<abbreviation>(make, ref<formula>($x.object), ref<formula>($y.object), ref<formula>(),
+      $$ = val<abbreviation>(make, val<formula>($x), val<formula>($y), val<formula>(),
         formula::logic, formula_definition_oprec);
     }
   | object_formula[x] "≕" object_formula[y] {
-      $$.object = ref<abbreviation>(make, ref<formula>($y.object), ref<formula>($x.object), ref<formula>(),
+      $$ = val<abbreviation>(make, val<formula>($y), val<formula>($x), val<formula>(),
         formula::logic, formula_definition_oprec);
   }
 /*
   | metaformula[x] "⊢" object_formula[y] "≔" object_formula[z] {
-      $$.object = ref<abbreviation>(make, ref<formula>($y.object), ref<formula>($z.object), ref<formula>($x.object),
+      $$ = val<abbreviation>(make, val<formula>($y), val<formula>($z), val<formula>($x),
         object_formula_type_, formula_definition_oprec); }
 */
 ;
@@ -1478,57 +1605,57 @@ object_formula_definition:
 
 term_definition:
     term[x] "≔" term[y] {
-      $$.object = ref<abbreviation>(make, ref<formula>($x.object), ref<formula>($y.object), ref<formula>(),
+      $$ = val<abbreviation>(make, val<formula>($x), val<formula>($y), val<formula>(),
         formula::object, term_definition_oprec);
     }
 /*
   // Causes conflicts with the general "⊢" rules.
   | metaformula[x] "⊢" term[y] "≔" term[z] {
-      $$.object = ref<abbreviation>(make, ref<formula>($y.object), ref<formula>($z.object), ref<formula>($x.object),
+      $$ = val<abbreviation>(make, val<formula>($y), val<formula>($z), val<formula>($x),
         term_type_, term_definition_oprec); }
 */
   | term[x] "≕" term[y] {
-      $$.object = ref<abbreviation>(make, ref<formula>($y.object), ref<formula>($x.object), ref<formula>(),
+      $$ = val<abbreviation>(make, val<formula>($y), val<formula>($x), val<formula>(),
         formula::object, term_definition_oprec);
   }
 ;
 
 
 metaformula:
-    pure_metaformula[x] { $$.object = $x.object; }
-  | object_formula[x] { $$.object = $x.object; }
+    pure_metaformula[x] { $$ = $x; }
+  | object_formula[x] { $$ = $x; }
 ;
 
 
 pure_metaformula:
-    atomic_metaformula[x] { $$.object = $x.object; }
-  | special_metaformula[x] { $$.object = $x.object; }
+    atomic_metaformula[x] { $$ = $x; }
+  | special_metaformula[x] { $$ = $x; }
   | "~" metaformula[x] {
-      $$.object = ref<metanot>(make, ref<formula>($x.object));
+      $$ = val<metanot>(make, val<formula>($x));
     }
   | metaformula[x] ";" metaformula[y] {
-      $$.object = mli::concatenate(ref<formula>($x.object), ref<formula>($y.object));
+      $$ = concatenate(val<formula>($x), val<formula>($y));
     }
   | metaformula[x] "," metaformula[y] {
-      $$.object = mli::concatenate(ref<formula>($x.object), ref<formula>($y.object));
+      $$ = concatenate(val<formula>($x), val<formula>($y));
     }
   | metaformula[x] "⊩" optional_superscript_natural_number_value[k]
       optional_varied_variable_matrix[m] optional_varied_in_reduction_variable_matrix[mr]
       metaformula[y] {
-      size_type k = (size_type)ref_cast<integer&>($k.object);
+      size_type k = (size_type)$k;
 
       if (k < 1)
         k = 2;
       else
         k += 2;
 
-      ref<inference> i(make, ref<formula>($y.object), ref<formula>($x.object), metalevel_t(k));
+      val<inference> i(make, val<formula>($y), val<formula>($x), metalevel_t(k));
 
-      inference* mp = ref_cast<inference*>($m.object);
+      inference* mp = dyn_cast<inference*>($m);
       if (mp != nullptr)
         i->varied_ = mp->varied_;
 
-      inference* mrp = ref_cast<inference*>($mr.object);
+      inference* mrp = dyn_cast<inference*>($mr);
       if (mrp != nullptr)
         i->varied_in_reduction_ = mrp->varied_in_reduction_;
 
@@ -1536,10 +1663,10 @@ pure_metaformula:
       // Check that varied and invariable indices given do not exceed
       // exceed the conclusion (head) and premise (body) sizes:
 
-      formula_sequence* hp = ref_cast<formula_sequence*>(i->head_);
+      formula_sequence* hp = dyn_cast<formula_sequence*>(i->head_);
       size_type n_head = (hp == nullptr)? 1 : hp->formulas_.size();
 
-      formula_sequence* bp = ref_cast<formula_sequence*>(i->body_);
+      formula_sequence* bp = dyn_cast<formula_sequence*>(i->body_);
       size_type n_body = (bp == nullptr)? 1 : bp->formulas_.size();
 
 
@@ -1566,35 +1693,35 @@ pure_metaformula:
             + " must be less than the number of premises " + std::to_string(n_body) + ".");
       }
 
-      $$.object = i;
+      $$ = i;
     }
 /*
   | metaformula[x] "⊢" superscript_natural_number_value[k] metaformula[y] {
-      size_type k = (size_type)ref_cast<integer&>($k.object);
+      size_type k = (size_type)$k;
 
       if (k < 1)
         throw syntax_error(@x,
-          "inference ⊢" + $k.text + ": metalevel " + std::to_string(k) + " < 1.");
+          "inference ⊢" + $k + ": metalevel " + std::to_string(k) + " < 1.");
 
-      $$.object =
-        ref<inference>(make, ref<formula>($y.object), ref<formula>($x.object), metalevel_t(k));
+      $$ =
+        val<inference>(make, val<formula>($y), val<formula>($x), metalevel_t(k));
     }
 */
   | metaformula[x] "⊢" optional_superscript_natural_number_value[k]
       optional_varied_variable_matrix[m] optional_varied_in_reduction_variable_matrix[mr]
       metaformula[y] {
-      size_type k = (size_type)ref_cast<integer&>($k.object);
+      size_type k = (size_type)$k;
 
       if (k < 1)
         k = 1;
 
-      ref<inference> i(make, ref<formula>($y.object), ref<formula>($x.object), metalevel_t(k));
+      val<inference> i(make, val<formula>($y), val<formula>($x), metalevel_t(k));
 
-      inference* mp = ref_cast<inference*>($m.object);
+      inference* mp = dyn_cast<inference*>($m);
       if (mp != nullptr)
         i->varied_ = mp->varied_;
 
-      inference* mrp = ref_cast<inference*>($mr.object);
+      inference* mrp = dyn_cast<inference*>($mr);
       if (mrp != nullptr)
         i->varied_in_reduction_ = mrp->varied_in_reduction_;
 
@@ -1602,10 +1729,10 @@ pure_metaformula:
       // Check that varied and invariable indices given do not exceed
       // exceed the conclusion (head) and premise (body) sizes:
 
-      formula_sequence* hp = ref_cast<formula_sequence*>(i->head_);
+      formula_sequence* hp = dyn_cast<formula_sequence*>(i->head_);
       size_type n_head = (hp == nullptr)? 1 : hp->formulas_.size();
 
-      formula_sequence* bp = ref_cast<formula_sequence*>(i->body_);
+      formula_sequence* bp = dyn_cast<formula_sequence*>(i->body_);
       size_type n_body = (bp == nullptr)? 1 : bp->formulas_.size();
 
 
@@ -1632,52 +1759,52 @@ pure_metaformula:
             + " must be less than the number of premises " + std::to_string(n_body) + ".");
       }
 
-      $$.object = i;
+      $$ = i;
     }
 /*
   | metaformula[x] "⊢" metaformula[y] {
-      ref<inference> i(make, ref<formula>($y.object), ref<formula>($x.object), 1_ml);
+      val<inference> i(make, val<formula>($y), val<formula>($x), 1_ml);
 
-      $$.object = i;
+      $$ = i;
     }
 */
-  | "⊢" metaformula[x] { $$.object = ref<inference>(make, ref<formula>($x.object)); }
+  | "⊢" metaformula[x] { $$ = val<inference>(make, val<formula>($x)); }
 
-  | "(" pure_metaformula[x] ")" { $$.object = $x.object; }
+  | "(" pure_metaformula[x] ")" { $$ = $x; }
   | simple_metaformula[x] metaformula_substitution_sequence[y] {
-      $$.object = ref<substitution_formula>(make, ref<substitution>($y.object), ref<formula>($x.object)); }
+      $$ = val<substitution_formula>(make, val<substitution>($y), val<formula>($x)); }
 ;
 
 
 optional_varied_variable_matrix:
-    %empty
-  | "⁽" varied_variable_conclusions[cs] "⁾" { $$.object = $cs.object; }
-  | "⁽" varied_variable_premises[ps] "⁾"    { $$.object = $ps.object; }
-  | "⁽" varied_variable_set[vs] "⁾"         { $$.object = $vs.object; }
+    %empty {}
+  | "⁽" varied_variable_conclusions[cs] "⁾" { $$ = $cs; }
+  | "⁽" varied_variable_premises[ps] "⁾"    { $$ = $ps; }
+  | "⁽" varied_variable_set[vs] "⁾"         { $$ = $vs; }
 ;
 
 varied_variable_conclusions:
     varied_variable_conclusion
   | varied_variable_conclusions[xs] ";" varied_variable_conclusion[x] {
-      inference& xs = ref_cast<inference&>($xs.object);
-      inference& x = ref_cast<inference&>($x.object);
+      inference& xs = dyn_cast<inference&>($xs);
+      inference& x = dyn_cast<inference&>($x);
 
       for (auto& i: x.varied_)
         for (auto& j: i.second)
           xs.varied_[i.first][j.first].insert(j.second.begin(), j.second.end());
 
-      $$.object = $xs.object;
+      $$ = $xs;
     }
 ;
 
 varied_variable_conclusion:
     superscript_natural_number_value[k] varied_variable_premises[xs] {
-      ref<inference> i(make);
-      inference& xs = ref_cast<inference&>($xs.object);
-      size_type k = (size_type)ref_cast<integer&>($k.object);
+      val<inference> i(make);
+      inference& xs = dyn_cast<inference&>($xs);
+      size_type k = (size_type)$k;
 
       i->varied_[k].insert(xs.varied_[0].begin(), xs.varied_[0].end());
-      $$.object = i;
+      $$ = i;
 
     }
 ;
@@ -1685,84 +1812,84 @@ varied_variable_conclusion:
 varied_variable_premises:
     varied_variable_premise
   | varied_variable_premises[xs] "," varied_variable_premise[x] {
-      inference& xs = ref_cast<inference&>($xs.object);
-      inference& x = ref_cast<inference&>($x.object);
+      inference& xs = dyn_cast<inference&>($xs);
+      inference& x = dyn_cast<inference&>($x);
 
       for (auto& j: x.varied_[0])
         xs.varied_[0][j.first].insert(j.second.begin(), j.second.end());
 
-      $$.object = $xs.object;
+      $$ = $xs;
     }
 ;
 
 varied_variable_premise:
     superscript_natural_number_value[k] varied_variable_set[xs] {
-      ref<inference> i(make);
-      inference& xs = ref_cast<inference&>($xs.object);
-      size_type k = (size_type)ref_cast<integer&>($k.object);
+      val<inference> i(make);
+      inference& xs = dyn_cast<inference&>($xs);
+      size_type k = (size_type)$k;
 
       i->varied_[0][k].insert(xs.varied_[0][0].begin(), xs.varied_[0][0].end());
 
-      $$.object = i;
+      $$ = i;
     }
 ;
 
 varied_variable_set:
     varied_variable
   | varied_variable_set[xs] varied_variable[x] {
-      inference& xs = ref_cast<inference&>($xs.object);
-      inference& x = ref_cast<inference&>($x.object);
+      inference& xs = dyn_cast<inference&>($xs);
+      inference& x = dyn_cast<inference&>($x);
 
       xs.varied_[0][0].insert(x.varied_[0][0].begin(), x.varied_[0][0].end());
 
-      $$.object = $xs.object;
+      $$ = $xs;
     }
 ;
 
 varied_variable:
     object_variable[x] {
-      ref<inference> i(make);
-      i->varied_[0][0].insert($x.object);
-      $$.object = i;
+      val<inference> i(make);
+      i->varied_[0][0].insert($x);
+      $$ = i;
     }
   | metaformula_variable[x] {
-      ref<inference> i(make);
-      i->varied_[0][0].insert($x.object);
-      $$.object = i;
+      val<inference> i(make);
+      i->varied_[0][0].insert($x);
+      $$ = i;
     }
 ;
 
 
 
 optional_varied_in_reduction_variable_matrix:
-    %empty
-  | "₍" varied_in_reduction_variable_conclusions[cs] "₎" { $$.object = $cs.object; }
-  | "₍" varied_in_reduction_variable_premises[ps] "₎"    { $$.object = $ps.object; }
-  | "₍" varied_in_reduction_variable_set[vs] "₎"         { $$.object = $vs.object; }
+    %empty {}
+  | "₍" varied_in_reduction_variable_conclusions[cs] "₎" { $$ = $cs; }
+  | "₍" varied_in_reduction_variable_premises[ps] "₎"    { $$ = $ps; }
+  | "₍" varied_in_reduction_variable_set[vs] "₎"         { $$ = $vs; }
 ;
 
 varied_in_reduction_variable_conclusions:
     varied_in_reduction_variable_conclusion
   | varied_in_reduction_variable_conclusions[xs] ";" varied_in_reduction_variable_conclusion[x] {
-      inference& xs = ref_cast<inference&>($xs.object);
-      inference& x = ref_cast<inference&>($x.object);
+      inference& xs = dyn_cast<inference&>($xs);
+      inference& x = dyn_cast<inference&>($x);
 
       for (auto& i: x.varied_in_reduction_)
         for (auto& j: i.second)
           xs.varied_in_reduction_[i.first][j.first].insert(j.second.begin(), j.second.end());
 
-      $$.object = $xs.object;
+      $$ = $xs;
     }
 ;
 
 varied_in_reduction_variable_conclusion:
     subscript_natural_number_value[k] varied_in_reduction_variable_premises[xs] {
-      ref<inference> i(make);
-      inference& xs = ref_cast<inference&>($xs.object);
-      size_type k = (size_type)ref_cast<integer&>($k.object);
+      val<inference> i(make);
+      inference& xs = dyn_cast<inference&>($xs);
+      size_type k = (size_type)$k;
 
       i->varied_in_reduction_[k].insert(xs.varied_in_reduction_[0].begin(), xs.varied_in_reduction_[0].end());
-      $$.object = i;
+      $$ = i;
 
     }
 ;
@@ -1770,50 +1897,50 @@ varied_in_reduction_variable_conclusion:
 varied_in_reduction_variable_premises:
     varied_in_reduction_variable_premise
   | varied_in_reduction_variable_premises[xs] "," varied_in_reduction_variable_premise[x] {
-      inference& xs = ref_cast<inference&>($xs.object);
-      inference& x = ref_cast<inference&>($x.object);
+      inference& xs = dyn_cast<inference&>($xs);
+      inference& x = dyn_cast<inference&>($x);
 
       for (auto& j: x.varied_in_reduction_[0])
         xs.varied_in_reduction_[0][j.first].insert(j.second.begin(), j.second.end());
 
-      $$.object = $xs.object;
+      $$ = $xs;
     }
 ;
 
 varied_in_reduction_variable_premise:
     subscript_natural_number_value[k] varied_in_reduction_variable_set[xs] {
-      ref<inference> i(make);
-      inference& xs = ref_cast<inference&>($xs.object);
-      size_type k = (size_type)ref_cast<integer&>($k.object);
+      val<inference> i(make);
+      inference& xs = dyn_cast<inference&>($xs);
+      size_type k = (size_type)$k;
 
       i->varied_in_reduction_[0][k].insert(xs.varied_in_reduction_[0][0].begin(), xs.varied_in_reduction_[0][0].end());
 
-      $$.object = i;
+      $$ = i;
     }
 ;
 
 varied_in_reduction_variable_set:
     varied_in_reduction_variable
   | varied_in_reduction_variable_set[xs] varied_in_reduction_variable[x] {
-      inference& xs = ref_cast<inference&>($xs.object);
-      inference& x = ref_cast<inference&>($x.object);
+      inference& xs = dyn_cast<inference&>($xs);
+      inference& x = dyn_cast<inference&>($x);
 
       xs.varied_in_reduction_[0][0].insert(x.varied_in_reduction_[0][0].begin(), x.varied_in_reduction_[0][0].end());
 
-      $$.object = $xs.object;
+      $$ = $xs;
     }
 ;
 
 varied_in_reduction_variable:
     object_variable[x] {
-      ref<inference> i(make);
-      i->varied_in_reduction_[0][0].insert($x.object);
-      $$.object = i;
+      val<inference> i(make);
+      i->varied_in_reduction_[0][0].insert($x);
+      $$ = i;
     }
   | metaformula_variable[x] {
-      ref<inference> i(make);
-      i->varied_in_reduction_[0][0].insert($x.object);
-      $$.object = i;
+      val<inference> i(make);
+      i->varied_in_reduction_[0][0].insert($x);
+      $$ = i;
     }
 ;
 
@@ -1821,174 +1948,174 @@ varied_in_reduction_variable:
 /*
 optional_varied_in_reduction_variable_sequence:
     %empty
-  | "₍" varied_in_reduction_variable_conclusions[ps] "₎"    { $$.object = $ps.object; }
-  | "₍" varied_in_reduction_variable_set[vs] "₎"         { $$.object = $vs.object; }
+  | "₍" varied_in_reduction_variable_conclusions[ps] "₎"    { $$ = $ps; }
+  | "₍" varied_in_reduction_variable_set[vs] "₎"         { $$ = $vs; }
 ;
 
 varied_in_reduction_variable_conclusions:
     varied_in_reduction_variable_conclusion
   | varied_in_reduction_variable_conclusion[xs] "," varied_in_reduction_variable_conclusion[x] {
-      inference& xs = ref_cast<inference&>($xs.object);
-      inference& x = ref_cast<inference&>($x.object);
+      inference& xs = dyn_cast<inference&>($xs);
+      inference& x = dyn_cast<inference&>($x);
 
       for (auto& j: x.varied_in_reduction_)
         xs.varied_in_reduction_[j.first].insert(j.second.begin(), j.second.end());
 
-      $$.object = $xs.object;
+      $$ = $xs;
     }
 ;
 
 varied_in_reduction_variable_conclusion:
     subscript_natural_number_value[k] varied_in_reduction_variable_set[xs] {
-      ref<inference> i(make);
-      inference& xs = ref_cast<inference&>($xs.object);
-      size_type k = (size_type)ref_cast<integer&>($k.object);
+      val<inference> i(make);
+      inference& xs = dyn_cast<inference&>($xs);
+      size_type k = (size_type)$k;
 
       i->varied_in_reduction_[k].insert(xs.varied_in_reduction_[0].begin(), xs.varied_in_reduction_[0].end());
 
-      $$.object = i;
+      $$ = i;
     }
 ;
 
 varied_in_reduction_variable_set:
     varied_in_reduction_variable
   | varied_in_reduction_variable_set[xs] varied_in_reduction_variable[x] {
-      inference& xs = ref_cast<inference&>($xs.object);
-      inference& x = ref_cast<inference&>($x.object);
+      inference& xs = dyn_cast<inference&>($xs);
+      inference& x = dyn_cast<inference&>($x);
 
       xs.varied_in_reduction_[0].insert(x.varied_in_reduction_[0].begin(), x.varied_in_reduction_[0].end());
 
-      $$.object = $xs.object;
+      $$ = $xs;
     }
 ;
 
 varied_in_reduction_variable:
     object_variable[x] {
-      ref<inference> i(make);
-      i->varied_in_reduction_[0].insert($x.object);
-      $$.object = i;
+      val<inference> i(make);
+      i->varied_in_reduction_[0].insert($x);
+      $$ = i;
     }
   | metaformula_variable[x] {
-      ref<inference> i(make);
-      i->varied_in_reduction_[0].insert($x.object);
-      $$.object = i;
+      val<inference> i(make);
+      i->varied_in_reduction_[0].insert($x);
+      $$ = i;
     }
 ;
 */
 
 
 simple_metaformula:
-    metaformula_variable[x] { $$.object = $x.object; }
-  | "(" pure_metaformula[x] ")" { $$.object = $x.object; }
+    metaformula_variable[x] { $$ = $x; }
+  | "(" pure_metaformula[x] ")" { $$ = $x; }
 ;
 
 
 atomic_metaformula:
-    metaformula_variable[x] { $$.object = $x.object; }
-  | metapredicate[x] { $$.object = $x.object; }
+    metaformula_variable[x] { $$ = $x; }
+  | metapredicate[x] { $$ = $x; }
 ;
 
 
 special_metaformula:
 /*
-  |  "fail"[x] { $$.object = ref<succeed_fail>(make, false); }
-  | "succeed"[x] { $$.object = ref<succeed_fail>(make, true); }
+  |  "fail"[x] { $$ = val<succeed_fail>(make, false); }
+  | "succeed"[x] { $$ = val<succeed_fail>(make, true); }
    meta_object_free[x] "≡" meta_object_free[y] {
-      $$.object = ref<objectidentical>(make, ref<variable>($x.object), ref<variable>($y.object), true);
+      $$ = val<objectidentical>(make, val<variable>($x), val<variable>($y), true);
     }
 */
     meta_object_free[x] "≢" meta_object_free[y] {
-      $$.object = ref<objectidentical>(make, ref<variable>($x.object), ref<variable>($y.object), false);
+      $$ = val<objectidentical>(make, val<variable>($x), val<variable>($y), false);
     }
   | meta_object_free[x] "free in" object_formula[y] {
-      $$.object = ref<free_in_object>(make, ref<variable>($x.object), ref<formula>($y.object), true);
+      $$ = val<free_in_object>(make, val<variable>($x), val<formula>($y), true);
     }
   | meta_object_free[x] "free in" term[y] {
-      $$.object = ref<free_in_object>(make, ref<variable>($x.object), ref<formula>($y.object), true);
+      $$ = val<free_in_object>(make, val<variable>($x), val<formula>($y), true);
     }
   | meta_object_free[x] "not" "free in" object_formula[y] {
-      $$.object = ref<free_in_object>(make, ref<variable>($x.object), ref<formula>($y.object), false);
+      $$ = val<free_in_object>(make, val<variable>($x), val<formula>($y), false);
     }
   | meta_object_free[x] "not" "free in" term[y] {
-      $$.object = ref<free_in_object>(make, ref<variable>($x.object), ref<formula>($y.object), false);
+      $$ = val<free_in_object>(make, val<variable>($x), val<formula>($y), false);
     }
   | term[x] "free for" meta_object_free[y] "in" object_formula[z] {
-      $$.object = ref<free_for_object>(make, 
-        ref<formula>($x.object), ref<variable>($y.object), ref<formula>($z.object), true);
+      $$ = val<free_for_object>(make, 
+        val<formula>($x), val<variable>($y), val<formula>($z), true);
     }
   | term[x] "free for" meta_object_free[y] "in" term[z] {
-      $$.object = ref<free_for_object>(make, 
-        ref<formula>($x.object), ref<variable>($y.object), ref<formula>($z.object), true);
+      $$ = val<free_for_object>(make, 
+        val<formula>($x), val<variable>($y), val<formula>($z), true);
     }
 ;
 
 
 meta_object_free:
-    object_variable[x] { $$.object = $x.object; }
+    object_variable[x] { $$ = $x; }
 ;
 
 
 metapredicate:
-    metapredicate_function[x] { $$.object = $x.object; }
+    metapredicate_function[x] { $$ = $x; }
   | object_formula[x] "≣" object_formula[y] {
-      $$.object = ref<identical>(make, ref<formula>($x.object), ref<formula>($y.object), true);
+      $$ = val<identical>(make, val<formula>($x), val<formula>($y), true);
     }
   | object_formula[x] "≣̷" object_formula[y] {
-      $$.object = ref<identical>(make, ref<formula>($x.object), ref<formula>($y.object), false);
+      $$ = val<identical>(make, val<formula>($x), val<formula>($y), false);
     }
   | term[x] "≣" term[y] {
-      $$.object = ref<identical>(make, ref<formula>($x.object), ref<formula>($y.object), true);
+      $$ = val<identical>(make, val<formula>($x), val<formula>($y), true);
     }
   | term[x] "≣̷" term[y] {
-      $$.object = ref<identical>(make, ref<formula>($x.object), ref<formula>($y.object), false);
+      $$ = val<identical>(make, val<formula>($x), val<formula>($y), false);
     }
 ;
 
 
 metapredicate_function:
     metapredicate_constant[x] metapredicate_argument[y] {
-      $$.object = ref<structure>(make, ref<formula>($x.object), ref<formula>($y.object),
+      $$ = val<structure>(make, val<formula>($x), val<formula>($y),
         structure::predicate, 1_ml, structure::postargument, precedence_t());
     }
   | metaformula_variable[x] metapredicate_argument[y] {
-      $$.object = ref<structure>(make, ref<formula>($x.object), ref<formula>($y.object),
+      $$ = val<structure>(make, val<formula>($x), val<formula>($y),
         structure::predicate, 1_ml, structure::postargument, precedence_t());
     }
 ;
 
 
 metapredicate_argument:
-    "(" metapredicate_argument_body[x] ")" { $$.object = $x.object; }
+    "(" metapredicate_argument_body[x] ")" { $$ = $x; }
 ;
 
 
 metapredicate_argument_body:
     object_formula[x] {
-      ref<sequence> vr(make, sequence::tuple);
-      $$.object = vr;
-      vr->push_back(ref<formula>($x.object)); }
+      ref0<sequence> vr(make, sequence::tuple);
+      $$ = vr;
+      vr->push_back(val<formula>($x)); }
   | metapredicate_argument_body[x] "," object_formula[y] {
-      $$.object = $x.object;
-      sequence& vr = ref_cast<sequence&>($$.object);
-      vr.push_back(ref<formula>($y.object)); }
+      $$ = $x;
+      sequence& vr = dyn_cast<sequence&>($$);
+      vr.push_back(val<formula>($y)); }
 ;
 
 
 object_formula:
-    atomic_formula[x] { $$.object = $x.object; }
+    atomic_formula[x] { $$ = $x; }
   | very_simple_formula[x] formula_substitution_sequence[y] {
-      $$.object = ref<substitution_formula>(make, ref<substitution>($y.object), ref<formula>($x.object));
+      $$ = val<substitution_formula>(make, val<substitution>($y), val<formula>($x));
     }
-  | predicate_function_application[x] { $$.object = $x.object; }
-  | logic_formula[x] { $$.object = $x.object; }
-  | "(" object_formula[x] ")" { $$.object = $x.object; }
-  | quantized_formula[x] { $$.object = $x.object; }
+  | predicate_function_application[x] { $$ = $x; }
+  | logic_formula[x] { $$ = $x; }
+  | "(" object_formula[x] ")" { $$ = $x; }
+  | quantized_formula[x] { $$ = $x; }
   | hoare_triple {}
 ;
 
 
 hoare_triple:
-  "{" object_formula "}" code_sequence "{" object_formula "}" { $$.object = ref<formula>(); }
+  "{" object_formula "}" code_sequence "{" object_formula "}" { $$ = val<formula>(); }
 ;
 
 /*
@@ -2000,7 +2127,7 @@ code:
 
 code_statement:
     code_term {}
-  | "{" code_sequence  "}"
+  | "{" code_sequence "}" {}
 ;
 
 
@@ -2021,112 +2148,118 @@ code_term:
 
 
 very_simple_formula:
-    object_formula_variable[x] { $$.object = $x.object; }
-  | atom_variable[x] { $$.object = $x.object; }
-  | "(" object_formula[x] ")" { $$.object = $x.object; }
+    object_formula_variable[x] { $$ = $x; }
+  | atom_variable[x] { $$ = $x; }
+  | "(" object_formula[x] ")" { $$ = $x; }
 ;
 
 
 quantized_formula:
     quantizer_declaration[x] quantized_body[y] {
       symbol_table.pop_level();
-      variable_list& vsr = ref_cast<variable_list&>($x.object);
-      $$.object = ref<bound_formula>(make, vsr, ref<formula>($y.object));
+      variable_list& vsr = dyn_cast<variable_list&>($x);
+      val<bound_formula> bf(make, vsr, val<formula>($y));
+      bf->excluded1_.insert(vsr.excluded1_.begin(), vsr.excluded1_.end());
+      $$ = bf;
     }
   | quantizer_declaration[x] optional_in_term[s] ":" object_formula[y] {
       symbol_table.pop_level();
-      variable_list& vsr = ref_cast<variable_list&>($x.object);
-      $$.object = ref<bound_formula>(make, vsr, $s.object, ref<formula>($y.object));
+      variable_list& vsr = dyn_cast<variable_list&>($x);
+      val<bound_formula> bf(make, vsr, $s, val<formula>($y));
+      bf->excluded1_.insert(vsr.excluded1_.begin(), vsr.excluded1_.end());
+      $$ = bf;
     }
   | quantizer_declaration[x] optional_in_term[s] quantized_formula[y] {
       symbol_table.pop_level();
-      variable_list& vsr = ref_cast<variable_list&>($x.object);
-      $$.object = ref<bound_formula>(make, vsr, $s.object, ref<formula>($y.object));
+      variable_list& vsr = dyn_cast<variable_list&>($x);
+      val<bound_formula> bf(make, vsr, $s, val<formula>($y));
+      bf->excluded1_.insert(vsr.excluded1_.begin(), vsr.excluded1_.end());
+      $$ = bf;
     }
 ;
 
 
 simple_formula:
-    object_formula_variable[x] { $$.object = $x.object; }
-  | atom_variable[x] { $$.object = $x.object; }
-  | predicate_expression[x] { $$.object = $x.object; }
-  | "(" object_formula[x] ")" { $$.object = $x.object; }
-  | quantized_formula[x] { $$.object = $x.object; }
+    object_formula_variable[x] { $$ = $x; }
+  | atom_variable[x] { $$ = $x; }
+  | predicate_expression[x] { $$ = $x; }
+  | "(" object_formula[x] ")" { $$ = $x; }
+  | quantized_formula[x] { $$ = $x; }
 ;
 
 
 // No quantizer or logic in top level.
 quantized_body:
-    atomic_formula[x] { $$.object = $x.object; }
-  | "(" object_formula[x] ")" { $$.object = $x.object; }
+    atomic_formula[x] { $$ = $x; }
+  | "(" object_formula[x] ")" { $$ = $x; }
 ;
 
 atomic_formula:
-    atom_constant[x] { $$.object = $x.object; }
-  | object_formula_variable[x] { $$.object = $x.object; }
-  | atom_variable[x] { $$.object = $x.object; }
-  | predicate[x] { $$.object = $x.object; }
+    atom_constant[x] { $$ = $x; }
+  | object_formula_variable[x] { $$ = $x; }
+  | atom_variable[x] { $$ = $x; }
+  | predicate[x] { $$ = $x; }
 ;
 
 
     /* Predicates */
 predicate:
-    predicate_expression[x] { $$.object = $x.object; }
-  | term[x] "="[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, equal_oprec, $x.object, $y.object); }
-  | term[x] "≠"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, not_equal_oprec, $x.object, $y.object); }
+    predicate_expression[x] { $$ = $x; }
+  | term[x] "="[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, equal_oprec, $x, $y); }
+  | term[x] "≠"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, not_equal_oprec, $x, $y); }
 
   /* Divisibility */
-  | term[x] "∣"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, equal_oprec, $x.object, $y.object); }
-  | term[x] "∤"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, not_equal_oprec, $x.object, $y.object); }
+  | term[x] "∣"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, equal_oprec, $x, $y); }
+  | term[x] "∤"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, not_equal_oprec, $x, $y); }
 
   /* Inequalities and their negations. */
-  | term[x] "<"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, less_oprec, $x.object, $y.object); }
-  | term[x] ">"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, greater_oprec, $x.object, $y.object); }
-  | term[x] "≤"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, less_or_equal_oprec, $x.object, $y.object); }
-  | term[x] "≥"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, greater_or_equal_oprec, $x.object, $y.object); }
-  | term[x] "≮"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, not_less_oprec, $x.object, $y.object); }
-  | term[x] "≯"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, not_greater_oprec, $x.object, $y.object); }
-  | term[x] "≰"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, not_less_or_equal_oprec, $x.object, $y.object); }
-  | term[x] "≱"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, not_greater_or_equal_oprec, $x.object, $y.object); }
+  | term[x] "<"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, less_oprec, $x, $y); }
+  | term[x] ">"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, greater_oprec, $x, $y); }
+  | term[x] "≤"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, less_or_equal_oprec, $x, $y); }
+  | term[x] "≥"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, greater_or_equal_oprec, $x, $y); }
+  | term[x] "≮"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, not_less_oprec, $x, $y); }
+  | term[x] "≯"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, not_greater_oprec, $x, $y); }
+  | term[x] "≰"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, not_less_or_equal_oprec, $x, $y); }
+  | term[x] "≱"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, not_greater_or_equal_oprec, $x, $y); }
   /* Set predicates. */
-  | term[x] "∈"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, in_oprec, $x.object, $y.object); }
-  | term[x] "∉"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, not_in_oprec, $x.object, $y.object); }
-  | term[x] "⊆"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, subset_oprec, $x.object, $y.object); }
-  | term[x] "⊊"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, proper_subset_oprec, $x.object, $y.object); }
-  | term[x] "⊇"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, superset_oprec, $x.object, $y.object); }
-  | term[x] "⊋"[a] term[y] { $$.object = ref<structure>(make, $a.text, structure::predicate, 0_ml, structure::infix, proper_superset_oprec, $x.object, $y.object); }
+  | term[x] "∈"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, in_oprec, $x, $y); }
+  | term[x] "∉"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, not_in_oprec, $x, $y); }
+  | term[x] "⊆"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, subset_oprec, $x, $y); }
+  | term[x] "⊊"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, proper_subset_oprec, $x, $y); }
+  | term[x] "⊇"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, superset_oprec, $x, $y); }
+  | term[x] "⊋"[a] term[y] { $$ = val<structure>(make, $a, structure::predicate, 0_ml, structure::infix, proper_superset_oprec, $x, $y); }
   | "Set" { symbol_table.push_level(false); bound_variable_type = database_parser::token::is_set_variable; }
     "₍" is_set_variable[x] "₎" { bound_variable_type = free_variable_context; }
      simple_formula[y] {
       symbol_table.pop_level();
-      $$.object = ref<bound_formula>(make,
-        ref<variable>($x.object), ref<formula>($y.object), bound_formula::is_set_);
+      $$ = val<bound_formula>(make,
+        val<variable>($x), val<formula>($y), bound_formula::is_set_);
     }
 ;
 
 
 predicate_expression:
     predicate_identifier[x] tuple[y] {
-      $$.object = ref<structure>(make, ref<formula>($x.object), ref<formula>($y.object),
+      $$ = val<structure>(make, val<formula>($x), val<formula>($y),
         structure::predicate, 0_ml, structure::postargument, precedence_t());
     }
 ;
 
 
 predicate_identifier:
-    predicate_constant[x] { $$.object = $x.object;  }
-  | predicate_variable[x] { $$.object = $x.object;  }
+    predicate_constant[x] { $$ = $x;  }
+  | predicate_variable[x] { $$ = $x;  }
 ;
 
 
 optional_superscript_natural_number_value:
-    %empty { $$.object = ref<mli::integer>(make); $$.text = ""; }
+    %empty {}
   | superscript_natural_number_value
 ;
 
 /*
 optional_subscript_natural_number_value:
-    %empty { $$.object = ref<mli::integer>(make); $$.text = ""; }
+    %empty { $$ = val<integer>(make); }
   | subscript_natural_number_value
 ;
 */
@@ -2134,100 +2267,134 @@ optional_subscript_natural_number_value:
     /* Logic */
 logic_formula:
     "¬"[a] optional_superscript_natural_number_value[k] object_formula[x] {
-      size_type k = (size_type)ref_cast<integer&>($k.object);
+      size_type k = (size_type)$k;
 
-      $$.object = ref<structure>(make, $a.text, structure::logic, metalevel_t(k),
-        structure::prefix, logical_not_oprec, $x.object);
+      $$ = val<structure>(make, $a, structure::logic, metalevel_t(k),
+        structure::prefix, logical_not_oprec, $x);
     }
   | object_formula[x] "∨"[a] optional_superscript_natural_number_value[k] object_formula[y] {
-      size_type k = (size_type)ref_cast<integer&>($k.object);
+      size_type k = (size_type)$k;
 
-      $$.object = ref<structure>(make, $a.text, structure::logic, metalevel_t(k),
-        structure::infix, logical_or_oprec, $x.object, $y.object);
+      $$ = val<structure>(make, $a, structure::logic, metalevel_t(k),
+        structure::infix, logical_or_oprec, $x, $y);
     }
   | object_formula[x] "∧"[a] optional_superscript_natural_number_value[k] object_formula[y] {
-      size_type k = (size_type)ref_cast<integer&>($k.object);
+      size_type k = (size_type)$k;
 
-      $$.object = ref<structure>(make, $a.text, structure::logic, metalevel_t(k),
-        structure::infix, logical_and_oprec, $x.object, $y.object);
+      $$ = val<structure>(make, $a, structure::logic, metalevel_t(k),
+        structure::infix, logical_and_oprec, $x, $y);
     }
   | object_formula[x] "⇒"[a] optional_superscript_natural_number_value[k] object_formula[y] {
-      size_type k = (size_type)ref_cast<integer&>($k.object);
+      size_type k = (size_type)$k;
 
-      $$.object = ref<structure>(make, $a.text, structure::logic, metalevel_t(k),
-        structure::infix, implies_oprec, $x.object, $y.object);
+      $$ = val<structure>(make, $a, structure::logic, metalevel_t(k),
+        structure::infix, implies_oprec, $x, $y);
     }
   | object_formula[x] "⇐"[a] optional_superscript_natural_number_value[k] object_formula[y] {
-      size_type k = (size_type)ref_cast<integer&>($k.object);
+      size_type k = (size_type)$k;
 
-      $$.object = ref<structure>(make, $a.text, structure::logic, metalevel_t(k),
-        structure::infix, impliedby_oprec, $x.object, $y.object);
+      $$ = val<structure>(make, $a, structure::logic, metalevel_t(k),
+        structure::infix, impliedby_oprec, $x, $y);
     }
   | object_formula[x] "⇔"[a] optional_superscript_natural_number_value[k] object_formula[y] {
-      size_type k = (size_type)ref_cast<integer&>($k.object);
+      size_type k = (size_type)$k;
 
-      $$.object = ref<structure>(make, $a.text, structure::logic, metalevel_t(k),
-        structure::infix, equivalent_oprec, $x.object, $y.object);
+      $$ = val<structure>(make, $a, structure::logic, metalevel_t(k),
+        structure::infix, equivalent_oprec, $x, $y);
     }
-  | prefix_logic_formula[x] { $$.object = $x.object;  }
+  | prefix_logic_formula[x] { $$ = $x;  }
 ;
 
 
 prefix_logic_formula:
-    prefix_formula_variable[x] { $$.object = $x.object; }
+    prefix_formula_variable[x] { $$ = $x; }
   | prefix_not_key[a] prefix_logic_formula[x] {
-      $$.object = ref<structure>(make, "¬", structure::logic, 0_ml,
-        structure::prefix, logical_not_oprec, $x.object);
+      $$ = val<structure>(make, "¬", structure::logic, 0_ml,
+        structure::prefix, logical_not_oprec, $x);
     }
   | prefix_or_key[a] prefix_logic_formula[x] prefix_logic_formula[y] {
-      $$.object = ref<structure>(make, "∨", structure::logic, 0_ml,
-        structure::infix, logical_or_oprec, $x.object, $y.object);
+      $$ = val<structure>(make, "∨", structure::logic, 0_ml,
+        structure::infix, logical_or_oprec, $x, $y);
     }
   | prefix_and_key[a] prefix_logic_formula[x] prefix_logic_formula[y] {
-      $$.object = ref<structure>(make, "∧", structure::logic, 0_ml,
-        structure::infix, logical_and_oprec, $x.object, $y.object);
+      $$ = val<structure>(make, "∧", structure::logic, 0_ml,
+        structure::infix, logical_and_oprec, $x, $y);
     }
   | prefix_implies_key[a] prefix_logic_formula[x] prefix_logic_formula[y] {
-      $$.object = ref<structure>(make, "⇒", structure::logic, 0_ml,
-        structure::infix, implies_oprec, $x.object, $y.object);
+      $$ = val<structure>(make, "⇒", structure::logic, 0_ml,
+        structure::infix, implies_oprec, $x, $y);
     }
   | prefix_equivalent_key[a] prefix_logic_formula[x] prefix_logic_formula[y] {
-      $$.object = ref<structure>(make, "⇔", structure::logic, 0_ml,
-        structure::infix, equivalent_oprec, $x.object, $y.object);
+      $$ = val<structure>(make, "⇔", structure::logic, 0_ml,
+        structure::infix, equivalent_oprec, $x, $y);
  }
 ;
 
 
 quantizer_declaration:
-    quantized_variable_list[x] { $$.object = $x.object; }
+    quantized_variable_list[x] { $$ = $x; }
 ;
 
 quantized_variable_list:
-    all_variable_list[x] { $$.object = $x.object; }
-  | exist_variable_list[x] { $$.object = $x.object; }
+    all_variable_list[x] { $$ = $x; }
+  | exist_variable_list[x] { $$ = $x; }
 ;
 
 
 all_variable_list:
-    "∀" all_identifier_list[x] { $$.object = $x.object; }
+    "∀" exclusion_set[vs] all_identifier_list[x] {
+      auto bfp = dyn_cast<bound_formula*>($vs);
+      if (bfp != nullptr) {
+        variable_list& vsr = dyn_cast<variable_list&>($x);
+        vsr.excluded1_.insert(bfp->excluded1_.begin(), bfp->excluded1_.end());
+      }
+      $$ = $x;
+    }
 ;
 
 
 exist_variable_list:
-    "∃" exist_identifier_list[x] { $$.object = $x.object; }
+    "∃" exclusion_set[vs] exist_identifier_list[x] {
+      auto bfp = dyn_cast<bound_formula*>($vs);
+      if (bfp != nullptr) {
+        variable_list& vsr = dyn_cast<variable_list&>($x);
+        vsr.excluded1_.insert(bfp->excluded1_.begin(), bfp->excluded1_.end());
+      }
+      $$ = $x;
+    }
 ;
+
+
+exclusion_set:
+    %empty {}
+  | "ₓ" { bound_variable_type = free_variable_context; }
+    "₍" exclusion_list[vs] "₎" {
+      bound_variable_type = database_parser::token::exist_variable;
+      $$ = $vs;
+    }
+;
+
+exclusion_list:
+    object_variable[x] { val<bound_formula> vr(make); vr->excluded1_.insert($x); $$ = vr; }
+  | exclusion_list[vs] object_variable [x] {
+      val<bound_formula> vr = $vs;
+      vr->excluded1_.insert($x);
+      $$ = vr;
+    }
+;
+
 
 
 all_identifier_list:
     all_variable[x] {
       bound_variable_type = free_variable_context;
-      $$.object = ref<variable_list>(make, ref<variable>($x.object), bound_formula::all_);
+      $$ = val<variable_list>(make, val<variable>($x), bound_formula::all_);
     }
   | all_identifier_list[x] { bound_variable_type = token::all_variable; }
       "," all_variable[y] {
       bound_variable_type = free_variable_context;
-      $$.object = $x.object;
-      ref_cast<variable_list&>($$.object).push_back(ref<variable>($y.object), bound_formula::all_);
+      $$ = $x;
+      dyn_cast<variable_list&>($$).push_back(val<variable>($y), bound_formula::all_);
     }
 ;
 
@@ -2235,177 +2402,177 @@ all_identifier_list:
 exist_identifier_list:
     exist_variable[x] {
       bound_variable_type = free_variable_context;
-      $$.object = ref<variable_list>(make, ref<variable>($x.object), bound_formula::exist_);
+      $$ = val<variable_list>(make, val<variable>($x), bound_formula::exist_);
     }
   | exist_identifier_list[x] { bound_variable_type = database_parser::token::exist_variable; }
       "," exist_variable[y] {
       bound_variable_type = free_variable_context;
-      $$.object = $x.object;
-      ref_cast<variable_list&>($$.object).push_back(ref<variable>($y.object), bound_formula::exist_);
+      $$ = $x;
+      dyn_cast<variable_list&>($$).push_back(val<variable>($y), bound_formula::exist_);
     }
 ;
 
 
 // Specifying domain 𝒙 ∈ 𝑆 for binders:
 optional_in_term:
-    %empty { $$.object = ref<formula>(make); }
-  | "∈" term[s] { $$.object = $s.object; }
+    %empty { $$ = val<formula>(make); }
+  | "∈" term[s] { $$ = $s; }
 ;
 
 
     /* Terms */
 
 tuple:
-    "(" tuple_body[x] ")" { $$.object = $x.object; }
+    "(" tuple_body[x] ")" { $$ = $x; }
 ;
 
 
 tuple_body:
     term[x] {
-      ref<sequence> vr(make, sequence::tuple);
-      $$.object = vr;
-      vr->push_back(ref<formula>($x.object));
+      ref0<sequence> vr(make, sequence::tuple);
+      $$ = vr;
+      vr->push_back(val<formula>($x));
     }
   | tuple_body[x] "," term[y] {
-      $$.object = $x.object;
-      sequence& vr = ref_cast<sequence&>($$.object);
-      vr.push_back(ref<formula>($y.object));
+      $$ = $x;
+      sequence& vr = dyn_cast<sequence&>($$);
+      vr.push_back(val<formula>($y));
     }
 ;
 
 
 term:
-    simple_term[x] { $$.object = $x.object; }
-  | function_term[x] { $$.object = $x.object; }
+    simple_term[x] { $$ = $x; }
+  | function_term[x] { $$ = $x; }
   | simple_term[x] term_substitution_sequence[y] {
-      $$.object = ref<substitution_formula>(make, ref<substitution>($y.object), ref<formula>($x.object));
+      $$ = val<substitution_formula>(make, val<substitution>($y), val<formula>($x));
     }
-  | set_term[x] { $$.object = $x.object; }
+  | set_term[x] { $$ = $x; }
 ;
 
 
 simple_term:
-    term_constant[x]   { $$.object = $x.object; }
-  | "natural number value"[x] { $$.object = $x.object; }
-  | "integer value"[x] { $$.object = $x.object; }
-  | term_identifier[x] { $$.object = $x.object; }
-  | "(" term[x] ")"    { $$.object = $x.object; }
+    term_constant[x]   { $$ = $x; }
+  | "natural number value"[x] { $$ = val<integer>(make, $x.second); }
+  | "integer value"[x] { $$ = val<integer>(make, $x); }
+  | term_identifier[x] { $$ = $x; }
+  | "(" term[x] ")"    { $$ = $x; }
 ;
 
 
 term_identifier:
     object_variable[x] variable_exclusion_set[vs]   {
-      ref<variable> xr = $x.object;
-      ref<variable> vr = $vs.object;
+      val<variable> xr = $x;
+      val<variable> vr = $vs;
       xr->excluded_.insert(vr->excluded_.begin(), vr->excluded_.end());
-      $$.object = $x.object;
+      $$ = xr;
     }
-  | function_variable[x]  { $$.object = $x.object; }
-  | function_map_variable[x]  { $$.object = $x.object; }
-  | all_variable[x]       { $$.object = $x.object; }
-  | exist_variable[x]     { $$.object = $x.object; }
-  | is_set_variable[x]    { $$.object = $x.object; }
-  | set_variable[x]       { $$.object = $x.object; }
-  | implicit_set_variable[x] { $$.object = $x.object; }
+  | function_variable[x]  { $$ = $x; }
+  | function_map_variable[x]  { $$ = $x; }
+  | all_variable[x]       { $$ = $x; }
+  | exist_variable[x]     { $$ = $x; }
+  | is_set_variable[x]    { $$ = $x; }
+  | set_variable[x]       { $$ = $x; }
+  | implicit_set_variable[x] { $$ = $x; }
 ;
 
 
 variable_exclusion_set:
-    %empty { $$.object = ref<variable>(make);  }
-  | "ₓ" "₍" variable_exclusion_list[vs] "₎" { $$.object = $vs.object; }
+    %empty { $$ = val<variable>(make);  }
+  | "ₓ" "₍" variable_exclusion_list[vs] "₎" { $$ = $vs; }
 ;
 
 
 variable_exclusion_list:
-    bound_variable[x] { ref<variable> vr(make); vr->excluded_.insert($x.object); $$.object = vr; }
+    bound_variable[x] { val<variable> vr(make); vr->excluded_.insert($x); $$ = vr; }
   | variable_exclusion_list[vs] bound_variable [x] {
-      ref<variable> vr = $vs.object;
-      vr->excluded_.insert($x.object);
-      $$.object = vr;
+      val<variable> vr = $vs;
+      vr->excluded_.insert($x);
+      $$ = vr;
     }
 ;
 
 
 bound_variable:
-    all_variable[x]       { $$.object = $x.object; }
-  | exist_variable[x]     { $$.object = $x.object; }
-  | is_set_variable[x]    { $$.object = $x.object; }
-  | set_variable[x]       { $$.object = $x.object; }
-  | implicit_set_variable[x] { $$.object = $x.object; }
+    all_variable[x]       { $$ = $x; }
+  | exist_variable[x]     { $$ = $x; }
+  | is_set_variable[x]    { $$ = $x; }
+  | set_variable[x]       { $$ = $x; }
+  | implicit_set_variable[x] { $$ = $x; }
 ;
 
 
 function_term:
     function_term_identifier[x] tuple[y] {
-      $$.object = ref<structure>(make, ref<formula>($x.object), ref<formula>($y.object),
+      $$ = val<structure>(make, val<formula>($x), val<formula>($y),
         structure::function, 0_ml, structure::postargument, precedence_t()); }
-  | term_function_application[x] { $$.object = $x.object; }
+  | term_function_application[x] { $$ = $x; }
   | term[x] "!"[a] {
-      $$.object = ref<structure>(make, $a.text, structure::function, 0_ml,
-        structure::postfix, factorial_oprec, $x.object);
+      $$ = val<structure>(make, $a, structure::function, 0_ml,
+        structure::postfix, factorial_oprec, $x);
     }
-  | term[x] "+"[a] term[y] { // $$.object = ref<integer_addition>(make, ref<formula>($x.object), ref<formula>($y.object));
-      $$.object = ref<structure>(make, $a.text, structure::function, 0_ml,
-        structure::infix, plus_oprec, $x.object, $y.object);
+  | term[x] "+"[a] term[y] { // $$ = val<integer_addition>(make, val<formula>($x), val<formula>($y));
+      $$ = val<structure>(make, $a, structure::function, 0_ml,
+        structure::infix, plus_oprec, $x, $y);
     }
-  | term[x] "-"[a] term[y] { // $$.object = ref<integer_addition>(make, ref<formula>($x.object), ref<integer_negative>(make, ref<formula>($y.object)));
-      $$.object = ref<structure>(make, $a.text, structure::function, 0_ml,
-        structure::infix, minus_oprec, $x.object, $y.object);
+  | term[x] "-"[a] term[y] { // $$ = val<integer_addition>(make, val<formula>($x), val<integer_negative>(make, val<formula>($y)));
+      $$ = val<structure>(make, $a, structure::function, 0_ml,
+        structure::infix, minus_oprec, $x, $y);
     }
-  | "-"[a] term[x]  %prec unary_minus { // $$.object = ref<integer_negative>(make, ref<formula>($x.object)); }
-      $$.object = ref<structure>(make, $a.text, structure::function, 0_ml,
-        structure::prefix, unary_minus_oprec, $x.object);
+  | "-"[a] term[x]  %prec unary_minus { // $$ = val<integer_negative>(make, val<formula>($x)); }
+      $$ = val<structure>(make, $a, structure::function, 0_ml,
+        structure::prefix, unary_minus_oprec, $x);
     }
   | term[x] "⋅"[a] term[y] {
-      $$.object = ref<structure>(make, $a.text, structure::function, 0_ml,
-        structure::infix, mult_oprec, $x.object, $y.object);
+      $$ = val<structure>(make, $a, structure::function, 0_ml,
+        structure::infix, mult_oprec, $x, $y);
     }
   | term[x] "/"[a] term[y] {
-      $$.object = ref<structure>(make, $a.text, structure::function, 0_ml,
-        structure::infix, divide_oprec, $x.object, $y.object);
+      $$ = val<structure>(make, $a, structure::function, 0_ml,
+        structure::infix, divide_oprec, $x, $y);
     }
 ;
 
 
 set_term:
-    "{" "}" { $$.object = ref<sequence>(make, sequence::member_list_set); }
-  | "∅" { $$.object = ref<constant>(make, "∅", constant::object); }
-  | "{" set_member_list[x] "}" { $$.object = $x.object; }
+    "{" "}" { $$ = ref0<sequence>(make, sequence::member_list_set); }
+  | "∅" { $$ = val<constant>(make, "∅", constant::object); }
+  | "{" set_member_list[x] "}" { $$ = $x; }
   | "{" set_variable_definition[x] optional_in_term[s] "|" object_formula[y] "}" {
       symbol_table.pop_level();
-      $$.object = ref<bound_formula>(make, $x.object, $s.object, $y.object, bound_formula::set_);
+      $$ = val<bound_formula>(make, $x, $s, $y, bound_formula::set_);
     }
   | "{" "₍" implicit_set_identifier_list[x] optional_in_term[s] "₎" term[y] "|" object_formula[z] "}" {
       symbol_table.pop_level();
-      variable_list& vs = ref_cast<variable_list&>($x.object);
-      ref<sequence> sp(make, ref<formula>($y.object), sequence::implicit_set);
-      sp->push_back(ref<formula>($z.object));
-      $$.object =
-        ref<bound_formula>(make, vs, $s.object, ref<formula>(sp));
+      variable_list& vs = dyn_cast<variable_list&>($x);
+      ref0<sequence> sp(make, val<formula>($y), sequence::implicit_set);
+      sp->push_back(val<formula>($z));
+      $$ =
+        val<bound_formula>(make, vs, $s, val<formula>(sp));
     }
   | term[x] "∪"[a] term[y] {
-      $$.object = ref<structure>(make, $a.text, structure::function, 0_ml,
-        structure::infix, set_union_oprec, $x.object, $y.object);
+      $$ = val<structure>(make, $a, structure::function, 0_ml,
+        structure::infix, set_union_oprec, $x, $y);
     }
   | term[x] "∩"[a] term[y] {
-      $$.object = ref<structure>(make, $a.text, structure::function, 0_ml,
-        structure::infix, set_intersection_oprec, $x.object, $y.object);
+      $$ = val<structure>(make, $a, structure::function, 0_ml,
+        structure::infix, set_intersection_oprec, $x, $y);
     }
   | term[x] "∖"[a] term[y] {
-      $$.object = ref<structure>(make, $a.text, structure::function, 0_ml,
-        structure::infix, set_difference_oprec, $x.object, $y.object);
+      $$ = val<structure>(make, $a, structure::function, 0_ml,
+        structure::infix, set_difference_oprec, $x, $y);
     }
   | "∁"[a] term[x] {
-      $$.object = ref<structure>(make, $a.text, structure::function, 0_ml,
-        structure::prefix, set_complement_oprec, $x.object);
+      $$ = val<structure>(make, $a, structure::function, 0_ml,
+        structure::prefix, set_complement_oprec, $x);
     }
   | "⋃"[a] term[x] { /* prefix union operator  */
-      $$.object = ref<structure>(make, $a.text, structure::function, 0_ml,
-        structure::prefix, set_union_operator_oprec, $x.object);
+      $$ = val<structure>(make, $a, structure::function, 0_ml,
+        structure::prefix, set_union_operator_oprec, $x);
     }
   | "∩"[a] term[x] { /* prefix intersection operator  */
-      $$.object = ref<structure>(make, $a.text, structure::function, 0_ml,
-        structure::prefix, set_intersection_operator_oprec, $x.object);
+      $$ = val<structure>(make, $a, structure::function, 0_ml,
+        structure::prefix, set_intersection_operator_oprec, $x);
     }
 ;
 
@@ -2414,33 +2581,33 @@ implicit_set_identifier_list:
     { symbol_table.push_level(false); bound_variable_type = database_parser::token::is_set_variable; }
     is_set_variable[x] {
       bound_variable_type = free_variable_context;
-      $$.object = ref<variable_list>(make, ref<variable>($x.object), bound_formula::implicit_set);
+      $$ = val<variable_list>(make, val<variable>($x), bound_formula::implicit_set);
     }
   | implicit_set_identifier_list[x] { bound_variable_type = database_parser::token::is_set_variable; }
       "," is_set_variable[y] {
       bound_variable_type = free_variable_context;
-      $$.object = $x.object;
-      ref_cast<variable_list&>($$.object).push_back(ref<variable>($y.object), bound_formula::implicit_set);
+      $$ = $x;
+      dyn_cast<variable_list&>($$).push_back(val<variable>($y), bound_formula::implicit_set);
     }
 ;
 
 
 set_member_list:
     term[x] {
-      ref<sequence> vr(make, sequence::member_list_set);
-      $$.object = vr;
-      vr->push_back(ref<formula>($x.object)); }
+      ref0<sequence> vr(make, sequence::member_list_set);
+      $$ = vr;
+      vr->push_back(val<formula>($x)); }
   | set_member_list[x] "," term[y] {
-      $$.object = $x.object;
-      sequence& vr = ref_cast<sequence&>($$.object);
-      vr.push_back(ref<formula>($y.object));
+      $$ = $x;
+      sequence& vr = dyn_cast<sequence&>($$);
+      vr.push_back(val<formula>($y));
     }
 ;
 
 
 function_term_identifier:
-    function_constant[x] { $$.object = $x.object; }
-  | function_variable[x] { $$.object = $x.object; }
+    function_constant[x] { $$ = $x; }
+  | function_variable[x] { $$ = $x; }
 ;
 
 
@@ -2456,9 +2623,9 @@ namespace mli {
 
 
   void theory_database::read(std::istream& is) {
-    mli::database_lexer lex(is, std::cout);
+    database_lexer lex(is, std::cout);
 
-    mli::database_parser p(*this, lex);
+    database_parser p(*this, lex);
 
     if (p.parse() != 0)
       is.setstate(std::ios::failbit);

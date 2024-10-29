@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -127,8 +127,8 @@ namespace mli {
 
     static constexpr precedence_type precedence_default = std::numeric_limits<precedence_type>::max();
 
-    typedef std::list<precedence_type> precedence_list;
-    typedef precedence_list::iterator predecence_iterator;
+    using precedence_list = std::list<precedence_type>;
+    using predecence_iterator = precedence_list::iterator;
 
     // Helper containers to compute the precedence numbers:
     precedence_list ps_;     // List of precedences.

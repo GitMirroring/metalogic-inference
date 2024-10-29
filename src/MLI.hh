@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -42,8 +42,6 @@
 #include "config.h"
 #include "pragmas.hh"
 
-#include "gc.hh"
-
 #include "exception.hh"
 #include "kleenean.hh"
 #include "polymorphy.hh"
@@ -86,9 +84,6 @@
 // Proved inferences reduced to the empty formula, or removed.
 #define SIMPLIFY_PROVED_INFERENCE 0
 
-// Use val<A>.
-#define USE_VAL 1
-
 
 // Optimization in 'split': If t and *this unify, then *this can be replaced by x.
 #define SPLIT_CONTAINER 0
@@ -105,8 +100,8 @@ namespace mli {
   // one thread is created. Default -1, i.e., the hardware_concurrency value.
   extern long thread_count;
 
-  typedef std::ptrdiff_t difference_type;
-  typedef std::size_t size_type;
+  using difference_type = std::ptrdiff_t;
+  using size_type = std::size_t;
 
   extern size_type level_max;
   extern size_type sublevel_max;
@@ -141,8 +136,8 @@ namespace mli {
   constexpr metalevel_t operator "" _ml(unsigned long long k) { return metalevel_t(k); }
 
 
-  typedef size_type bind;    // Numbering for variable binding.
-  typedef size_type depth;   // Depth of nested proofs of statement, starting a 0.
+  using bind = size_type;    // Numbering for variable binding.
+  using depth = size_type;   // Depth of nested proofs of statement, starting a 0.
 
 
   // Class for renumbering variables according to inference tree level (distance from root
@@ -187,7 +182,7 @@ namespace mli {
 
   // Degree of definition used in the unificiation of a formula in s formula sequence:
   // Each use, gets a new, lowest number assigned by class degree_pool (in definition::unify).
-  typedef unsigned degree;
+  using degree = unsigned;
 
   // Class for selecting the smallest degree not in use in the current instantiation.
   class degree_pool {
@@ -310,16 +305,16 @@ namespace mli {
 
   // Type for indicating the set of varied variables of an inference, one set
   // for each conclusion formula.
-  using varied_type = std::map<size_type, std::map<size_type, std::set<ref<variable>>>>;
+  using varied_type = std::map<size_type, std::map<size_type, std::set<val<variable>>>>;
 
   // Type for indicating the set of varied variables of an inference,
   // having only one conclusion formula.
-  using varied_premise_type = std::map<size_type, std::set<ref<variable>>>;
+  using varied_premise_type = std::map<size_type, std::set<val<variable>>>;
 
 
   // The root class of the dynamic polymorphic hierarchy.
   class unit {
-    typedef unsigned long count_type;
+    using count_type = unsigned long;
 
   public:
     // If other constructors are defined, the default constructor must be
@@ -349,8 +344,9 @@ namespace mli {
     // Macros simplifying virtual copy and move operators, usage, in class A declaration:
     //   new_copy(A);
     //   new_move(A);
-    #define new_copy(A)  virtual A* new_p(size_t k = 0) const& { return new (shared, k) A(*this); }
-    #define new_move(A)  virtual A* new_p(size_t k = 0) && { return new (shared, k) A(std::move(*this)); }
+    // Example of usage: val<A>::operator=(const val& x).
+    #define new_copy(A)  virtual A* new_p(void* p = nullptr) const& { return (p == nullptr)? new A(*this) : new(p) A(*this); }
+    #define new_move(A)  virtual A* new_p(void* p = nullptr) && { return (p == nullptr)? new A(std::move(*this)) : new(p) A(std::move(*this)); }
 
     new_copy(unit);
     new_move(unit);
@@ -465,13 +461,13 @@ namespace mli {
 
   // Used in parsing to assign bind numbers to variables with syntactically
   // same name, unique to the binder they belong to.
-  typedef table_stack<std::string, ref<variable>> name_variable_table;
+  using name_variable_table = table_stack<std::string, val<variable>>;
 
   // Used to keep track of binder variables for explicit substitution free-for checks.
-  using variable_table = set_stack<ref<variable>>;
+  using variable_table = set_stack<val<variable>>;
 
   // Used to add variable exception sets.
-  using variable_map = std::map<ref<variable>, std::set<ref<variable>>>;
+  using variable_map = std::map<val<variable>, std::set<val<variable>>>;
 
 
   // Meta and public unit formulas.
@@ -489,23 +485,23 @@ namespace mli {
     virtual type get_formula_type() const { return none; }
 
     // Variable renumbering:
-    ref<formula> set_bind(); // Set numbering of binders and their associated bound variable occurrences.
+    val<formula> set_bind(); // Set numbering of binders and their associated bound variable occurrences.
     virtual void set_bind(bind&, name_variable_table&) {}
 
     // Return a copy with relabeled variables; if level.top = 0, a copy without changing the labels:
-    virtual ref<formula> rename(level = 0, degree = 0) const { return this; }
+    virtual val<formula> rename(level = 0, degree = 0) const { return *this; }
 
     // Return a copy with exception set variables added to the variables, as indicated by the map:
-    virtual ref<formula> add_exception_set(variable_map&) const { return this; }
+    virtual val<formula> add_exception_set(variable_map&) const { return *this; }
 
     // Statement name access; empty string if not defined:
     virtual std::string name() const { return {}; }
-    virtual ref<formula> get_formula() const { return this; }
-    virtual ref<formula> get_formula(size_type) const { return this; }
 
+    virtual val<formula> get_formula() const { return *this; }
+    virtual val<formula> get_formula(size_type) const { return *this; }
 
     // Free variables:
-    virtual kleenean has(const ref<variable>&, occurrence) const { return false; }
+    virtual kleenean has(const val<variable>&, occurrence) const { return false; }
 
     // Find all variables of the category indicated by the occurrence argument.
     // The second argument collects the bound variables (needed for correct computation
@@ -513,42 +509,42 @@ namespace mli {
     // The bool& argument will be set to true if the search encounters a metavariable
     // that, if later substituted, may contain more variables of the search type.
     // This is needed by free_for() which will then be undefined.
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const {}
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const {}
 
     // The bool value as a return instead of as an argument:
-    bool contains(std::set<ref<variable>>& s, occurrence oc) const;
+    bool contains(std::set<val<variable>>& s, occurrence oc) const;
 
     // Compute f free for x in *this, i.e., true if no free occurance of x in *this
     // is in the scope of a binder β y, where y is free in f; otherwise false. Thus,
     // if true, substituting f for x in *this does not cause any free variables of
     // f to become bound.
-    kleenean free_for(const ref<formula>& f, const ref<variable>& x) const;
+    kleenean free_for(const val<formula>& f, const val<variable>& x) const;
 
     // Implementation helper function:
     //   free_for(f, x, s, bs)
     // s = set of variables that cannot become bound at free occurance of x,
     // bs = bound variables currently in scope.
-    virtual kleenean free_for(const ref<formula>&, const ref<variable>&,
-      std::set<ref<variable>>&, std::list<ref<variable>>&) const { return true; }
+    virtual kleenean free_for(const val<formula>&, const val<variable>&,
+      std::set<val<variable>>&, std::list<val<variable>>&) const { return true; }
 
 
     // Make variables unspecializable during proof (ensuring generality):
     virtual void unspecialize(depth, bool) {}
-    virtual void unspecialize(std::set<ref<variable>>& ps, bool b) {}
+    virtual void unspecialize(std::set<val<variable>>& ps, bool b) {}
 
     // Substitution:
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const;
 
 
     // Add y as a goal to *this, merging with inferences as necessary.
     // An empty formula has no goals, so x is the only new goal:
-    virtual ref<formula> add_goal(const ref<formula>& x) const { return x; }
+    virtual val<formula> add_goal(const val<formula>& x) const { return x; }
 
 
     // Add y as a premise to *this, creating inferences as necessary.
     // An empty formula is proved, so needs no premises:
-    virtual ref<formula> add_premise(const ref<formula>& x, metalevel_t,
-      const varied_type& vs, const varied_type& vrs) const { return this; }
+    virtual val<formula> add_premise(const val<formula>& x, metalevel_t,
+      const varied_type& vs, const varied_type& vrs) const { return *this; }
 
     // Metalevel:
     // 0  object formula 0
@@ -557,7 +553,7 @@ namespace mli {
     virtual metalevel_t metalevel() const { return 0_ml; }
 
 
-    virtual bool is_metasubset(const ref<formula> x) const { return true; }
+    virtual bool is_metasubset(const val<formula> x) const { return true; }
 
 
     // Return metaand resp. metaor behavior, which is reversed relatively a goal when a
@@ -579,8 +575,8 @@ namespace mli {
     // or its head B or body A to be extracted.
     virtual bool inference_mode() const { return false; }
 
-    virtual ref<formula> head() const { return this; }
-    virtual ref<formula> body() const { return {}; }
+    virtual val<formula> head() const { return *this; }
+    virtual val<formula> body() const { return {}; }
 
 
     // Defining axioms and rules for traditional labeling of formal theory statements:
@@ -611,13 +607,13 @@ namespace mli {
     virtual bool is_specializable_formula_variable() const { return false; }
 
     // Unification:
-    virtual alternatives unify(unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const;
+    virtual alternatives unify(unify_environment tx, const val<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const;
 
 
     // Unifier with both arguments u(x, y):
     // For objects A that change the behavior of the unifier u_A(x, y), rather than
     // participating in the unification itself. The default is though calling x->unify(y).
-    virtual alternatives unify(const ref<formula>& x, unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const;
+    virtual alternatives unify(const val<formula>& x, unify_environment tx, const val<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const;
 
 
     // Find <formula, subformulas> pairs (g, fs), where fs = v_1, ..., v_k is such that
@@ -627,10 +623,10 @@ namespace mli {
     // This is used when finding all substitution solutions to unify(g[x↦t], f) where g is unknown:
     // Replacing x with t in g creates an expression that unifies with f, as unify(t, v_1, ..., v_k)
     // is non-empty, and in the rest, f and g are identical.
-    virtual split_formula split(unify_environment, const ref<variable>& x, const ref<formula>& t, unify_environment, database*, level, degree_pool&, direction) const;
+    virtual split_formula split(unify_environment, const val<variable>& x, const val<formula>& t, unify_environment, database*, level, degree_pool&, direction) const;
 
-    friend split_formula split(const ref<formula>& f,
-      const ref<variable>& x, const ref<formula>& t, database*, level lv, degree_pool& sl, direction dr);
+    friend split_formula split(const val<formula>& f,
+      const val<variable>& x, const val<formula>& t, database*, level lv, degree_pool& sl, direction dr);
 
 
     // These are the defaults for empty formulas; for nonempty formulas, see class nonempty_formula:
@@ -656,11 +652,11 @@ namespace mli {
     // Expand nested formula sequences. The argument is the index used to
     // recompute the indices of data such as inference varied variables.
     // The return is a formula sequence.
-    virtual ref<formula> expand(size_type) const;
+    virtual val<formula> expand(size_type) const;
 
     // True if x is a member of *this viewed as a formula sequence.
     // Does not make sense when x is the empty formula.
-    virtual bool has_formula(ref<formula> x) const { return false; }
+    virtual bool has_formula(val<formula> x) const { return false; }
 
     // True when the inference implicit premise should be expanded.
     // An exception is when the database has been specified to not do that,
@@ -692,13 +688,18 @@ namespace mli {
 
 
   // Master unification function mli::unify:
-  alternatives unify(const ref<formula>&, unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction = reduction, expansion = expand);
+  alternatives unify(const val<formula>&, unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction = reduction, expansion = expand);
 
   // Unifying a formula x with a list of formulas ys:
-  alternatives unify(const ref<formula>& x, unify_environment tx, const std::list<ref<formula>>& ys, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr);
+  alternatives unify(const val<formula>& x, unify_environment tx, const std::list<val<formula>>& ys, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr);
+
+  // Unifying a formula x with a list ys of pairs formula and local bound variables:
+  alternatives unify(const val<formula>& x, unify_environment tx,
+    const std::list<std::pair<val<formula>, std::set<val<variable>>>>& ys,
+    unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr);
 
   // Implicit logic unification:
-  alternatives logic_unify(const ref<formula>& x, unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl);
+  alternatives logic_unify(const val<formula>& x, unify_environment tx, const val<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl);
 
 
   // A formula x to be proved x (is a goal), referencing a database dbr of proved statements.
@@ -707,7 +708,7 @@ namespace mli {
   // n = number of solutions to be found; n = 0 ⇔ find all solutions
   // When n solutions have been found the search ends, but additional already found
   // proofs may or may not be reported.
-  proofs prove(const ref<formula>& x, database& dbr, size_type n);
+  proofs prove(const val<formula>& x, database& dbr, size_type n);
 
 
   // Class setting some common defaults for non-empty formulas.
@@ -720,22 +721,22 @@ namespace mli {
 
     bool empty() const override { return false; }
 
-    ref<formula> add_goal(const ref<formula>& x) const override;
+    val<formula> add_goal(const val<formula>& x) const override;
 
-    ref<formula> add_premise(const ref<formula>& x, metalevel_t,
+    val<formula> add_premise(const val<formula>& x, metalevel_t,
       const varied_type& vs, const varied_type& vrs) const override;
 
 
     bool provable() const override { return false; }
 
-    bool is_metasubset(const ref<formula> x) const override;
+    bool is_metasubset(const val<formula> x) const override;
 
     size_type metasize() const override { return 1; }
     size_type formula_sequence_size() const override { return 1; }
 
-    ref<formula> expand(size_type) const override;
+    val<formula> expand(size_type) const override;
 
-    bool has_formula(ref<formula> x) const override { return *x == *this; }
+    bool has_formula(val<formula> x) const override { return *x == *this; }
   };
 
 
@@ -744,11 +745,11 @@ namespace mli {
   class statement : public nonempty_formula {
   public:
     std::string name_;
-    ref<formula> statement_;
+    val<formula> statement_;
 
     statement() = default;
-    statement(const ref<formula>& f) : statement_(f) {}
-    statement(const std::string& nm, const ref<formula>& f) : name_(nm), statement_(f) {}
+    statement(const val<formula>& f) : statement_(f) {}
+    statement(const std::string& nm, const val<formula>& f) : name_(nm), statement_(f) {}
 
     new_copy(statement);
     new_move(statement);
@@ -756,7 +757,7 @@ namespace mli {
 
     formula::type get_formula_type() const override { return formula::meta; }
 
-    virtual ref<formula> get_formula(size_type k) const { return statement_->get_formula(k); }
+    virtual val<formula> get_formula(size_type k) const { return statement_->get_formula(k); }
 
     virtual metalevel_t metalevel() const override { return statement_->metalevel(); }
 
@@ -771,37 +772,37 @@ namespace mli {
     virtual bool inference_mode() const override { return true; }
 #endif
 
-    virtual ref<formula> head() const { return statement_->head(); }
-    virtual ref<formula> body() const { return statement_->body(); }
+    virtual val<formula> head() const { return statement_->head(); }
+    virtual val<formula> body() const { return statement_->body(); }
 
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    virtual alternatives unify(const ref<formula>& x, unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const;
+    virtual alternatives unify(const val<formula>& x, unify_environment tx, const val<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const;
 
 
-    virtual kleenean has(const ref<variable>& v, occurrence oc) const override { return statement_->has(v, oc); }
-    virtual void contains(std::set<ref<variable>>& s, std::set<ref<variable>>& bs, bool& more, occurrence oc) const override { return statement_->contains(s, bs, more, oc); }
+    virtual kleenean has(const val<variable>& v, occurrence oc) const override { return statement_->has(v, oc); }
+    virtual void contains(std::set<val<variable>>& s, std::set<val<variable>>& bs, bool& more, occurrence oc) const override { return statement_->contains(s, bs, more, oc); }
 
-    virtual kleenean free_for(const ref<formula>& f, const ref<variable>& x,
-      std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const override { return statement_->free_for(f, x, s, bs); }
+    virtual kleenean free_for(const val<formula>& f, const val<variable>& x,
+      std::set<val<variable>>& s, std::list<val<variable>>& bs) const override { return statement_->free_for(f, x, s, bs); }
 
     void unspecialize(depth d, bool b) override { statement_->unspecialize(d, b); }
-    void unspecialize(std::set<ref<variable>>& ps, bool b) override { statement_->unspecialize(ps, b); }
+    void unspecialize(std::set<val<variable>>& ps, bool b) override { statement_->unspecialize(ps, b); }
 
-    virtual ref<formula> rename(level = 0, degree = 0) const override;
-    virtual ref<formula> add_exception_set(variable_map&) const override;
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const override;
+    virtual val<formula> rename(level = 0, degree = 0) const override;
+    virtual val<formula> add_exception_set(variable_map&) const override;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const override;
 
     // Variable renumbering:
     virtual void set_bind(bind& b, name_variable_table& vs);
 
-    virtual void declared(std::set<ref<variable>>& vs) const { statement_->contains(vs, occurrence::declared); }
+    virtual void declared(std::set<val<variable>>& vs) const { statement_->contains(vs, occurrence::declared); }
 
 
     // Statement access:
     virtual std::string name() const override { return name_; }
-    virtual ref<formula> get_formula() const override { return statement_; }
+    virtual val<formula> get_formula() const override { return statement_; }
 
     virtual statement_type get_statement_type() const { return no_statement; }
 
@@ -844,7 +845,7 @@ namespace mli {
     size_type index_ = -1;
 
     // The partially substituted components for a formula sequence variable.
-    std::list<ref<formula>> components_;
+    std::list<val<formula>> components_;
 
     // Used to create internal, implicit, variables that semantically cannot
     // clash with user defined variables, like the 𝚪 in inference::unify.
@@ -915,22 +916,22 @@ namespace mli {
     // substitution rule 𝑨 ⊢⁽𝒙⁾ 𝑨[𝒙 ⤇ 𝒕], cf. Kleene p. 101, then they should not
     // have excluded variables. (Term variables admit any substitutions, and
     // must therefore be restricted by metaconditions.)
-    std::set<ref<variable>> excluded_;
+    std::set<val<variable>> excluded_;
 
     // To check that excluded variables are not dropped in unification from the fact,
     // those are recorded in excluded_from_ so that they can be checked as the
     // unified bound variables are substituted.
-    std::set<ref<variable>> excluded_from_;
+    std::set<val<variable>> excluded_from_;
 
 
-    // The free and bound variables belong to the logic, the others
-    // to the metalogic.
+    // A variable type of "atom" holds a logical contant such as 𝕗 or 𝕥, and
+    // in principle, non-Boolean logic other values.
     // The order in the list below cannot be changed, as used in several searches.
     enum type { none_,
       formula_sequence_,
       formula_, predicate_, atom_,
       function_,
-      metaobject_, object_,
+      object_,
       code_
     };
 
@@ -962,7 +963,7 @@ namespace mli {
 
 
     // True iff a substitution of *this may result in an expression containing x:
-    bool may_contain(const ref<variable>& x) const;
+    bool may_contain(const val<variable>& x) const;
 
     // True iff if a variable of type x may be substitued by a variable of type y:
     static bool is_specializable_to(type x, type y);
@@ -975,15 +976,14 @@ namespace mli {
 
     // Variable binding depth in the current context relative the bound variable
     // lookup table. Congurence requires limited variables having the same depth.
-    size_type get_depth(ref<variable_table> vt) const { return vt->depth(this); }
+    size_type get_depth(const variable_table& vt) const { return vt.depth(*this); }
 
     // In an explicit substitution 𝑨[𝑥 ⤇ 𝑓], determines if the variable 𝑥 is
     // a free occurrence locally in 𝑨; 𝑥 may be bound at a higher level.
     // The function substitution_formula::substitute pushes a local level onto
     // the bound variables table.
-    bool is_locally_bound(ref<variable_table> vt) const { return vt->contains_local(this); }
-    bool is_locally_free(ref<variable_table> vt) const { return !vt->contains_local(this); }
-
+    bool is_locally_bound(const variable_table& vt) const { return vt.contains_local(*this); }
+    bool is_locally_free(const variable_table& vt) const { return !vt.contains_local(*this); }
 
     bool is_object() const;
     bool is_formula() const;
@@ -994,23 +994,25 @@ namespace mli {
     virtual formula::type get_formula_type() const override {
       return is_formula()? formula::logic : formula::object; }
 
+#if 0
     bool is_specializable_formula_variable() const override { return type_ == formula_ && !unspecializable_; }
+#endif
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    kleenean occurs_in(const ref<formula>&) const;
-    virtual kleenean has(const ref<variable>&, occurrence) const override;
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const override;
+    kleenean occurs_in(const val<formula>&) const;
+    virtual kleenean has(const val<variable>&, occurrence) const override;
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const override;
 
-    virtual kleenean free_for(const ref<formula>& f, const ref<variable>& x, 
-      std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const override;
+    virtual kleenean free_for(const val<formula>& f, const val<variable>& x, 
+      std::set<val<variable>>& s, std::list<val<variable>>& bs) const override;
 
     void unspecialize(depth, bool) override;
-    void unspecialize(std::set<ref<variable>>&, bool) override;
+    void unspecialize(std::set<val<variable>>&, bool) override;
 
-    virtual ref<formula> rename(level = 0, degree = 0) const override;
-    virtual ref<formula> add_exception_set(variable_map&) const override;
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const override;
+    virtual val<formula> rename(level = 0, degree = 0) const override;
+    virtual val<formula> add_exception_set(variable_map&) const override;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const override;
 
     virtual void set_bind(bind&, name_variable_table&) override;
 
@@ -1032,7 +1034,7 @@ namespace mli {
 
   // Temporary comparison class, disregarding variable unspecialization.
   struct precedes {
-    bool operator()(ref<variable> x, ref<variable> y);
+    bool operator()(val<variable> x, val<variable> y);
   };
 
 
@@ -1072,13 +1074,18 @@ namespace mli {
 
   class unify_environment {
   public:
-    ref<variable_table> table_;     // Bound variables lookup.
+    variable_table table_;     // Bound variables lookup.
+
+    // The bound variables being excluded for the term listed in the binders in the local scope.
+
+    // The key is the term variable, mapped to the set of the bound variables.
+    std::map<val<variable>, std::set<val<variable>>> excluded1_;
 
     target target_ = goal;
     metalevel_t metalevel_;
 
     bool is_premise_ = false;
-    std::set<ref<variable>> premise_variables_; // Premise limited variables.
+    std::set<val<variable>> premise_variables_; // Premise limited variables.
 
     size_type premise_index_ = 0;
     size_type conclusion_index_ = 0;
@@ -1091,17 +1098,17 @@ namespace mli {
 
     unify_environment(const target& t, metalevel_t ml) : target_(t), metalevel_(ml) {}
 
-    unify_environment(ref<variable_table> tbl, const target& t)
+    unify_environment(const variable_table& tbl, const target& t)
      : table_(tbl), target_(t) {}
 
-    void push() { table_->push_level(); }
-    void pop() { table_->pop_level(); }
+    void push() { table_.push_level(); }
+    void pop() { table_.pop_level(); }
 
     constexpr bool is_goal() const { return (target_ == goal); }
     constexpr bool is_fact() const { return (target_ == fact); }
 
     // Recompute varied variables:
-    unify_environment substitute(ref<substitution> s);
+    unify_environment substitute(const val<substitution>& s);
   };
 
 
@@ -1119,17 +1126,17 @@ namespace mli {
 
   class substitute_environment {
   public:
-    ref<variable_table> table_;
+    variable_table table_;
 
     bool is_premise_ = false;
-    std::set<ref<variable>> premise_variables_; // Premise limited variables.
+    std::set<val<variable>> premise_variables_; // Premise limited variables.
 
     size_type premise_index_ = 0;
     size_type conclusion_index_ = 0;
 
     substitute_environment() {}
 
-    substitute_environment(ref<variable_table> tbl) : table_(tbl) {}
+    substitute_environment(const variable_table& tbl) : table_(tbl) {}
 
     substitute_environment(const unify_environment& ue)
      : table_(ue.table_), is_premise_(ue.is_premise_), premise_variables_(ue.premise_variables_),
@@ -1179,20 +1186,20 @@ namespace mli {
     bool is_undefined() const override { return  name == "𝕦"; }
 
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    virtual kleenean has(const ref<variable>&, occurrence) const override { return false; }
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const override {}
+    virtual kleenean has(const val<variable>&, occurrence) const override { return false; }
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const override {}
 
-    virtual kleenean free_for(const ref<formula>&, const ref<variable>&, 
-      std::set<ref<variable>>&, std::list<ref<variable>>&) const override
+    virtual kleenean free_for(const val<formula>&, const val<variable>&, 
+      std::set<val<variable>>&, std::list<val<variable>>&) const override
     { return true; }
 
     void unspecialize(depth, bool) override {}
-    void unspecialize(std::set<ref<variable>>&, bool) override {}
+    void unspecialize(std::set<val<variable>>&, bool) override {}
 
-    virtual ref<formula> rename(level, degree) const override { return this; }
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const override { return this; }
+    virtual val<formula> rename(level, degree) const override { return *this; }
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const override { return *this; }
 
     virtual void set_bind(bind&, name_variable_table&) override {}
 
@@ -1204,12 +1211,12 @@ namespace mli {
 
   class sequence : public nonempty_formula {
   public:
-    typedef std::list<ref<formula>> container_type;
-    typedef container_type::size_type size_type;
-    typedef container_type::iterator iterator;
-    typedef container_type::const_iterator const_iterator;
-    typedef container_type::reverse_iterator reverse_iterator;
-    typedef container_type::const_reverse_iterator const_reverse_iterator;
+    using container_type = std::list<val<formula>>;
+    using size_type = container_type::size_type;
+    using iterator = container_type::iterator;
+    using const_iterator = container_type::const_iterator;
+    using reverse_iterator = container_type::reverse_iterator;
+    using const_reverse_iterator = container_type::const_reverse_iterator;
 
     container_type formulas_;
 
@@ -1238,17 +1245,17 @@ namespace mli {
 
     sequence(type t) : type_(t) {}
 
-    sequence(const ref<formula>& x, type t)
+    sequence(const val<formula>& x, type t)
      : formulas_(1, x), type_(t) {}
 
-    sequence(const ref<formula>& x, const ref<formula>& y, type t)
+    sequence(const val<formula>& x, const val<formula>& y, type t)
      : formulas_(1, x), type_(t) { formulas_.push_back(y); }
 
 
-    sequence(const std::list<ref<formula>>& xs, type t)
+    sequence(const std::list<val<formula>>& xs, type t)
      : formulas_(xs), type_(t) {}
 
-    sequence(type t, std::initializer_list<ref<formula>> xs)
+    sequence(type t, std::initializer_list<val<formula>> xs)
      : formulas_(xs), type_(t) {}
 
 
@@ -1257,32 +1264,32 @@ namespace mli {
     { formulas_.insert(formulas_.end(), y.formulas_.begin(), y.formulas_.end()); }
 
 
-    sequence(const sequence& x, const ref<formula>& y)
+    sequence(const sequence& x, const val<formula>& y)
      : formulas_(x.formulas_), type_(x.type_) { formulas_.push_back(y); }
 
-    sequence(const ref<formula>& x, const sequence& y)
+    sequence(const val<formula>& x, const sequence& y)
      : formulas_(y.formulas_), type_(y.type_) { formulas_.push_front(x); }
 
 
     formula::type get_formula_type() const override;
 
-    void push_back(const ref<formula>& t) { formulas_.push_back(t); }
+    void push_back(const val<formula>& t) { formulas_.push_back(t); }
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
-    virtual split_formula split(unify_environment, const ref<variable>&, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual split_formula split(unify_environment, const val<variable>&, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    virtual kleenean has(const ref<variable>&, occurrence) const override;
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const override;
+    virtual kleenean has(const val<variable>&, occurrence) const override;
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const override;
 
-    virtual kleenean free_for(const ref<formula>& f, const ref<variable>& x,
-      std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const override;
+    virtual kleenean free_for(const val<formula>& f, const val<variable>& x,
+      std::set<val<variable>>& s, std::list<val<variable>>& bs) const override;
 
     void unspecialize(depth, bool) override;
-    void unspecialize(std::set<ref<variable>>&, bool) override;
+    void unspecialize(std::set<val<variable>>&, bool) override;
 
-    virtual ref<formula> rename(level, degree) const override;
-    virtual ref<formula> add_exception_set(variable_map&) const override;
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const override;
+    virtual val<formula> rename(level, degree) const override;
+    virtual val<formula> add_exception_set(variable_map&) const override;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const override;
 
     virtual void set_bind(bind&, name_variable_table&) override;
 
@@ -1292,7 +1299,7 @@ namespace mli {
     virtual void write(std::ostream&, write_style) const override;
 
     // Check if x, y are of type t, and return accordingly a sequence of type t:
-    friend ref<formula> concatenate(const ref<formula>& x, const ref<formula>& y, sequence::type t);
+    friend val<formula> concatenate(const val<formula>& x, const val<formula>& y, sequence::type t);
   };
 
 
@@ -1303,8 +1310,8 @@ namespace mli {
     precedence_t precedence_;
 
   public:
-    ref<formula> atom;     // Name or letter (identifier).
-    ref<formula> argument; // Should be a sequence.
+    val<formula> atom;     // Name or letter (identifier).
+    val<formula> argument; // Should be a sequence.
 
     metalevel_t metalevel_ = 0_ml;
 
@@ -1312,11 +1319,11 @@ namespace mli {
     // predicate  logic value and object argument
     // function   object value and object argument
     enum type { function, predicate, logic };
-    type type_;
+    type type_ = predicate;
 
     // postargument  write argument as is after the atom
     enum style { postargument, prefix, postfix, infix };
-    style style_;
+    style style_ = postargument;
 
 
     static formula::type to_formula_type(type x) {
@@ -1341,22 +1348,28 @@ namespace mli {
       }
     }
 
+    structure() = default;
 
-    structure() : type_(predicate), style_(postargument) {}
+#if 0 // Check if these are needed:
+    structure(const structure&) = default;
+    structure(structure&&) = default;
+    structure& operator=(const structure&) & = default;
+    structure& operator=(structure&&) & = default;
+#endif
 
     new_copy(structure);
     new_move(structure);
 
 
     // Constructor setting the atom and argument as is.
-    structure(const ref<formula>& a, const ref<formula>& arg, type t, metalevel_t ml, style s, precedence_t p)
+    structure(const val<formula>& a, const val<formula>& arg, type t, metalevel_t ml, style s, precedence_t p)
      : atom(a), argument(arg), type_(t), style_(s), precedence_(p), metalevel_(ml) {}
 
 
     // Structure with constant atom (a string, which is its name, and argument a sequence.
-    structure(const std::string& s, type t, metalevel_t ml, style st, precedence_t p, std::initializer_list<ref<formula>> xs)
-     : atom(ref<constant>(make, s, to_constant_type(t))),
-       argument(ref<sequence>(make, (t == logic)? sequence::logic : sequence::tuple, xs)),
+    structure(const std::string& s, type t, metalevel_t ml, style st, precedence_t p, std::initializer_list<val<formula>> xs)
+     : atom(val<constant>(make, s, to_constant_type(t))),
+       argument(ref0<sequence>(make, (t == logic)? sequence::logic : sequence::tuple, xs)),
        type_(t), style_(st), precedence_(p), metalevel_(ml) {}
 
     // Allows variadic templates to be forwarded to the initializer list:
@@ -1365,7 +1378,7 @@ namespace mli {
      : structure(s, t, ml, st, p, {bs...}) {}
 
 
-    void push_back(const ref<formula>&);
+    void push_back(const val<formula>&);
 
     void set(type t) { type_ = t; }
     void set(style s) { style_ = s; }
@@ -1378,7 +1391,7 @@ namespace mli {
     bool is_negation() const override { return *atom == constant("¬", constant::logic_function); }
     bool is_double_negation() const override {
       if (is_negation()) {
-        sequence* sqp = ref_cast<sequence*>(argument);
+        sequence* sqp = dyn_cast<sequence*>(argument);
         if (sqp != nullptr && sqp->formulas_.size() == 1)
           return sqp->formulas_.front()->is_negation();
       }
@@ -1389,21 +1402,21 @@ namespace mli {
     bool is_conjunction() const override { return *atom == constant("∧", constant::logic_function); }
     bool is_disjunction() const override { return *atom == constant("∨", constant::logic_function); }
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
-    virtual split_formula split(unify_environment, const ref<variable>&, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual split_formula split(unify_environment, const val<variable>&, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    virtual kleenean has(const ref<variable>&, occurrence) const override;
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const override;
+    virtual kleenean has(const val<variable>&, occurrence) const override;
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const override;
 
-    virtual kleenean free_for(const ref<formula>& f, const ref<variable>& x, 
-      std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const override;
+    virtual kleenean free_for(const val<formula>& f, const val<variable>& x, 
+      std::set<val<variable>>& s, std::list<val<variable>>& bs) const override;
 
     void unspecialize(depth, bool) override;
-    void unspecialize(std::set<ref<variable>>&, bool) override;
+    void unspecialize(std::set<val<variable>>&, bool) override;
 
-    virtual ref<formula> rename(level, degree) const override;
-    virtual ref<formula> add_exception_set(variable_map&) const override;
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const override;
+    virtual val<formula> rename(level, degree) const override;
+    virtual val<formula> add_exception_set(variable_map&) const override;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const override;
 
     virtual void set_bind(bind&, name_variable_table&) override;
 
@@ -1417,9 +1430,9 @@ namespace mli {
   // Binder, or binding operator.
   class bound_formula : public nonempty_formula {
   public:
-    ref<variable> variable_;  // Variable that is bound.
-    ref<formula> domain_;     // Domain of variable.
-    ref<formula> formula_;    // The formula that is bound.
+    val<variable> variable_;  // Variable that is bound.
+    val<formula> domain_;     // Domain of variable.
+    val<formula> formula_;    // The formula that is bound.
 
     // The bind number identifies, within a formula, different binders and their
     // Used to enable local substitutions. Free variables have value 0.
@@ -1432,33 +1445,45 @@ namespace mli {
 
     type type_ = none_;
 
+    // For a non-limited variable, when substituted, the result should contain no free
+    // occurrences of any of the variables in this container.
+    // These result from explicit substitutions 𝑨[𝒙 ↦ 𝒕], 𝒕 free for 𝒙 in 𝑨, and 𝑨
+    // is sufficiently explicit so that the expression is simplified; then the binders
+    // that 𝒕 is in the scope of of the same type should be added to this container.
+    //
+    // When ordinary variables only allow the substitutions permitted by the object
+    // substitution rule 𝑨 ⊢⁽𝒙⁾ 𝑨[𝒙 ⤇ 𝒕], cf. Kleene p. 101, then they should not
+    // have excluded variables. (Term variables admit any substitutions, and
+    // must therefore be restricted by metaconditions.)
+    std::set<val<variable>> excluded1_;
+
 
     bound_formula() {}
 
     new_copy(bound_formula);
     new_move(bound_formula);
 
-    bound_formula(const ref<variable>& v, const bound_formula::type& bt)
+    bound_formula(const val<variable>& v, const bound_formula::type& bt)
      : variable_(v), type_(bt) {}
-    bound_formula(const ref<variable>& v, const ref<formula>& f, const bound_formula::type& bt, bind b = 0)
+    bound_formula(const val<variable>& v, const val<formula>& f, const bound_formula::type& bt, bind b = 0)
      : variable_(v), formula_(f), type_(bt) {}
 
-    bound_formula(const ref<variable>& v, const ref<formula>& d, const ref<formula>& f, const bound_formula::type& bt, bind b = 0)
+    bound_formula(const val<variable>& v, const val<formula>& d, const val<formula>& f, const bound_formula::type& bt, bind b = 0)
      : variable_(v), domain_(d), formula_(f), type_(bt), bind_(b) {}
 
 
-    bound_formula(const variable_list& vs, const ref<formula>& f);
+    bound_formula(const variable_list& vs, const val<formula>& f);
 
-    bound_formula(const variable_list& vs, const ref<formula>& d, const ref<formula>& f);
+    bound_formula(const variable_list& vs, const val<formula>& d, const val<formula>& f);
 
 
     // Helper function, only used in this class implementation:
-    bound_formula* push_back(const ref<variable>&, const bound_formula::type&);
+    bound_formula* push_back(const val<variable>&, const bound_formula::type&);
 
     // Create an iteration of binders, as each can only bind a single variable:
     void push_back(const variable_list&);
 
-    void set(const ref<formula>&);
+    void set(const val<formula>&);
     void set(const bound_formula&); // Assumes same bind identifier.
     void set(bind b) { bind_ = b; }
 
@@ -1466,21 +1491,21 @@ namespace mli {
 
     virtual formula::type get_formula_type() const override { return formula::logic; }
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
-    virtual split_formula split(unify_environment, const ref<variable>&, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual split_formula split(unify_environment, const val<variable>&, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    virtual kleenean has(const ref<variable>&, occurrence) const override;
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const override;
+    virtual kleenean has(const val<variable>&, occurrence) const override;
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const override;
 
-    virtual kleenean free_for(const ref<formula>& f, const ref<variable>& x, 
-      std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const override;
+    virtual kleenean free_for(const val<formula>& f, const val<variable>& x, 
+      std::set<val<variable>>& s, std::list<val<variable>>& bs) const override;
 
     void unspecialize(depth, bool) override;
-    void unspecialize(std::set<ref<variable>>&, bool) override;
+    void unspecialize(std::set<val<variable>>&, bool) override;
 
-    virtual ref<formula> rename(level, degree) const override;
-    virtual ref<formula> add_exception_set(variable_map&) const override;
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const override;
+    virtual val<formula> rename(level, degree) const override;
+    virtual val<formula> add_exception_set(variable_map&) const override;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const override;
 
     virtual void set_bind(bind&, name_variable_table&) override;
 
@@ -1499,22 +1524,25 @@ namespace mli {
   // objects, such as bound_formula.
   class variable_list : public unit {
   public:
-    typedef std::pair<ref<variable>, bound_formula::type>  value_type;
-    typedef std::list<value_type>          sequence_type;
-    typedef sequence_type::iterator        iterator;
-    typedef sequence_type::const_iterator  const_iterator;
+    using value_type = std::pair<val<variable>, bound_formula::type>;
+    using sequence_type = std::list<value_type>;
+    using iterator = sequence_type::iterator;
+    using const_iterator = sequence_type::const_iterator;
 
     std::list<value_type> variables_;
-    
+
+    std::set<val<variable>> excluded1_; // Help construction of excluded variables.
+
+
     variable_list() = default;
 
     new_copy(variable_list);
     new_move(variable_list);
 
-    variable_list(const ref<variable>& x, const bound_formula::type& bt)
+    variable_list(const val<variable>& x, const bound_formula::type& bt)
      : variables_(1, value_type(x, bt)) {}
 
-    void push_back(const ref<variable>& x, const bound_formula::type& bt)
+    void push_back(const val<variable>& x, const bound_formula::type& bt)
     { variables_.push_back(value_type(x, bt)); }
     void push_back(const variable_list& x)
     { variables_.insert(variables_.end(), x.variables_.begin(), x.variables_.end()); }
@@ -1530,13 +1558,13 @@ namespace mli {
 
   class formula_sequence : public nonempty_formula {
   public:
-    using container_type = std::vector<ref<formula>>;
+    using container_type = std::vector<val<formula>>;
 
-    typedef container_type::size_type size_type;
-    typedef container_type::iterator iterator;
-    typedef container_type::const_iterator const_iterator;
-    typedef container_type::reverse_iterator reverse_iterator;
-    typedef container_type::const_reverse_iterator const_reverse_iterator;
+    using size_type = container_type::size_type;
+    using iterator = container_type::iterator;
+    using const_iterator = container_type::const_iterator;
+    using reverse_iterator = container_type::reverse_iterator;
+    using const_reverse_iterator = container_type::const_reverse_iterator;
 
     container_type formulas_;
 
@@ -1547,16 +1575,16 @@ namespace mli {
     new_move(formula_sequence);
 
 
-    formula_sequence(const ref<formula>& x)
+    formula_sequence(const val<formula>& x)
      : formulas_(1, x) {}
 
 
-    formula_sequence(std::initializer_list<ref<formula>> xs) : formulas_(xs) {}
+    formula_sequence(std::initializer_list<val<formula>> xs) : formulas_(xs) {}
 
-    formula_sequence(const std::vector<ref<formula>>& xs)
+    formula_sequence(const std::vector<val<formula>>& xs)
      : formulas_(xs) {}
 
-    formula_sequence(const std::list<ref<formula>>& xs)
+    formula_sequence(const std::list<val<formula>>& xs)
      : formulas_(xs.begin(), xs.end()) {}
 
     formula_sequence(const formula_sequence& x, const formula_sequence& y)
@@ -1564,51 +1592,51 @@ namespace mli {
     { formulas_.insert(formulas_.end(), y.formulas_.begin(), y.formulas_.end()); }
 
 
-    formula_sequence(const formula_sequence& x, const ref<formula>& y)
+    formula_sequence(const formula_sequence& x, const val<formula>& y)
      : formulas_(x.formulas_) { formulas_.push_back(y); }
 
-    formula_sequence(const ref<formula>& x, const formula_sequence& y)
+    formula_sequence(const val<formula>& x, const formula_sequence& y)
      : formulas_({x}) { formulas_.insert(formulas_.end(), y.formulas_.begin(), y.formulas_.end()); }
 
     formula::type get_formula_type() const override;
 
-    void push_back(const ref<formula>& t) { formulas_.push_back(t); }
+    void push_back(const val<formula>& t) { formulas_.push_back(t); }
 
-    virtual ref<formula> get_formula(size_type k) const override {
+    virtual val<formula> get_formula(size_type k) const override {
       if (k >= formulas_.size()) return {};
       auto i = formulas_.begin(); std::advance(i, k);
       return *i;
     }
 
-    ref<formula> add_goal(const ref<formula>& x) const override;
+    val<formula> add_goal(const val<formula>& x) const override;
 
-    ref<formula> add_premise(const ref<formula>& x, metalevel_t,
+    val<formula> add_premise(const val<formula>& x, metalevel_t,
       const varied_type& vs, const varied_type& vrs) const override;
 
 
     virtual metalevel_t metalevel() const override;
 
-    bool is_metasubset(const ref<formula> x) const override;
+    bool is_metasubset(const val<formula> x) const override;
 
     bool meta_container_and_mode(target x) const override { return x == goal; }
     bool meta_container_or_mode(target x) const override { return x == fact; }
 
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
-    virtual split_formula split(unify_environment, const ref<variable>&, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual split_formula split(unify_environment, const val<variable>&, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    virtual kleenean has(const ref<variable>&, occurrence) const override;
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const override;
+    virtual kleenean has(const val<variable>&, occurrence) const override;
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const override;
 
-    virtual kleenean free_for(const ref<formula>& f, const ref<variable>& x,
-      std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const override;
+    virtual kleenean free_for(const val<formula>& f, const val<variable>& x,
+      std::set<val<variable>>& s, std::list<val<variable>>& bs) const override;
 
     void unspecialize(depth, bool) override;
-    void unspecialize(std::set<ref<variable>>&, bool) override;
+    void unspecialize(std::set<val<variable>>&, bool) override;
 
-    virtual ref<formula> rename(level, degree) const override;
-    virtual ref<formula> add_exception_set(variable_map&) const override;
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const override;
+    virtual val<formula> rename(level, degree) const override;
+    virtual val<formula> add_exception_set(variable_map&) const override;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const override;
 
     virtual void set_bind(bind&, name_variable_table&) override;
 
@@ -1618,9 +1646,9 @@ namespace mli {
     size_type formula_sequence_size() const override { return formulas_.size(); }
 
     bool unexpanded() const override;
-    ref<formula> expand(size_type) const override;
+    val<formula> expand(size_type) const override;
 
-    bool has_formula(ref<formula> x) const override;
+    bool has_formula(val<formula> x) const override;
 
     virtual order compare(const unit&) const override;
 
@@ -1628,7 +1656,7 @@ namespace mli {
     virtual void write(std::ostream&, write_style) const override;
 
     // Check if x, y are of type t, and return accordingly a formula_sequence of type t:
-    friend ref<formula> concatenate(const ref<formula>& x, const ref<formula>& y);
+    friend val<formula> concatenate(const val<formula>& x, const val<formula>& y);
   };
 
 
@@ -1637,9 +1665,9 @@ namespace mli {
   // If x is not formula sequence and y is, x is prepended to y.
   // If x is a formula sequence and y is not, y is appended to x.
   // If both x and y are formula sequences, they are concatenated into a single formula sequence.
-  ref<formula> concatenate(const ref<formula>& x, const ref<formula>& y);
+  val<formula> concatenate(const val<formula>& x, const val<formula>& y);
 
-  inline ref<formula> concatenate(const ref<formula>& x, const ref<formula>& y, const ref<formula>& z) {
+  inline val<formula> concatenate(const val<formula>& x, const val<formula>& y, const val<formula>& z) {
     return concatenate(concatenate(x, y), z);
   }
 
@@ -1673,8 +1701,8 @@ namespace mli {
   // where the components 𝜸₀, 𝜸₁, … and 𝜸'₀, 𝜸'₁, … are suitably recomputed.
   class inference : public nonempty_formula {
   public:
-    ref<formula> head_;
-    ref<formula> body_;
+    val<formula> head_;
+    val<formula> body_;
 
     metalevel_t metalevel_ = 1_ml;
 
@@ -1705,20 +1733,20 @@ namespace mli {
     new_move(inference);
 
 
-    explicit inference(const ref<formula>& h) : head_(h) {}
+    explicit inference(const val<formula>& h) : head_(h) {}
 
-    inference(const ref<formula>& h, metalevel_t ml) : head_(h), metalevel_(ml) {}
+    inference(const val<formula>& h, metalevel_t ml) : head_(h), metalevel_(ml) {}
 
-    inference(const ref<formula>& h, const ref<formula>& b, metalevel_t ml)
+    inference(const val<formula>& h, const val<formula>& b, metalevel_t ml)
      : head_(h), body_(b), metalevel_(ml) {}
 
-    inference(const ref<formula>& h, metalevel_t ml, const varied_type& vs)
+    inference(const val<formula>& h, metalevel_t ml, const varied_type& vs)
      : head_(h), metalevel_(ml), varied_(vs) {}
 
-    inference(const ref<formula>& h, const ref<formula>& b, metalevel_t ml, const varied_type& vs)
+    inference(const val<formula>& h, const val<formula>& b, metalevel_t ml, const varied_type& vs)
      : head_(h), body_(b), metalevel_(ml), varied_(vs) {}
 
-    inference(const ref<formula>& h, const ref<formula>& b, metalevel_t ml,
+    inference(const val<formula>& h, const val<formula>& b, metalevel_t ml,
       const varied_type& vs, const varied_type& vrs)
      : head_(h), body_(b), metalevel_(ml), varied_(vs), varied_in_reduction_(vrs) {}
 
@@ -1726,35 +1754,35 @@ namespace mli {
     // Varied variable premises arguments not attached to a number in a conclusion
     // formula sequence, so it is set to 0:
 
-    inference(const ref<formula>& h, const ref<formula>& b, metalevel_t ml, const varied_premise_type& vs)
+    inference(const val<formula>& h, const val<formula>& b, metalevel_t ml, const varied_premise_type& vs)
      : head_(h), body_(b), metalevel_(ml) { if(!vs.empty()) varied_[0] = vs; }
 
-    inference(const ref<formula>& h, const ref<formula>& b, metalevel_t ml,
+    inference(const val<formula>& h, const val<formula>& b, metalevel_t ml,
       const varied_premise_type& vs, const varied_premise_type& vrs)
      : head_(h), body_(b), metalevel_(ml) {
        if(!vs.empty()) varied_[0] = vs;
        if(!vrs.empty()) varied_in_reduction_[0] = vrs; }
 
 
-    inference(const ref<formula>& h, const std::list<ref<formula>>& bfs, metalevel_t ml)
-     : head_(h), body_(ref<formula_sequence>(make, bfs)), metalevel_(ml) {}
+    inference(const val<formula>& h, const std::list<val<formula>>& bfs, metalevel_t ml)
+     : head_(h), body_(val<formula_sequence>(make, bfs)), metalevel_(ml) {}
 
 
     virtual formula::type get_formula_type() const { return formula::meta; }
 
-    virtual ref<formula> get_formula(size_type k) const;
+    virtual val<formula> get_formula(size_type k) const;
 
     bool provable() const override;
     size_type metasize() const override { return head_->metasize(); }
     bool unexpanded() const override
-    { return ref_cast<formula_sequence*>(head_) != nullptr || head_->unexpanded(); }
+    { return dyn_cast<formula_sequence*>(head_) != nullptr || head_->unexpanded(); }
 
-    ref<formula> expand(size_type) const override;
+    val<formula> expand(size_type) const override;
 
     // Implementation in substitution.cc.
-    inference& append(const ref<formula>& x);
+    inference& append(const val<formula>& x);
 
-    ref<formula> add_premise(const ref<formula>& x, metalevel_t,
+    val<formula> add_premise(const val<formula>& x, metalevel_t,
       const varied_type& vs, const varied_type& vrs) const override;
 
     virtual metalevel_t metalevel() const override { return metalevel_; }
@@ -1774,29 +1802,29 @@ namespace mli {
 
     virtual bool inference_mode() const override { return true; }
 
-    virtual ref<formula> head() const { return head_; }
-    virtual ref<formula> body() const { return body_; }
+    virtual val<formula> head() const { return head_; }
+    virtual val<formula> body() const { return body_; }
 
 
     virtual bool is_axiom() const;
     virtual bool is_rule() const;
 
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
-    virtual split_formula split(unify_environment, const ref<variable>&, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual split_formula split(unify_environment, const val<variable>&, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    virtual kleenean has(const ref<variable>&, occurrence) const override;
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const override;
+    virtual kleenean has(const val<variable>&, occurrence) const override;
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const override;
 
-    virtual kleenean free_for(const ref<formula>& f, const ref<variable>& x,
-      std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const override;
+    virtual kleenean free_for(const val<formula>& f, const val<variable>& x,
+      std::set<val<variable>>& s, std::list<val<variable>>& bs) const override;
 
     void unspecialize(depth, bool) override;
-    void unspecialize(std::set<ref<variable>>&, bool) override;
+    void unspecialize(std::set<val<variable>>&, bool) override;
 
-    virtual ref<formula> rename(level, degree) const override;
-    virtual ref<formula> add_exception_set(variable_map&) const override;
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const override;
+    virtual val<formula> rename(level, degree) const override;
+    virtual val<formula> add_exception_set(variable_map&) const override;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const override;
 
     virtual void set_bind(bind&, name_variable_table&) override;
 
@@ -1815,24 +1843,24 @@ namespace mli {
 
     virtual formula::type get_formula_type() const override { return formula::meta; }
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    virtual alternatives unify(const ref<formula>& x, unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const;
+    virtual alternatives unify(const val<formula>& x, unify_environment tx, const val<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const;
 
 
-    virtual kleenean has(const ref<variable>&, occurrence) const override { return false; }
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const override {}
+    virtual kleenean has(const val<variable>&, occurrence) const override { return false; }
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const override {}
 
-    virtual kleenean free_for(const ref<formula>&, const ref<variable>&, 
-      std::set<ref<variable>>&, std::list<ref<variable>>&) const override { return true; }
+    virtual kleenean free_for(const val<formula>&, const val<variable>&, 
+      std::set<val<variable>>&, std::list<val<variable>>&) const override { return true; }
 
     void unspecialize(depth, bool) override {}
-    void unspecialize(std::set<ref<variable>>&, bool) override {}
+    void unspecialize(std::set<val<variable>>&, bool) override {}
 
-    virtual ref<formula> rename(level, degree) const override;
-    virtual ref<formula> add_exception_set(variable_map&) const override;
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const override {
-      return ref<database>();
+    virtual val<formula> rename(level, degree) const override;
+    virtual val<formula> add_exception_set(variable_map&) const override;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const override {
+      return val<database>();
     }
 
     virtual void set_bind(bind&, name_variable_table&) override {}
@@ -1843,15 +1871,15 @@ namespace mli {
     virtual int get_level() const;
     virtual bool has_definition(level) const;
 
-    virtual bool insert(const ref<statement>&);
+    virtual bool insert(const ref4<statement>&);
 
 
     // Lookup statement with name nm in the database at level lv.
 #if 1
-    virtual std::optional<ref<statement>> find(const std::string& nm, level lv);
+    virtual std::optional<ref4<statement>> find(const std::string& nm, level lv);
 #else
     // If 'proved' is true, the default, only proved statements are looked for.
-    virtual std::optional<ref<statement>> find(const std::string& nm, level lv, bool proved = false);
+    virtual std::optional<ref4<statement>> find(const std::string& nm, level lv, bool proved = false);
 #endif
 
     // A database behaves as a metaor if a fact, and as a metand if a goal, that is,
@@ -1873,7 +1901,7 @@ namespace mli {
   void write_proofs(std::ostream& os, std::list<proof>& pfs);
 
   // Write a set variables.
-  void write_variables(std::ostream& os, write_style ws, std::set<ref<variable>>& vs);
+  void write_variables(std::ostream& os, write_style ws, std::set<val<variable>>& vs);
 
 
   // Functions to be used when statement variables are allowed to specialize in proof.
@@ -1882,14 +1910,14 @@ namespace mli {
 
 #if WRITE_SOLUTIONS
   // Write one solution.
-  void write_solution(std::ostream& os, write_style ws, std::set<ref<variable>>& vs, ref<substitution> s);
+  void write_solution(std::ostream& os, write_style ws, std::set<val<variable>>& vs, val<substitution> s);
 
   // Write a list of substitutions.
-  void write_solution(std::ostream& os, std::list<ref<substitution>>& ss);
+  void write_solution(std::ostream& os, std::list<val<substitution>>& ss);
 
   // Write variables that get new values by the substitutions.
   void write_solution(std::ostream& os, write_style ws,
-    std::set<ref<variable>>& vs, std::list<ref<substitution>>& ss);
+    std::set<val<variable>>& vs, std::list<val<substitution>>& ss);
 #endif
 
 } // namespace mli

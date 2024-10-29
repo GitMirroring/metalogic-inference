@@ -1,4 +1,4 @@
- /* Copyright (C) 2017, 2021-2023 Hans Åberg.
+ /* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -89,7 +89,7 @@ namespace mli {
   // The proof tree becomes infinite if for example Modus Ponens (MP) is in the database
   // at all levels.
 
-  proofs prove(const ref<formula>& x, database& dbr, size_type n) {
+  proofs prove(const val<formula>& x, database& dbr, size_type n) {
     inference_tree it(x);
 
     return it.solve(dbr, n);

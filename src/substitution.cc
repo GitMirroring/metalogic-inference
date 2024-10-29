@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -16,27 +16,30 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 #include "MLI.hh"
+
+#include <algorithm>
+
 #include "substitution.hh"
 #include "metacondition.hh"
 
 
 namespace mli {
 
-  ref<formula> substitution::operator()(const ref<formula>& x) const {
+  val<formula> substitution::operator()(const val<formula>& x) const {
     substitute_environment se;
 
-    return x->substitute(this, se);
+    return x->substitute(*this, se);
   }
 
 
-  alternatives substitution::unify(unify_environment, const ref<formula>& x, unify_environment, database*, level, degree_pool&, direction) const {
+  alternatives substitution::unify(unify_environment, const val<formula>& x, unify_environment, database*, level, degree_pool&, direction) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
        << "substitution::unify\n  " << *this << ";\n  " << x << ")" << std::endl;
     }
 
-    substitution* xp = ref_cast<substitution*>(x);
+    substitution* xp = dyn_cast<substitution*>(x);
     return (xp != 0) && (xp->is_identity())? I : O;
   }
 
@@ -52,7 +55,7 @@ namespace mli {
 
 #define TABLE_DEBUG 0
 
-  ref<formula> variable_substitution::substitute_variable(const ref<variable>& x, substitute_environment vt) const {
+  val<formula> variable_substitution::substitute_variable(const val<variable>& x, substitute_environment vt) const {
     if (trace_value & trace_substitute) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog << "Begin variable_substitution::substitute_variable\n  "
@@ -60,21 +63,33 @@ namespace mli {
         << std::flush;
 #if TABLE_DEBUG
       std::clog << "Variable table:";
-      if (vt.table_->empty()) std::clog << " empty";
+      if (vt.table_.empty()) std::clog << " empty";
       else std::clog << "\n" << vt.table_;
       std::clog << std::endl;
 #endif
     }
+
+#if 0 // debug.hh
+    if (!x->excluded_.empty()) {
+      std::cout << "variable_substitution::substitute_variable: "
+        << "(" << x << ")" << *this << std::endl;
+    }
+#endif
 
     // A substitution x[v ↦ f] or x[v ⤇ f].
 
 #if 1 // debug.hh
     // Optimization: identity substitution.
     if (variable_ == formula_)
-      return ref<formula>(x);
+      return val<formula>(x);
 #endif
 
-    variable* fp = ref_cast<variable*>(formula_);
+    variable* fp = dyn_cast<variable*>(formula_);
+
+#if 0 // debug.hh
+    bool b = (fp != nullptr) && (fp->name == "𝒙") && (variable_->name == "𝒙") && (x->name == "𝒙");
+    std::clog << "b = " << b << std::endl;
+#endif
 
 
     // Variable change of limited variables legality verification:
@@ -125,7 +140,7 @@ namespace mli {
       }
       else  // A change-of-variable check; for explicit substitutions, this is done by a free-for check:
       if (x == variable_) {
-        size_type df = ref_cast<variable&>(formula_).get_depth(vt.table_);
+        size_type df = dyn_cast<variable&>(formula_).get_depth(vt.table_);
 
         if (df != 0 && dx != df)
           is_illegal = true;
@@ -153,7 +168,7 @@ namespace mli {
     if (x == variable_) {
       // If *this is an end marker substitution [𝜞 ↦ □], return the components of x:
       if (formula_->is_end_of_formula_sequence())
-        return ref<formula_sequence>(make, x->components_);
+        return val<formula_sequence>(make, x->components_);
 
       // When the variable_ is not a set index, return formula_,
       // except in the case of a premise-to-conclusion substitution which,
@@ -167,7 +182,7 @@ namespace mli {
 
       // Now, variable_ is a set index of x, so formula_ should be added to
       // the components in a copy of x, which is returned.
-      ref<variable> vr(make, *x);
+      val<variable> vr(make, *x);
 
       vr->components_.push_back(formula_);
       return vr;
@@ -175,19 +190,30 @@ namespace mli {
 
 
 #if 1
+
+#if 0 // debug.hh
+    if (x->excluded_from_.contains(variable_)) {
+      std::cout << "variable_substitution::substitute_variable: "
+        << "(" << x << ")" << *this << std::endl;
+    }
+#endif
+
     // Check that no variables excluded_from_ are dropped with respect to the
     // current substitution, that is, if variable_ is in excluded_from_,
     // the the replacement formula_ must be excluded_.
+#if 0 // debug.hh
+#else
     if (x->excluded_from_.contains(variable_) && !x->excluded_.contains(formula_)) {
       std::ostringstream oss;
       oss << "variable_substitution::substitute_variable, excluded variables dropped: "
         << "(" << x << ")" << *this;
       throw illegal_substitution(oss.str());
     }
+#endif
 
     // If variable_ is excluded in x, it must be replaced by formula_.
     if (x->excluded_.contains(variable_)) {
-      ref<variable> xr(make, *x);
+      val<variable> xr(make, *x);
       xr->excluded_.erase(variable_);
       xr->excluded_.insert(formula_);
       return xr;
@@ -201,7 +227,7 @@ namespace mli {
     if (!x->excluded_.contains(variable_))
       return x;
 
-    ref<variable> x1(make, *x);
+    val<variable> x1(make, *x);
     x1->excluded_.erase(variable_);
     x1->excluded_.insert(formula_);
 
@@ -216,23 +242,23 @@ namespace mli {
   }
 
 
-  ref<formula> variable_substitution::rename(level lv, degree sl) const {
-    ref<variable_substitution> mp(make, *this);
+  val<formula> variable_substitution::rename(level lv, degree sl) const {
+    val<variable_substitution> mp(make, *this);
     mp->variable_ = variable_->rename(lv, sl);
     mp->formula_ = formula_->rename(lv, sl);
     return mp;  
   }
 
 
-  ref<formula> variable_substitution::add_exception_set(variable_map& vm) const {
-    ref<variable_substitution> mp(make, *this);
+  val<formula> variable_substitution::add_exception_set(variable_map& vm) const {
+    val<variable_substitution> mp(make, *this);
     mp->variable_ = variable_->add_exception_set(vm);
     mp->formula_ = formula_->add_exception_set(vm);
     return mp;
   }
 
 
-  kleenean variable_substitution::has(const ref<variable>& v, occurrence oc) const {
+  kleenean variable_substitution::has(const val<variable>& v, occurrence oc) const {
     kleenean k1 = variable_->has(v, oc);
     if (k1 == true)  return true;
 
@@ -242,14 +268,14 @@ namespace mli {
   }
 
 
-  void variable_substitution::contains(std::set<ref<variable>>& s, std::set<ref<variable>>& bs, bool& more, occurrence oc) const {
+  void variable_substitution::contains(std::set<val<variable>>& s, std::set<val<variable>>& bs, bool& more, occurrence oc) const {
     variable_->contains(s, bs, more, oc);
     formula_->contains(s, bs, more, oc);
   }
 
 
-  kleenean variable_substitution::free_for(const ref<formula>& f, const ref<variable>& x,
-    std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const {
+  kleenean variable_substitution::free_for(const val<formula>& f, const val<variable>& x,
+    std::set<val<variable>>& s, std::list<val<variable>>& bs) const {
     kleenean k1 = variable_->free_for(f, x, s, bs);
     if (k1 == false)  return false;
     kleenean k2 = formula_->free_for(f, x, s, bs);
@@ -263,55 +289,55 @@ namespace mli {
   }
 
 
-  void variable_substitution::unspecialize(std::set<ref<variable>>& vs, bool b) {
+  void variable_substitution::unspecialize(std::set<val<variable>>& vs, bool b) {
     variable_->unspecialize(vs, b);
     formula_->unspecialize(vs, b);
   }
 
 
-  ref<formula> variable_substitution::substitute(const ref<substitution>& s, substitute_environment vt) const {
-    ref<formula> v0 = variable_->substitute(s, vt);
+  val<formula> variable_substitution::substitute(const val<substitution>& s, substitute_environment vt) const {
+    val<formula> v0 = variable_->substitute(s, vt);
 
-    variable* vp = ref_cast<variable*>(v0);
+    variable* vp = dyn_cast<variable*>(v0);
     if (vp == 0)
       throw illegal_substitution("In variable_substitution::substitute, substitution of variable not a variable.");
 
-    ref<variable_substitution> mp(make, *this);
-    mp->variable_ = vp;
+    val<variable_substitution> mp(make, *this);
+    mp->variable_ = v0;
     mp->formula_ = formula_->substitute(s, vt);
 
     return mp;  
   }
 
 
-  alternatives variable_substitution::unify(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives variable_substitution::unify(unify_environment tt, const val<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog << "variable_substitution::unify(\n  " << *this << ";\n  " << x << ")\n" << std::flush;
     }
 
-    variable_substitution* xp = ref_cast<variable_substitution*>(x);
+    variable_substitution* xp = dyn_cast<variable_substitution*>(x);
     if (xp == 0)  return O;
-    alternatives as = mli::unify(ref<formula>(variable_), tt, ref<formula>(xp->variable_), tx, dbp, lv, sl, dr);
+    alternatives as = mli::unify(val<formula>(variable_), tt, val<formula>(xp->variable_), tx, dbp, lv, sl, dr);
     return as.unify(formula_, tt, xp->formula_, tx, dbp, lv, sl, dr);  
   }
 
 
   split_formula variable_substitution::split(unify_environment tg,
-    const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
+    const val<variable>& x, const val<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
 
-    split_formula sf(this);  // Return value.
+    split_formula sf(*this);  // Return value.
 
 #if SPLIT_CONTAINER
 #warning variable_substitution::split SPLIT_CONTAINER
     // If t and *this unify, then *this can be replaced by x:
-    alternatives as = mli::unify(t, tt, this, tg, dbp, lv, sl, dr);
+    alternatives as = mli::unify(t, tt, *this, tg, dbp, lv, sl, dr);
 
     if (!as.empty())
-      sf.push_back(this, ref<formula>(x), tt.table_->find_local());
+      sf.push_back(*this, val<formula>(x), tt.table_->find_local());
 #endif
 
-    auto 𝜆 = [&](const ref<formula>& x) { ref<variable_substitution> r(*this); r->formula_ = x; return r; };
+    auto 𝜆 = [&](const val<formula>& x) { val<variable_substitution> r(*this); r->formula_ = x; return r; };
 
     sf.append(mli::split(formula_, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
 
@@ -319,23 +345,23 @@ namespace mli {
   }
 
 
-  ref<substitution> variable_substitution::innermost() const {
-    return this;
+  val<substitution> variable_substitution::innermost() const {
+    return *this;
   }
 
 
-  ref<substitution> variable_substitution::without() const {
-    return ref<substitution>(make);
+  val<substitution> variable_substitution::without() const {
+    return val<substitution>(make);
   }
 
 
-  ref<substitution> variable_substitution::outermost() const {
-    return this;
+  val<substitution> variable_substitution::outermost() const {
+    return *this;
   }
 
 
-  ref<substitution> variable_substitution::within() const {
-    return ref<substitution>(make);
+  val<substitution> variable_substitution::within() const {
+    return val<substitution>(make);
   }
 
 
@@ -451,7 +477,7 @@ namespace mli {
   // Class explicit_substitution
 
 
-  ref<formula> explicit_substitution::substitute_variable(const ref<variable>& x, substitute_environment vt) const {
+  val<formula> explicit_substitution::substitute_variable(const val<variable>& x, substitute_environment vt) const {
     if (trace_value & trace_substitute) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog << "Begin explicit_substitution::substitute_variable\n  "
@@ -459,7 +485,7 @@ namespace mli {
         << std::flush;
 #if TABLE_DEBUG
       std::clog << "Variable table:";
-      if (vt.table_->empty()) std::clog << " empty";
+      if (vt.table_.empty()) std::clog << " empty";
       else std::clog << "\n" << vt.table_;
       std::clog << std::endl;
 #endif
@@ -472,7 +498,7 @@ namespace mli {
       return x;
 
 
-    variable* fp = ref_cast<variable*>(formula_);
+    variable* fp = dyn_cast<variable*>(formula_);
 
 
     // Variable change of limited variables legality verification, and as a limited
@@ -550,7 +576,7 @@ namespace mli {
 
       // Check 𝑓 free for (substitutable at) 𝑥 in 𝑨:
 
-      std::set<ref<variable>> fvs;   // Free variables of f.
+      std::set<val<variable>> fvs;   // Free variables of f.
 
       // If formula_ contains term variables t of the same type as x, then
       // the free-for metacondition is undefined, as it is unknown what variables t
@@ -588,8 +614,8 @@ namespace mli {
       // have excluded variables. (Term variables admit any substitutions, and
       // must therefore be restricted by metaconditions.)
 
-      std::set<ref<variable>> bvs; // Locally bound variables in scope at x.
-      vt.table_->find_local(bvs);
+      std::set<val<variable>> bvs; // Locally bound variables in scope at x.
+      vt.table_.find_local(bvs);
 
       // Check that the excluded variables of the free variable of formula_ are
       // not bound at x:
@@ -619,7 +645,7 @@ namespace mli {
     // No substitution case, a delayed return if f can contain x after a future
     // eventual substitution, otherwise return f, i.e., no substitution made:
 
-    ref<formula> r;
+    val<formula> r;
 
     // Delayed return here, if an undefined substitution (if say x is a
     // formula variable and variable_ is an object variable).
@@ -632,10 +658,10 @@ namespace mli {
       }
 
       // Note that *this must now have is_explicit_ == true:
-      r = ref<substitution_formula>(make, this, x);
+      r = val<substitution_formula>(make, *this, x);
     }
     else
-      r = ref<formula>(x);
+      r = val<formula>(x);
 
     if (trace_value & trace_substitute) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
@@ -648,7 +674,7 @@ namespace mli {
   }
 
 
-  alternatives explicit_substitution::unify_substitution2(const ref<formula>& x, unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives explicit_substitution::unify_substitution2(const val<formula>& x, unify_environment tx, const val<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
 
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
@@ -658,8 +684,8 @@ namespace mli {
     }
 
     // Write 𝒙 ≔ variable_, 𝒕 = formula_, 𝑨 = x, 𝑩 = y. Then when unifying
-    // u(𝑨[𝒙 ⤇ 𝒕], 𝑩), 𝑩 is split up in a set of disjoint subterms 𝝉 which may
-    // be empty, and let 𝑩₍𝒙, 𝝉₎ denote 𝑩 where each of the terms of 𝝉 have been
+    // u(𝑨[𝒙 ⤇ 𝒕], 𝑩), 𝑩 is split up in a set of disjoint subterms 𝝉, which may
+    // be empty; let 𝑩₍𝒙, 𝝉₎ denote 𝑩 where each of the terms of 𝝉 have been
     // replaced by 𝒙. Then, with cases checked in order:
     // If u(𝒕, 𝝉).u(𝒙, 𝒕) is non-empty, the return is u(𝒕, 𝝉).u(𝒙, 𝒕).u(𝑨, 𝑩)
     // If 𝑩 is a goal, the return is u(𝒕, 𝝉).[𝒙 ↦ '𝒙].u(𝑨, 𝑩)
@@ -736,8 +762,12 @@ namespace mli {
 
       if (!std::get<2>(i).empty()) // Nothing to check if std::get<2>(i) is empty.
         for (auto& j: std::get<0>(i).formulas_) {
-          std::set<ref<variable>> fvs;
+          std::set<val<variable>> fvs;
+#if NEW_SUBFORMULAS
+          j.first->contains(fvs, occurrence::free);
+#else
           j->contains(fvs, occurrence::free);
+#endif
 
           for (auto& k: fvs) {
 
@@ -768,8 +798,17 @@ namespace mli {
 
             // This checks if the variable exclusion set of k contains the set of bound
             // variables in the current scope, which is the set std::get<2>(i).
+#if NEW_SUBFORMULAS
+            cont = std::includes(k->excluded_.begin(), k->excluded_.end(),
+                j.second.begin(), j.second.end());
+#else
             cont = std::includes(k->excluded_.begin(), k->excluded_.end(),
                 std::get<2>(i).begin(), std::get<2>(i).end());
+#endif
+
+#if 0 // debug.hh
+            cont = true;
+#endif
 
             if (trace_value & trace_unify) {
               std::lock_guard<std::recursive_mutex> guard(write_mutex);
@@ -814,10 +853,10 @@ namespace mli {
       if (!as1.empty())
         as0 = as1;
       else if (ty.target_ == goal) {
-        ref<variable> v = ref<variable>(make, *variable_);
+        val<variable> v = val<variable>(make, *variable_);
         v->unspecializable_ = true;
 
-        ref<substitution> s = ref<variable_substitution>(make, variable_, v);
+        val<substitution> s = val<variable_substitution>(make, variable_, v);
 
         as0 = as0 * s;
       }
@@ -856,23 +895,23 @@ namespace mli {
   }
 
 
-  ref<formula> explicit_substitution::rename(level lv, degree sl) const {
-    ref<explicit_substitution> mp(make, *this);
+  val<formula> explicit_substitution::rename(level lv, degree sl) const {
+    val<explicit_substitution> mp(make, *this);
     mp->variable_ = variable_->rename(lv, sl);
     mp->formula_ = formula_->rename(lv, sl);
     return mp;
   }
 
 
-  ref<formula> explicit_substitution::add_exception_set(variable_map& vm) const {
-    ref<explicit_substitution> mp(make, *this);
+  val<formula> explicit_substitution::add_exception_set(variable_map& vm) const {
+    val<explicit_substitution> mp(make, *this);
     mp->variable_ = variable_->add_exception_set(vm);
     mp->formula_ = formula_->add_exception_set(vm);
     return mp;
   }
 
 
-  kleenean explicit_substitution::has(const ref<variable>& v, occurrence oc) const {
+  kleenean explicit_substitution::has(const val<variable>& v, occurrence oc) const {
     kleenean k1 = variable_->has(v, oc);
     if (k1 == true)  return true;
 
@@ -882,14 +921,14 @@ namespace mli {
   }
 
 
-  void explicit_substitution::contains(std::set<ref<variable>>& s, std::set<ref<variable>>& bs, bool& more, occurrence oc) const {
+  void explicit_substitution::contains(std::set<val<variable>>& s, std::set<val<variable>>& bs, bool& more, occurrence oc) const {
     variable_->contains(s, bs, more, oc);
     formula_->contains(s, bs, more, oc);
   }
 
 
-  kleenean explicit_substitution::free_for(const ref<formula>& f, const ref<variable>& x,
-    std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const {
+  kleenean explicit_substitution::free_for(const val<formula>& f, const val<variable>& x,
+    std::set<val<variable>>& s, std::list<val<variable>>& bs) const {
     kleenean k1 = variable_->free_for(f, x, s, bs);
     if (k1 == false)  return false;
     kleenean k2 = formula_->free_for(f, x, s, bs);
@@ -903,54 +942,54 @@ namespace mli {
   }
 
 
-  void explicit_substitution::unspecialize(std::set<ref<variable>>& vs, bool b) {
+  void explicit_substitution::unspecialize(std::set<val<variable>>& vs, bool b) {
     variable_->unspecialize(vs, b);
     formula_->unspecialize(vs, b);
   }
 
 
-  ref<formula> explicit_substitution::substitute(const ref<substitution>& s, substitute_environment vt) const {
-    ref<formula> v0 = variable_->substitute(s, vt);
+  val<formula> explicit_substitution::substitute(const val<substitution>& s, substitute_environment vt) const {
+    val<formula> v0 = variable_->substitute(s, vt);
 
-    variable* vp = ref_cast<variable*>(v0);
+    variable* vp = dyn_cast<variable*>(v0);
     if (vp == 0)
       throw illegal_substitution("In explicit_substitution::substitute, substitution of variable not a variable.");
 
-    ref<explicit_substitution> mp(make, *this);
-    mp->variable_ = vp;
+    val<explicit_substitution> mp(make, *this);
+    mp->variable_ = v0;
     mp->formula_ = formula_->substitute(s, vt);
 
     return mp;
   }
 
 
-  alternatives explicit_substitution::unify(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives explicit_substitution::unify(unify_environment tt, const val<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog << "explicit_substitution::unify(\n  " << *this << ";\n  " << x << ")\n" << std::flush;
     }
 
-    explicit_substitution* xp = ref_cast<explicit_substitution*>(x);
+    explicit_substitution* xp = dyn_cast<explicit_substitution*>(x);
     if (xp == 0)  return O;
-    alternatives as = mli::unify(ref<formula>(variable_), tt, ref<formula>(xp->variable_), tx, dbp, lv, sl, dr);
+    alternatives as = mli::unify(val<formula>(variable_), tt, val<formula>(xp->variable_), tx, dbp, lv, sl, dr);
     return as.unify(formula_, tt, xp->formula_, tx, dbp, lv, sl, dr);
   }
 
 
   split_formula explicit_substitution::split(unify_environment tg,
-    const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
-    split_formula sf(this);  // Return value.
+    const val<variable>& x, const val<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
+    split_formula sf(*this);  // Return value.
 
 #if SPLIT_CONTAINER
 #warning explicit_substitution::split SPLIT_CONTAINER
     // If t and *this unify, then *this can be replaced by x:
-    alternatives as = mli::unify(t, tt, this, tg, dbp, lv, sl, dr);
+    alternatives as = mli::unify(t, tt, *this, tg, dbp, lv, sl, dr);
 
     if (!as.empty())
-      sf.push_back(this, ref<formula>(x), tt.table_->find_local());
+      sf.push_back(*this, val<formula>(x), tt.table_->find_local());
 #endif
 
-    auto 𝜆 = [&](const ref<formula>& x) { ref<explicit_substitution> r(*this); r->formula_ = x; return r; };
+    auto 𝜆 = [&](const val<formula>& x) { val<explicit_substitution> r(*this); r->formula_ = x; return r; };
 
     sf.append(mli::split(formula_, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
 
@@ -958,23 +997,23 @@ namespace mli {
   }
 
 
-  ref<substitution> explicit_substitution::innermost() const {
-    return this;
+  val<substitution> explicit_substitution::innermost() const {
+    return *this;
   }
 
 
-  ref<substitution> explicit_substitution::without() const {
-    return ref<substitution>(make);
+  val<substitution> explicit_substitution::without() const {
+    return val<substitution>(make);
   }
 
 
-  ref<substitution> explicit_substitution::outermost() const {
-    return this;
+  val<substitution> explicit_substitution::outermost() const {
+    return *this;
   }
 
 
-  ref<substitution> explicit_substitution::within() const {
-    return ref<substitution>(make);
+  val<substitution> explicit_substitution::within() const {
+    return val<substitution>(make);
   }
 
 
@@ -1013,7 +1052,7 @@ namespace mli {
   }
 
 
-  ref<formula> substitution_composition::substitute_variable(const ref<variable>& x, substitute_environment vt) const {
+  val<formula> substitution_composition::substitute_variable(const val<variable>& x, substitute_environment vt) const {
     return (inner_->substitute_variable(x, vt))->substitute(outer_, vt);
   }
 
@@ -1024,23 +1063,23 @@ namespace mli {
   }
 
 
-  ref<formula> substitution_composition::rename(level lv, degree sl) const {
-    ref<substitution_composition> mp(make, *this);
+  val<formula> substitution_composition::rename(level lv, degree sl) const {
+    val<substitution_composition> mp(make, *this);
     mp->inner_ = inner_->rename(lv, sl);
     mp->outer_ = outer_->rename(lv, sl);
     return mp;
   }
 
 
-  ref<formula> substitution_composition::add_exception_set(variable_map& vm) const {
-    ref<substitution_composition> mp(make, *this);
+  val<formula> substitution_composition::add_exception_set(variable_map& vm) const {
+    val<substitution_composition> mp(make, *this);
     mp->inner_ = inner_->add_exception_set(vm);
     mp->outer_ = outer_->add_exception_set(vm);
     return mp;
   }
 
 
-  kleenean substitution_composition::has(const ref<variable>& v, occurrence oc) const {
+  kleenean substitution_composition::has(const val<variable>& v, occurrence oc) const {
     kleenean k1 = inner_->has(v, oc);
     if (k1 == true)  return true;
 
@@ -1050,14 +1089,14 @@ namespace mli {
   }
 
 
-  void substitution_composition::contains(std::set<ref<variable>>& s, std::set<ref<variable>>& bs, bool& more, occurrence oc) const {
+  void substitution_composition::contains(std::set<val<variable>>& s, std::set<val<variable>>& bs, bool& more, occurrence oc) const {
     inner_->contains(s, bs, more, oc);
     outer_->contains(s, bs, more, oc);
   }
 
 
-  kleenean substitution_composition::free_for(const ref<formula>& f, const ref<variable>& x,
-    std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const {
+  kleenean substitution_composition::free_for(const val<formula>& f, const val<variable>& x,
+    std::set<val<variable>>& s, std::list<val<variable>>& bs) const {
     kleenean k1 = inner_->free_for(f, x, s, bs);
     if (k1 == false)  return false;
 
@@ -1073,48 +1112,48 @@ namespace mli {
   }
 
 
-  void substitution_composition::unspecialize(std::set<ref<variable>>& vs, bool b) {
+  void substitution_composition::unspecialize(std::set<val<variable>>& vs, bool b) {
     inner_->unspecialize(vs, b);
     outer_->unspecialize(vs, b);
   }
 
 
-  ref<formula> substitution_composition::substitute(const ref<substitution>& s, substitute_environment vt) const {
-    ref<substitution_composition> mp(make, *this);
-    mp->inner_ = ref<substitution>(inner_->substitute(s, vt));
-    mp->outer_ = ref<substitution>(outer_->substitute(s, vt));
+  val<formula> substitution_composition::substitute(const val<substitution>& s, substitute_environment vt) const {
+    val<substitution_composition> mp(make, *this);
+    mp->inner_ = val<substitution>(inner_->substitute(s, vt));
+    mp->outer_ = val<substitution>(outer_->substitute(s, vt));
     return mp;
   }
 
 
-  alternatives substitution_composition::unify(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives substitution_composition::unify(unify_environment tt, const val<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog << "substitution_composition::unify(\n  " << *this << ";\n  " << x << ")\n" << std::flush;
     }
 
-    substitution_composition* xp = ref_cast<substitution_composition*>(x);
+    substitution_composition* xp = dyn_cast<substitution_composition*>(x);
     if (xp == 0)  return O;
-    alternatives as = mli::unify(ref<formula>(inner_), tt, ref<formula>(xp->inner_), tx, dbp, lv, sl, dr);
-    return as.unify(ref<formula>(outer_), tt, ref<formula>(xp->outer_), tx, dbp, lv, sl, dr);  
+    alternatives as = mli::unify(val<formula>(inner_), tt, val<formula>(xp->inner_), tx, dbp, lv, sl, dr);
+    return as.unify(val<formula>(outer_), tt, val<formula>(xp->outer_), tx, dbp, lv, sl, dr);  
   }
 
 
   split_formula substitution_composition::split(unify_environment tg,
-    const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
-    split_formula sf(this);  // Return value.
+    const val<variable>& x, const val<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
+    split_formula sf(*this);  // Return value.
 
 #if SPLIT_CONTAINER
 #warning substitution_composition::split SPLIT_CONTAINER
     // If t and *this unify, then *this can be replaced by x:
-    alternatives as = mli::unify(t, tt, this, tg, dbp, lv, sl, dr);
+    alternatives as = mli::unify(t, tt, *this, tg, dbp, lv, sl, dr);
 
     if (!as.empty())
-      sf.push_back(this, ref<formula>(x), tt.table_->find_local());
+      sf.push_back(*this, val<formula>(x), tt.table_->find_local());
 #endif
 
-    auto 𝜆 = [&](const ref<formula>& x, const ref<formula>& y) {
-      ref<substitution_composition> r(*this); r->outer_ = x; r->inner_ = y; return r;
+    auto 𝜆 = [&](const val<formula>& x, const val<formula>& y) {
+      val<substitution_composition> r(*this); r->outer_ = x; r->inner_ = y; return r;
     };
 
     sf.append(mli::split({outer_, inner_}, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
@@ -1123,29 +1162,29 @@ namespace mli {
   }
 
 
-  ref<substitution> substitution_composition::innermost() const {
+  val<substitution> substitution_composition::innermost() const {
     return inner_->innermost();
   }
 
 
-  ref<substitution> substitution_composition::without() const {
-    ref<substitution> s = inner_->without();
+  val<substitution> substitution_composition::without() const {
+    val<substitution> s = inner_->without();
     if (s->is_identity())
       return outer_;
-    return ref<substitution_composition>(make, outer_, s);
+    return val<substitution_composition>(make, outer_, s);
   }
 
 
-  ref<substitution> substitution_composition::outermost() const {
+  val<substitution> substitution_composition::outermost() const {
     return outer_->outermost();
   }
 
 
-  ref<substitution> substitution_composition::within() const {
-    ref<substitution> s = outer_->within();
+  val<substitution> substitution_composition::within() const {
+    val<substitution> s = outer_->within();
     if (s->is_identity())
       return inner_;
-    return ref<substitution_composition>(make, s, inner_);
+    return val<substitution_composition>(make, s, inner_);
   }
 
 
@@ -1170,12 +1209,12 @@ namespace mli {
   }
 
 
-  ref<substitution> operator*(const ref<substitution>& inner, const ref<substitution>& outer) {
+  val<substitution> operator*(const val<substitution>& inner, const val<substitution>& outer) {
 #if 1 // debug.hh
     if (inner->is_identity())  return outer;
     if (outer->is_identity())  return inner;
 #endif
-    return ref<substitution_composition>(make, outer, inner);
+    return val<substitution_composition>(make, outer, inner);
   }
 
 
@@ -1190,23 +1229,23 @@ namespace mli {
   }
 
 
-  ref<formula> substitution_formula::rename(level lv, degree sl) const {
-    ref<substitution_formula> sfp(make, *this);
+  val<formula> substitution_formula::rename(level lv, degree sl) const {
+    val<substitution_formula> sfp(make, *this);
     sfp->substitution_ = substitution_->rename(lv, sl);
     sfp->formula_ = formula_->rename(lv, sl);
     return sfp;
   }
 
 
-  ref<formula> substitution_formula::add_exception_set(variable_map& vm) const {
-    ref<substitution_formula> sfp(make, *this);
+  val<formula> substitution_formula::add_exception_set(variable_map& vm) const {
+    val<substitution_formula> sfp(make, *this);
     sfp->substitution_ = substitution_->add_exception_set(vm);
     sfp->formula_ = formula_->add_exception_set(vm);
     return sfp;
   }
 
 
-  kleenean substitution_formula::has(const ref<variable>& v, occurrence oc) const {
+  kleenean substitution_formula::has(const val<variable>& v, occurrence oc) const {
     // If v is substituted by substitution_:
     // If oc == free: return false
     // if oc = bound: if substitution_ on v is all occurances, return false.
@@ -1219,14 +1258,14 @@ namespace mli {
   }
 
 
-  void substitution_formula::contains(std::set<ref<variable>>& vs, std::set<ref<variable>>& bs, bool& more, occurrence oc) const {
+  void substitution_formula::contains(std::set<val<variable>>& vs, std::set<val<variable>>& bs, bool& more, occurrence oc) const {
     substitution_->contains(vs, bs, more, oc);
     formula_->contains(vs, bs, more, oc);
   }
 
 
-  kleenean substitution_formula::free_for(const ref<formula>& f, const ref<variable>& x,
-      std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const {
+  kleenean substitution_formula::free_for(const val<formula>& f, const val<variable>& x,
+      std::set<val<variable>>& s, std::list<val<variable>>& bs) const {
     kleenean k1 = substitution_->free_for(f, x, s, bs);
     if (k1 == false)  return false;
     kleenean k2 = formula_->free_for(f, x, s, bs);
@@ -1240,13 +1279,13 @@ namespace mli {
   }
 
 
-  void substitution_formula::unspecialize(std::set<ref<variable>>& vs, bool b) {
+  void substitution_formula::unspecialize(std::set<val<variable>>& vs, bool b) {
     substitution_->unspecialize(vs, b);
     formula_->unspecialize(vs, b);
   }
 
 
-  ref<formula> substitution_formula::substitute(const ref<substitution>& s, substitute_environment vt) const {
+  val<formula> substitution_formula::substitute(const val<substitution>& s, substitute_environment vt) const {
     if (trace_value & trace_substitute) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
@@ -1259,13 +1298,13 @@ namespace mli {
     // explicit substitution formula with free-for checks:
 
     // Push a bottom, used for free-for checks, which pops when the element bg expires:
-    bottom_guard bg(*vt.table_);
+    bottom_guard bg(vt.table_);
 
-    ref<formula> f1 = formula_->substitute(s, vt);
-    ref<substitution> s1 = substitution_->substitute(s, vt);
+    val<formula> f1 = formula_->substitute(s, vt);
+    val<substitution> s1 = substitution_->substitute(s, vt);
 
 #if EXPLICIT_SUBSTITUTION_SIMPLIFICATION
-    explicit_substitution* esp = ref_cast<explicit_substitution*>(s1);
+    explicit_substitution* esp = dyn_cast<explicit_substitution*>(s1);
 
     if (esp == nullptr) {
       std::ostringstream ost;
@@ -1280,7 +1319,7 @@ namespace mli {
       return formula_;
 #endif
 
-    ref<formula> fr;
+    val<formula> fr;
 
     fr = f1->substitute(s1, vt);
 
@@ -1297,7 +1336,7 @@ namespace mli {
   }
 
 
-  alternatives substitution_formula::unify(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives substitution_formula::unify(unify_environment tt, const val<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
@@ -1305,7 +1344,7 @@ namespace mli {
        << std::endl;
     }
 
-    substitution_formula* xp = ref_cast<substitution_formula*>(x);
+    substitution_formula* xp = dyn_cast<substitution_formula*>(x);
 
     if (xp == nullptr)
       // u(A[x.t], B) type 2 solutions. Case u(A, B[y.u]) is handled
@@ -1355,10 +1394,10 @@ namespace mli {
     // Elements popped when the syntactic environment expires:
     {
     push_bound p0(tt);
-    tt.table_->insert(substitution_->variable_);
+    tt.table_.insert(substitution_->variable_);
 
     push_bound p1(tx);
-    tx.table_->insert(sf.substitution_->variable_);
+    tx.table_.insert(sf.substitution_->variable_);
 
     as = mli::unify(substitution_->variable_, tt, sf.substitution_->variable_, tx, dbp, lv, sl, dr);
     as = as.unify(formula_, tt, sf.formula_, tx, dbp, lv, sl, dr);
@@ -1381,27 +1420,27 @@ namespace mli {
   }
 
 
-  alternatives substitution_formula::unify2(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives substitution_formula::unify2(unify_environment tt, const val<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
     // u(A[x.t], B) type 2 solutions:
     return substitution_->unify_substitution2(formula_, tt, x, tx, dbp, lv, sl, dr);
   }
 
 
   split_formula substitution_formula::split(unify_environment tg,
-    const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
-    split_formula sf(this);  // Return value.
+    const val<variable>& x, const val<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
+    split_formula sf(*this);  // Return value.
 
 #if SPLIT_CONTAINER
 #warning substitution_formula::split SPLIT_CONTAINER
     // If t and *this unify, then *this can be replaced by x:
-    alternatives as = mli::unify(t, tt, this, tg, dbp, lv, sl, dr);
+    alternatives as = mli::unify(t, tt, *this, tg, dbp, lv, sl, dr);
 
     if (!as.empty())
-      sf.push_back(this, ref<formula>(x), tt.table_->find_local());
+      sf.push_back(*this, val<formula>(x), tt.table_->find_local());
 #endif
 
-    auto 𝜆 = [&](const ref<formula>& x, const ref<formula>& y) {
-      ref<substitution_formula> r(*this); r->substitution_ = x; r->formula_ = y; return r;
+    auto 𝜆 = [&](const val<formula>& x, const val<formula>& y) {
+      val<substitution_formula> r(*this); r->substitution_ = x; r->formula_ = y; return r;
     };
 
     sf.append(mli::split({substitution_, formula_}, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
@@ -1440,7 +1479,7 @@ namespace mli {
   }
 
 
-  alternative& alternative::label(const ref<statement>& ls, level lv) {
+  alternative& alternative::label(const val<statement>& ls, level lv) {
 #if NEW_PROVED
     labelstatements_[lv.sub].statement_ = ls;
 #else
@@ -1451,7 +1490,7 @@ namespace mli {
   }
 
 
-  alternative& alternative::label(const ref<statement>& ls, level lv, degree sl) {
+  alternative& alternative::label(const val<statement>& ls, level lv, degree sl) {
 #if NEW_PROVED
     labelstatements_[lv.sub].definitions_.push_back(ls);
 #else
@@ -1462,7 +1501,7 @@ namespace mli {
   }
 
 
-  alternative& alternative::sublabel(const ref<statement>& ls, level lv) {
+  alternative& alternative::sublabel(const val<statement>& ls, level lv) {
     labelstatements_[lv.sub].substatements_.push_front(ls);
 
     return *this;
@@ -1569,7 +1608,7 @@ namespace mli {
 
   // If y is an inference of the same metalevel, concatenate the heads and concatenate
   // the bodies, otherwise, concatenate the head with y.
-  inference& inference::append(const ref<formula>& y) {
+  inference& inference::append(const val<formula>& y) {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
@@ -1579,7 +1618,7 @@ namespace mli {
        << std::endl;
     }
 
-    inference* ip = ref_cast<inference*>(y);
+    inference* ip = dyn_cast<inference*>(y);
 
     if (ip != nullptr && ip->metalevel_ == metalevel_) {
       head_ = concatenate(head_, ip->head_);
@@ -1597,8 +1636,8 @@ namespace mli {
   // The metalevel ml is the one of the inference constructed in infrence::unify. The metalevel of
   // y may be lower if no new inference is contructed. The metalevel of x is allowed to be equal
   // to ml to allow for the head unification to produce a premise.
-  ref<formula> merge(const ref<formula>& x, const ref<formula>& y,
-    const ref<formula>& h, const ref<formula>& b, metalevel_t ml,
+  val<formula> merge(const val<formula>& x, const val<formula>& y,
+    const val<formula>& h, const val<formula>& b, metalevel_t ml,
     const varied_type& vs, const varied_type& vrs) {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
@@ -1619,8 +1658,8 @@ namespace mli {
     metalevel_t ml1 = x->metalevel();
     metalevel_t ml2 = y->metalevel();
 
-    inference* ip1 = ref_cast<inference*>(x);
-    inference* ip2 = ref_cast<inference*>(y);
+    inference* ip1 = dyn_cast<inference*>(x);
+    inference* ip2 = dyn_cast<inference*>(y);
 
     // Check inference objects of metalevel ml, as lower level should be passive formulas.
     bool ib1 = ip1 != 0 && ml1 == ml;
@@ -1632,7 +1671,7 @@ namespace mli {
     if (ib1 && ib2) {
       // Only insert the head of x in case it is not provable from the y premises, and
       // only insert the head of y in case it is not provable from the x premises,
-      ref<formula> hr;
+      val<formula> hr;
 
       bool hb1 = !ip1->head_->provable() && !ip2->body_->has_formula(ip1->head_);
       bool hb2 = !ip2->head_->provable() && !ip1->body_->has_formula(ip2->head_);
@@ -1649,12 +1688,12 @@ namespace mli {
       if (hr->empty())
         return {};
 
-      return ref<inference>(make, hr, concatenate(b, ip1->body_, ip2->body_),
+      return val<inference>(make, hr, concatenate(b, ip1->body_, ip2->body_),
         ml, vs, vrs);
     }
     else if (ib2) {
       // Only insert x in case it is not provable from the y premises:
-      ref<formula> hr;
+      val<formula> hr;
 
       if (!x->provable() && !ip2->body_->has_formula(x))
         hr = concatenate(x, ip2->head_, h);
@@ -1664,11 +1703,11 @@ namespace mli {
       if (hr->empty())
         return {};
 
-      return ref<inference>(make, hr, concatenate(b, ip2->body_), ml, vs, vrs);
+      return val<inference>(make, hr, concatenate(b, ip2->body_), ml, vs, vrs);
     }
     else if (ib1) {
       // Only insert y in case it is not provable from the x premises:
-      ref<formula> hr;
+      val<formula> hr;
 
       if (!y->provable() && !ip1->body_->has_formula(y))
         hr = concatenate(ip1->head_, y, h);
@@ -1678,20 +1717,20 @@ namespace mli {
       if (hr->empty())
         return {};
 
-      return ref<inference>(make, hr, concatenate(b, ip1->body_), ml, vs, vrs);
+      return val<inference>(make, hr, concatenate(b, ip1->body_), ml, vs, vrs);
     }
 
-    ref<formula> hr = concatenate(x, y, h);
+    val<formula> hr = concatenate(x, y, h);
 
     if (hr->empty())
       return {};
 
-    return ref<inference>(make, hr, b, ml, vs, vrs);
+    return val<inference>(make, hr, b, ml, vs, vrs);
   }
 
 
   alternative merge(const alternative& x, const alternative& y,
-    const ref<formula>& h, const ref<formula>& b, metalevel_t ml,
+    const val<formula>& h, const val<formula>& b, metalevel_t ml,
     const varied_type& vs, const varied_type& vrs) {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
@@ -1755,7 +1794,7 @@ namespace mli {
 
 
   alternatives merge(const alternatives& x, const alternatives& y,
-    const ref<formula>& h, const ref<formula>& b, metalevel_t ml,
+    const val<formula>& h, const val<formula>& b, metalevel_t ml,
     const varied_type& vs, const varied_type& vrs) {
     alternatives as;
 
@@ -1823,7 +1862,7 @@ namespace mli {
     return a;
   }
 
-  alternative alternative::add_goal(const ref<formula>& x) const {
+  alternative alternative::add_goal(const val<formula>& x) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
@@ -1852,7 +1891,7 @@ namespace mli {
 
   // Add the premise x to the body of goal_, turning the latter
   // into an inference, if not alredy of that form.
-  alternative alternative::add_premise(const ref<formula>& x, metalevel_t ml,
+  alternative alternative::add_premise(const val<formula>& x, metalevel_t ml,
       const varied_type& vs, const varied_type& vrs) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
@@ -1879,21 +1918,21 @@ namespace mli {
   const alternatives I = alternative();
 
 
-  alternatives& alternatives::label(const ref<statement>& ls, level lv) {
+  alternatives& alternatives::label(const val<statement>& ls, level lv) {
     for (auto& i: alternatives_)
       i = i.label(ls, lv);
     return *this;
   }
 
 
-  alternatives& alternatives::label(const ref<statement>& ls, level lv, degree sl) {
+  alternatives& alternatives::label(const val<statement>& ls, level lv, degree sl) {
     for (auto& i: alternatives_)
       i = i.label(ls, lv, sl);
     return *this;
   }
 
 
-  alternatives& alternatives::sublabel(const ref<statement>& ls, level lv) {
+  alternatives& alternatives::sublabel(const val<statement>& ls, level lv) {
     for (auto& i: alternatives_)
       i = i.sublabel(ls, lv);
 
@@ -1913,7 +1952,7 @@ namespace mli {
   }
 
 
-  alternatives alternatives::add_goal(const ref<formula>& x) const {
+  alternatives alternatives::add_goal(const val<formula>& x) const {
 #if NEW_PROVED
     if (x->provable())
       return *this;
@@ -1942,7 +1981,7 @@ namespace mli {
   }
 
 
-  alternatives alternatives::add_premise(const ref<formula>& x, metalevel_t ml,
+  alternatives alternatives::add_premise(const val<formula>& x, metalevel_t ml,
       const varied_type& vs, const varied_type& vrs) const {
 
     if (x->provable())  return *this;
@@ -1958,173 +1997,19 @@ namespace mli {
 
 #define WRITE_TABLE 0
 
-  alternatives alternatives::unify(const ref<formula>& x, unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr, expansion ex) const {
-
-#if WRITE_TABLE
-    {
-      std::lock_guard<std::recursive_mutex> guard(write_mutex);
-
-      std::clog << "A: alternatives::unify(\n  "
-        << "("  << x << ", " << y << ")" << ".\n"
-        << std::flush;
-
-      std::clog << "tx: \n";
-
-      if (tx.table_ != 0) {
-        variable_table::stack::iterator i,
-          i0 = tx.table_->table_stack_.begin(), i1 = tx.table_->table_stack_.end();
-        if (i0 != i1) {
-          std::clog << "Variable table:\n";
-          for (i = i0; i != i1; ++i) {
-            if (i != i0)  std::clog << "\n";
-            variable_table::table::iterator j, j0 = i->begin(), j1 = i->end();
-            for (j = j0; j != j1; ++j) {
-              if (j != j0)  std::clog << ", ";
-              std::clog << "(" << j->first << ";" << j->second << ")";
-            }
-          }
-          std::clog << std::endl;
-        }
-      }
-
-      std::clog << "ty: \n";
-
-      if (ty.table_ != 0) {
-        variable_table::stack::iterator i,
-          i0 = ty.table_->table_stack_.begin(), i1 = ty.table_->table_stack_.end();
-        if (i0 != i1) {
-          std::clog << "Variable table:\n";
-          for (i = i0; i != i1; ++i) {
-            if (i != i0)  std::clog << "\n";
-            variable_table::table::iterator j, j0 = i->begin(), j1 = i->end();
-            for (j = j0; j != j1; ++j) {
-              if (j != j0)  std::clog << ", ";
-              std::clog << "(" << j->first << ";" << j->second << ")";
-            }
-          }
-          std::clog << std::endl;
-        }
-      }
-
-    }
-#endif
+  alternatives alternatives::unify(const val<formula>& x, unify_environment tx, const val<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr, expansion ex) const {
 
     alternatives as;
 
     for (auto& i: alternatives_) {
-      ref<substitution> s = i.substitution_;
-#if WRITE_TABLE
-      std::clog << "s: " << s << std::endl;
-#endif
-      unify_environment tx1 = tx;
-      unify_environment ty1 = ty;
-
-#if 0
-      // Substitute tables tx, ty by s.
-      if (tx.table_ != 0) {
-        unify_environment::table_type* txp = new unify_environment::table_type();
-#if TABLE_DEBUG
-        txp->table_stack_.resize(tx1.table_->size());
-
-        variable_table::stack::iterator i,
-          i0 = tx.table_->table_stack_.begin(), i1 = tx.table_->table_stack_.end(),
-          j, j0 = txp->table_stack_.begin(), j1 = txp->table_stack_.end();
-
-        for (i = i0, j = j0; i != i1; ++i, ++j)
-          for (auto& k: *i) {
-#if WRITE_TABLE
-            std::clog << "C: " << k.first << ", " << s(k.first) << std::endl;
-#endif
-            j->insert({s(k.first), s(k.second)});
-          }
-
-        tx1.table_ = txp;
-#endif
-      }
-
-
-      if (ty.table_ != 0) {
-        unify_environment::table_type* typ = new unify_environment::table_type();
-#if TABLE_DEBUG
-        typ->table_stack_.resize(ty1.table_->size());
-
-        variable_table::stack::iterator i,
-          i0 = ty.table_->table_stack_.begin(), i1 = ty.table_->table_stack_.end(),
-          j, j0 = typ->table_stack_.begin(), j1 = typ->table_stack_.end();
-
-        for (i = i0, j = j0; i != i1; ++i, ++j)
-          for (auto& k: *i) {
-#if WRITE_TABLE
-            std::clog << "D: " << k.first << ", " << s(k.first) << std::endl;
-#endif
-            j->insert({s(k.first), s(k.second)});
-          }
-
-        ty1.table_ = typ;
-#endif
-      }
-#endif
-
-#if WRITE_TABLE
-    {
-      std::lock_guard<std::recursive_mutex> guard(write_mutex);
-
-      std::clog << "B: alternatives::unify(\n  "
-        << "("  << x << "," << y << ")" << ".\n"
-        << std::flush;
-
-      std::clog << "tx1: \n";
-
-      if (tx1.table_ != 0) {
-        variable_table::stack::iterator i,
-          i0 = tx1.table_->table_stack_.begin(), i1 = tx1.table_->table_stack_.end();
-        if (i0 != i1) {
-          std::clog << "Variable table:\n";
-          for (i = i0; i != i1; ++i) {
-            if (i != i0)  std::clog << "\n";
-            variable_table::table::iterator j, j0 = i->begin(), j1 = i->end();
-            for (j = j0; j != j1; ++j) {
-              if (j != j0)  std::clog << ", ";
-              std::clog << "(" << j->first << ";" << j->second << ")";
-            }
-          }
-          std::clog << std::endl;
-        }
-      }
-
-      std::clog << "ty1: \n";
-
-      if (ty1.table_ != 0) {
-        variable_table::stack::iterator i,
-          i0 = ty1.table_->table_stack_.begin(), i1 = ty1.table_->table_stack_.end();
-        if (i0 != i1) {
-          std::clog << "Variable table:\n";
-          for (i = i0; i != i1; ++i) {
-            if (i != i0)  std::clog << "\n";
-            variable_table::table::iterator j, j0 = i->begin(), j1 = i->end();
-            for (j = j0; j != j1; ++j) {
-              if (j != j0)  std::clog << ", ";
-              std::clog << "(" << j->first << ";" << j->second << ")";
-            }
-          }
-          std::clog << std::endl;
-        }
-      }
-
-    }
-#endif
+      val<substitution> s = i.substitution_;
 
      // An illegal substitution merely produces no alternative, but the search loop continues:
       try {
         alternatives bs = mli::unify(
-          // Check use of tx/tx1, ty/ty1:
-#if 1
           // The unification varied variables are substituted so that they come out correctly
           // in formula_sequence::unify:
           x->substitute(s, tx), tx.substitute(s), y->substitute(s, ty), ty.substitute(s), dbp, lv, sl, dr, ex);
-#else
-          x->substitute(s, tx), tx, y->substitute(s, ty), ty, dbp, lv, sl, dr, ex);
-#endif
 
           as.append(i * bs);
       }
@@ -2134,7 +2019,6 @@ namespace mli {
           std::clog << ex.what() << std::endl;
         }
       }
-
     }
 
     return as;
@@ -2142,14 +2026,14 @@ namespace mli {
 
 
   alternatives alternatives::unify_binder(
-      const ref<formula>& x, unify_environment tx,
-      const ref<formula>& y, unify_environment ty,
+      const val<formula>& x, unify_environment tx,
+      const val<formula>& y, unify_environment ty,
       database* dbp, level lv, degree_pool& sl, direction dr) const {
 
     alternatives as;
 
     for (auto& i: alternatives_) {
-      ref<substitution> s = i.substitution_;
+      val<substitution> s = i.substitution_;
       alternatives bs = mli::unify(
         x->substitute(s, tx), tx, y->substitute(s, ty), ty, dbp, lv, sl, dr);
 
@@ -2262,8 +2146,12 @@ namespace mli {
     for (i = i0; i != i1; ++i) {
       if (i != i0)
         os << ", ";
+#if NEW_SUBFORMULAS
+      i->first->write(os, ws);
+#else
       (*i)->write(os, ws);
-    }  
+#endif
+    }
     os << "}";
   }
 

@@ -1449,7 +1449,7 @@ lemma T3G. object 𝒔, 𝒕.
 result by MP: premise ⊢; T3g. — MP: premise ⊢; T3g.
 
 lemma T3h. object 𝒕ₓ₍°𝑦⁰⁺¹₎.
-  𝒕ₓ₍°𝑦⁰⁺¹₎ ≠ 0 ⇒ ∃¹°𝑦⁰⁺¹ 𝒕ₓ₍°𝑦⁰⁺¹₎ = s(°𝑦⁰⁺¹)
+  𝒕 ≠ 0 ⇒ ∃¹°𝑦⁰⁺¹ 𝒕ₓ₍°𝑦⁰⁺¹₎ = s(°𝑦⁰⁺¹)
 proof
   definition D. object 𝒙¹.
     𝐴(𝒙¹) ≔ 𝒙¹ ≠ 0 ⇒ ∃¹°𝑤¹⁺¹ 𝒙¹ = s(°𝑤¹⁺¹).
@@ -1477,7 +1477,7 @@ proof
 ∎
 
 lemma T3H. object 𝒕ₓ₍°𝑦⁰⁺¹₎.
-  𝒕ₓ₍°𝑦⁰⁺¹₎ ≠ 0 ⊢ ∃¹°𝑦⁰⁺¹ 𝒕ₓ₍°𝑦⁰⁺¹₎ = s(°𝑦⁰⁺¹)
+  𝒕 ≠ 0 ⊢ ∃¹°𝑦⁰⁺¹ 𝒕ₓ₍°𝑦⁰⁺¹₎ = s(°𝑦⁰⁺¹)
 result by MP: premise ⊢; T3h. — MP: premise ⊢; T3h.
 
 end theory TS1.

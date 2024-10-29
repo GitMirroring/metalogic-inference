@@ -1,4 +1,4 @@
-# Copyright (C) 2017, 2021-2023 Hans Åberg.
+# Copyright (C) 2017, 2021-2024 Hans Åberg.
 #
 # This file is part of MLI, MetaLogic Inference.
 #
@@ -17,7 +17,7 @@
 
 bin_PROGRAMS = mli
 
-mli_SOURCES = MLI.cc MLI.hh gc.cc gc.hh main.cc \
+mli_SOURCES = MLI.cc MLI.hh main.cc \
   polymorphy.hh relation.hh table-stack.hh exception.hh pragmas.hh \
   kleenean.hh debug.hh write-style.cc write-style.hh \
   basictype.cc basictype.hh database.cc database.hh location-type.hh \
@@ -29,7 +29,7 @@ mli_SOURCES = MLI.cc MLI.hh gc.cc gc.hh main.cc \
   metacondition.cc metacondition.hh  precedence.cc precedence.hh \
   proposition.cc proposition.hh  reassign.hh  substitution.cc substitution.hh \
   function.cc function.hh \
-  gmp.hh hoare_logic.cc hoare_logic.hh
+  hoare_logic.cc hoare_logic.hh
 
 dist_noinst_HEADERS = database-parser.yy database-lexer.ll directive-parser.yy directive-lexer.ll
 

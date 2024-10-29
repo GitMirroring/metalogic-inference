@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -29,7 +29,7 @@ namespace mli {
   const char* num_sups[] = {"⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹"};
 
 
-  std::string to_index(index ix, gmp::integer k, bool z) {
+  std::string to_index(index ix, int64_t k, bool z) {
     std::string r;
 
     if (k == 0) {
@@ -45,7 +45,7 @@ namespace mli {
 
     const char** nums = ix? num_sups : num_subs;
 
-    std::string s = k.str();
+    std::string s = std::to_string(k);
 
     for (auto& i: s)
       r += nums[i - '0'];

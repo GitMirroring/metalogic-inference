@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -60,7 +60,7 @@
     public:
       long number = 0;
       std::string text;
-      mli::ref<mli::unit> object;
+      mli::ref6<mli::unit> object;
 
       semantic_type() {}
     };
@@ -96,7 +96,7 @@
     // For statements (theorems, definitions), pushed before the symbol declarations
     // (after the label), and if there is a proof, popped where it ends:
 
-    using symbol_table_t = mli::table_stack<std::string, std::pair<mli::directive_parser::token_type, mli::ref<mli::unit>>>;
+    using symbol_table_t = mli::table_stack<std::string, std::pair<mli::directive_parser::token_type, mli::ref6<mli::unit>>>;
 
     extern symbol_table_t directive_symbol_table;
 
@@ -187,7 +187,7 @@
     directive_parser::token_type directive_define_variable(semantic_type& yylval) {
       if (statement_substitution_context) {
         statement_substitution_context = false;
-        std::optional<std::pair<directive_parser::token_type, mli::ref<mli::unit>>> x = mli::directive_symbol_table.find_top(yylval.text);
+        std::optional<std::pair<directive_parser::token_type, mli::ref6<mli::unit>>> x = mli::directive_symbol_table.find_top(yylval.text);
         if (!x)  return mli::directive_parser::token::plain_name;
         yylval.object = x->second;
         yylval.number = x->first;
@@ -197,7 +197,7 @@
       if (declaration_context)
         return mli::directive_parser::token::plain_name;
 
-      std::optional<std::pair<mli::directive_parser::token_type, mli::ref<mli::unit>>> x = mli::directive_symbol_table.find(yylval.text);
+      std::optional<std::pair<mli::directive_parser::token_type, mli::ref6<mli::unit>>> x = mli::directive_symbol_table.find(yylval.text);
 
 
       if (!x) {
@@ -207,7 +207,7 @@
 
         // Bound variable case: Create a limited variable og bind 1, insert at the secondary
         // (bound variable) stack level.
-        ref<variable> v;
+        val<variable> v;
         v->bind_ = 1;
         directive_symbol_table.insert(yylval.text, {directive_bound_variable_type, v});
 
@@ -218,7 +218,7 @@
       }
 
 
-      mli::variable* vp = mli::ref_cast<mli::variable*>(x->second);
+      mli::variable* vp = mli::dyn_cast<mli::variable*>(x->second);
 
       if (vp != nullptr
         && (vp->depth_ == -1 || directive_bound_variable_type != mli::free_variable_context)) {
@@ -229,7 +229,7 @@
           // Check if it is a variable which is declared without definition, in which case make
           // a copy with right proof depth, insert it in the symbol table, and change x->second
           // so subsequently the new copy is used instead of the original lookup value.
-          mli::ref<mli::variable> v(make, *vp);
+          mli::val<mli::variable> v(make, *vp);
 
           directive_symbol_table.insert_or_assign(yylval.text, {x->first, v});
 
@@ -246,7 +246,7 @@
           //   If defined, return it (do nothing, as x is already set to it).
 
           if (!vp->is_limited()) {
-            mli::ref<mli::variable> v(make, *vp);
+            mli::val<mli::variable> v(make, *vp);
             v->metatype_ = variable::limited_;
             v->bind_ = 1;
 
@@ -255,7 +255,7 @@
             x->second = v;
           }
           else if (vp->depth_ == -1) {
-            mli::ref<mli::variable> v(make, *vp);
+            mli::val<mli::variable> v(make, *vp);
 
             directive_symbol_table.insert_or_assign(yylval.text, {x->first, v});
 
@@ -709,11 +709,11 @@ proof_strictness:
 
 
 limits:
-    "thread" "count" integer[k] { thread_count = (difference_type)ref_cast<integer&>($k.object); }
-  | "level" "max" natural_number_value[k] { level_max = (size_type)ref_cast<integer&>($k.object); }
-  | "sublevel" "max" natural_number_value[k] { sublevel_max = (size_type)ref_cast<integer&>($k.object); }
-  | "proof" "count" natural_number_value[k] { proof_count = (size_type)ref_cast<integer&>($k.object); }
-  | "unify" "count" "max" natural_number_value[k] { unify_count_max = (size_type)ref_cast<integer&>($k.object); }
+    "thread" "count" integer[k] { thread_count = (difference_type)dyn_cast<integer&>($k.object); }
+  | "level" "max" natural_number_value[k] { level_max = (size_type)dyn_cast<integer&>($k.object); }
+  | "sublevel" "max" natural_number_value[k] { sublevel_max = (size_type)dyn_cast<integer&>($k.object); }
+  | "proof" "count" natural_number_value[k] { proof_count = (size_type)dyn_cast<integer&>($k.object); }
+  | "unify" "count" "max" natural_number_value[k] { unify_count_max = (size_type)dyn_cast<integer&>($k.object); }
 ;
 
 

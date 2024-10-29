@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -22,7 +22,7 @@
 
 namespace mli {
 
-  alternatives integer::unify(unify_environment, const ref<formula>& x, unify_environment, database*, level, degree_pool&, direction) const {
+  alternatives integer::unify(unify_environment, const val<formula>& x, unify_environment, database*, level, degree_pool&, direction) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
@@ -30,19 +30,20 @@ namespace mli {
        << std::endl;
     }
 
-    integer* xp = ref_cast<integer*>(x);
+    integer* xp = dyn_cast<integer*>(x);
     return (xp != 0 && value == xp->value)? I : O;
   }
 
 
   order integer::compare(const unit& x) const {
     auto& xr = dynamic_cast<const integer&>(x);
-    return sgn(value.compare(xr.value));
+
+    return order(value, xr.value);
   }
 
 
   void integer::write(std::ostream& os, write_style) const {
-    gmp::operator<<(os, value);
+    os << value;
   }
 
 } // namespace mli

@@ -50,6 +50,7 @@
   #include "MLI.hh"
   #include "database.hh"
   #include "basictype.hh"
+  #include "proposition.hh"
 
   #include "location-type.hh"
 
@@ -65,37 +66,12 @@
 
   namespace mli {
 
-    class semantic_type {
-    public:
-      long number = 0;
-      std::string text;
-      mli::ref<mli::unit> object;
-
-      semantic_type() {}
-    };
-
-
-    class database_lexer : public yyFlexLexer {
-    public:
-      mli::semantic_type* yylvalp = nullptr;
-      mli::location_type* yyllocp = nullptr;
-
-      database_lexer() {};
-
-      database_lexer(std::istream& is, std::ostream& os) : yyFlexLexer(&is, &os) {}
-
-      int yylex(); // Defined in database-lexer.cc.
-
-      std::istream& in() { return yyin; }
-
-      int operator()(mli::semantic_type* x) { yylvalp = x;  return yylex(); }
-      int operator()(mli::semantic_type* x, mli::location_type* y) { yylvalp = x;  yyllocp = y;  return yylex(); }
-    };
+    class database_lexer;
 
   } // namespace mli
 
 
-#line 99 "../../mli-root/src/database-parser.hh"
+#line 75 "../../mli-root/src/database-parser.hh"
 
 
 # include <cstdlib> // std::abort
@@ -239,7 +215,7 @@
 
 #line 22 "../../mli-root/src/database-parser.yy"
 namespace mli {
-#line 243 "../../mli-root/src/database-parser.hh"
+#line 219 "../../mli-root/src/database-parser.hh"
 
 
 
@@ -254,8 +230,414 @@ namespace mli {
 # endif
     typedef MLISTYPE value_type;
 #else
-    /// Symbol semantic values.
-    typedef mli::semantic_type value_type;
+  /// A buffer to store and retrieve objects.
+  ///
+  /// Sort of a variant, but does not keep track of the nature
+  /// of the stored data, since that knowledge is available
+  /// via the current parser state.
+  class value_type
+  {
+  public:
+    /// Type of *this.
+    typedef value_type self_type;
+
+    /// Empty construction.
+    value_type () YY_NOEXCEPT
+      : yyraw_ ()
+    {}
+
+    /// Construct and fill.
+    template <typename T>
+    value_type (YY_RVREF (T) t)
+    {
+      new (yyas_<T> ()) T (YY_MOVE (t));
+    }
+
+#if 201103L <= YY_CPLUSPLUS
+    /// Non copyable.
+    value_type (const self_type&) = delete;
+    /// Non copyable.
+    self_type& operator= (const self_type&) = delete;
+#endif
+
+    /// Destruction, allowed only if empty.
+    ~value_type () YY_NOEXCEPT
+    {}
+
+# if 201103L <= YY_CPLUSPLUS
+    /// Instantiate a \a T in here from \a t.
+    template <typename T, typename... U>
+    T&
+    emplace (U&&... u)
+    {
+      return *new (yyas_<T> ()) T (std::forward <U>(u)...);
+    }
+# else
+    /// Instantiate an empty \a T in here.
+    template <typename T>
+    T&
+    emplace ()
+    {
+      return *new (yyas_<T> ()) T ();
+    }
+
+    /// Instantiate a \a T in here from \a t.
+    template <typename T>
+    T&
+    emplace (const T& t)
+    {
+      return *new (yyas_<T> ()) T (t);
+    }
+# endif
+
+    /// Instantiate an empty \a T in here.
+    /// Obsolete, use emplace.
+    template <typename T>
+    T&
+    build ()
+    {
+      return emplace<T> ();
+    }
+
+    /// Instantiate a \a T in here from \a t.
+    /// Obsolete, use emplace.
+    template <typename T>
+    T&
+    build (const T& t)
+    {
+      return emplace<T> (t);
+    }
+
+    /// Accessor to a built \a T.
+    template <typename T>
+    T&
+    as () YY_NOEXCEPT
+    {
+      return *yyas_<T> ();
+    }
+
+    /// Const accessor to a built \a T (for %printer).
+    template <typename T>
+    const T&
+    as () const YY_NOEXCEPT
+    {
+      return *yyas_<T> ();
+    }
+
+    /// Swap the content with \a that, of same type.
+    ///
+    /// Both variants must be built beforehand, because swapping the actual
+    /// data requires reading it (with as()), and this is not possible on
+    /// unconstructed variants: it would require some dynamic testing, which
+    /// should not be the variant's responsibility.
+    /// Swapping between built and (possibly) non-built is done with
+    /// self_type::move ().
+    template <typename T>
+    void
+    swap (self_type& that) YY_NOEXCEPT
+    {
+      std::swap (as<T> (), that.as<T> ());
+    }
+
+    /// Move the content of \a that to this.
+    ///
+    /// Destroys \a that.
+    template <typename T>
+    void
+    move (self_type& that)
+    {
+# if 201103L <= YY_CPLUSPLUS
+      emplace<T> (std::move (that.as<T> ()));
+# else
+      emplace<T> ();
+      swap<T> (that);
+# endif
+      that.destroy<T> ();
+    }
+
+# if 201103L <= YY_CPLUSPLUS
+    /// Move the content of \a that to this.
+    template <typename T>
+    void
+    move (self_type&& that)
+    {
+      emplace<T> (std::move (that.as<T> ()));
+      that.destroy<T> ();
+    }
+#endif
+
+    /// Copy the content of \a that to this.
+    template <typename T>
+    void
+    copy (const self_type& that)
+    {
+      emplace<T> (that.as<T> ());
+    }
+
+    /// Destroy the stored \a T.
+    template <typename T>
+    void
+    destroy ()
+    {
+      as<T> ().~T ();
+    }
+
+  private:
+#if YY_CPLUSPLUS < 201103L
+    /// Non copyable.
+    value_type (const self_type&);
+    /// Non copyable.
+    self_type& operator= (const self_type&);
+#endif
+
+    /// Accessor to raw memory as \a T.
+    template <typename T>
+    T*
+    yyas_ () YY_NOEXCEPT
+    {
+      void *yyp = yyraw_;
+      return static_cast<T*> (yyp);
+     }
+
+    /// Const accessor to raw memory as \a T.
+    template <typename T>
+    const T*
+    yyas_ () const YY_NOEXCEPT
+    {
+      const void *yyp = yyraw_;
+      return static_cast<const T*> (yyp);
+     }
+
+    /// An auxiliary type to compute the largest semantic type.
+    union union_type
+    {
+      // "integer value"
+      // "subscript natural number value"
+      // "subscript integer value"
+      // "superscript natural number value"
+      // "superscript integer value"
+      // optional_superscript_natural_number_value
+      char dummy1[sizeof (integer)];
+
+      // metaformula_substitution_sequence
+      // substitution_for_metaformula
+      // metaformula_substitution
+      // formula_substitution_sequence
+      // substitution_for_formula
+      // formula_substitution
+      // term_substitution_sequence
+      // term_substitution
+      // predicate_function_application
+      // term_function_application
+      // theory
+      // include_theories
+      // include_theory
+      // theory_body
+      // formal_system
+      // formal_system_body
+      // formal_system_body_item
+      // theory_body_list
+      // theory_body_item
+      // postulate
+      // conjecture
+      // theorem
+      // theorem_statement
+      // proof
+      // $@11
+      // compound-proof
+      // proof_head
+      // proof_lines
+      // proof_line
+      // proof_of_conclusion
+      // find_statement
+      // find_statement_list
+      // find_statement_sequence
+      // find_definition_sequence
+      // find_statement_item
+      // find_statement_name
+      // @13
+      // statement
+      // definition_statement
+      // identifier_declaration
+      // declarator_list
+      // declarator_identifier_list
+      // identifier_function_list
+      // identifier_function_name
+      // identifier_constant_list
+      // identifier_constant_name
+      // identifier_variable_list
+      // identifier_variable_name
+      // definition
+      // metaformula_definition
+      // object_formula_definition
+      // term_definition
+      // metaformula
+      // pure_metaformula
+      // optional_varied_variable_matrix
+      // varied_variable_conclusions
+      // varied_variable_conclusion
+      // varied_variable_premises
+      // varied_variable_premise
+      // varied_variable_set
+      // varied_variable
+      // optional_varied_in_reduction_variable_matrix
+      // varied_in_reduction_variable_conclusions
+      // varied_in_reduction_variable_conclusion
+      // varied_in_reduction_variable_premises
+      // varied_in_reduction_variable_premise
+      // varied_in_reduction_variable_set
+      // varied_in_reduction_variable
+      // simple_metaformula
+      // atomic_metaformula
+      // special_metaformula
+      // meta_object_free
+      // metapredicate
+      // metapredicate_function
+      // metapredicate_argument
+      // metapredicate_argument_body
+      // object_formula
+      // hoare_triple
+      // code_statement
+      // code_sequence
+      // code_term
+      // very_simple_formula
+      // quantized_formula
+      // simple_formula
+      // quantized_body
+      // atomic_formula
+      // predicate
+      // predicate_expression
+      // predicate_identifier
+      // logic_formula
+      // prefix_logic_formula
+      // quantizer_declaration
+      // quantized_variable_list
+      // all_variable_list
+      // exist_variable_list
+      // exclusion_set
+      // exclusion_list
+      // all_identifier_list
+      // exist_identifier_list
+      // optional_in_term
+      // tuple
+      // tuple_body
+      // term
+      // simple_term
+      // term_identifier
+      // variable_exclusion_set
+      // variable_exclusion_list
+      // bound_variable
+      // function_term
+      // set_term
+      // implicit_set_identifier_list
+      // set_member_list
+      // function_term_identifier
+      char dummy2[sizeof (ref6<unit>)];
+
+      // end_theory_name
+      char dummy3[sizeof (std::pair<std::string, bool>)];
+
+      // "natural number value"
+      char dummy4[sizeof (std::pair<std::string, integer>)];
+
+      // theorem_head
+      char dummy5[sizeof (std::pair<theorem::type, std::string>)];
+
+      // "result"
+      // "name"
+      // "label"
+      // "∀"
+      // "∃"
+      // "¬"
+      // "∧"
+      // "∨"
+      // "⇒"
+      // "⇐"
+      // "⇔"
+      // "ℕ"
+      // "<"
+      // ">"
+      // "≤"
+      // "≥"
+      // "≮"
+      // "≯"
+      // "≰"
+      // "≱"
+      // "="
+      // "≠"
+      // "∣"
+      // "∤"
+      // "↦"
+      // "⤇"
+      // "!"
+      // "⋅"
+      // "+"
+      // "-"
+      // "∈"
+      // "∉"
+      // "∁"
+      // "∪"
+      // "∩"
+      // "∖"
+      // "⋃"
+      // "⋂"
+      // "⊆"
+      // "⊊"
+      // "⊇"
+      // "⊋"
+      // "/"
+      // "\\"
+      // theory_name
+      // statement_name
+      // statement_label
+      // subproof_statement
+      // optional-result
+      char dummy6[sizeof (std::string)];
+
+      // "theorem"
+      char dummy7[sizeof (theorem::type)];
+
+      // definition_labelstatement
+      char dummy8[sizeof (val<definition>)];
+
+      // "metapredicate constant"
+      // "function"
+      // "predicate"
+      // "predicate constant"
+      // "atom constant"
+      // "function constant"
+      // "term constant"
+      // "metaformula variable"
+      // "object formula variable"
+      // "predicate variable"
+      // "atom variable"
+      // "prefix formula variable"
+      // "function variable"
+      // "object variable"
+      // "code variable"
+      // "all variable"
+      // "exist variable"
+      // "function map variable"
+      // "Set variable"
+      // "set variable"
+      // "set variable definition"
+      // "implicit set variable"
+      char dummy9[sizeof (val<unit>)];
+    };
+
+    /// The size of the largest semantic type.
+    enum { size = sizeof (union_type) };
+
+    /// A buffer to store semantic values.
+    union
+    {
+      /// Strongest alignment constraints.
+      long double yyalign_me_;
+      /// A buffer large enough to store any of the semantic values.
+      char yyraw_[size];
+    };
+  };
+
 #endif
     /// Backward compatibility (Bison 3.8).
     typedef value_type semantic_type;
@@ -364,7 +746,7 @@ namespace mli {
     prefix_or_key = 329,           // prefix_or_key
     prefix_implies_key = 330,      // prefix_implies_key
     prefix_equivalent_key = 331,   // prefix_equivalent_key
-    natural_numner_key = 332,      // "ℕ"
+    natural_number_key = 332,      // "ℕ"
     less_key = 333,                // "<"
     greater_key = 334,             // ">"
     less_or_equal_key = 335,       // "≤"
@@ -536,7 +918,7 @@ namespace mli {
         S_prefix_or_key = 74,                    // prefix_or_key
         S_prefix_implies_key = 75,               // prefix_implies_key
         S_prefix_equivalent_key = 76,            // prefix_equivalent_key
-        S_natural_numner_key = 77,               // "ℕ"
+        S_natural_number_key = 77,               // "ℕ"
         S_less_key = 78,                         // "<"
         S_greater_key = 79,                      // ">"
         S_less_or_equal_key = 80,                // "≤"
@@ -664,100 +1046,102 @@ namespace mli {
         S_statement_label = 202,                 // statement_label
         S_proof_line = 203,                      // proof_line
         S_204_12 = 204,                          // $@12
-        S_subproof = 205,                        // subproof
-        S_subproof_statement = 206,              // subproof_statement
-        S_proof_of_conclusion = 207,             // proof_of_conclusion
-        S_208_optional_result = 208,             // optional-result
-        S_find_statement = 209,                  // find_statement
-        S_find_statement_list = 210,             // find_statement_list
-        S_find_statement_sequence = 211,         // find_statement_sequence
-        S_find_definition_sequence = 212,        // find_definition_sequence
-        S_find_statement_item = 213,             // find_statement_item
-        S_find_statement_name = 214,             // find_statement_name
-        S_215_13 = 215,                          // @13
-        S_statement = 216,                       // statement
-        S_definition_statement = 217,            // definition_statement
-        S_identifier_declaration = 218,          // identifier_declaration
-        S_declarator_list = 219,                 // declarator_list
-        S_declarator_identifier_list = 220,      // declarator_identifier_list
-        S_identifier_function_list = 221,        // identifier_function_list
-        S_identifier_function_name = 222,        // identifier_function_name
-        S_223_14 = 223,                          // $@14
-        S_224_15 = 224,                          // $@15
-        S_identifier_constant_list = 225,        // identifier_constant_list
-        S_identifier_constant_name = 226,        // identifier_constant_name
-        S_identifier_variable_list = 227,        // identifier_variable_list
-        S_identifier_variable_name = 228,        // identifier_variable_name
-        S_definition = 229,                      // definition
-        S_metaformula_definition = 230,          // metaformula_definition
-        S_object_formula_definition = 231,       // object_formula_definition
-        S_term_definition = 232,                 // term_definition
-        S_metaformula = 233,                     // metaformula
-        S_pure_metaformula = 234,                // pure_metaformula
-        S_optional_varied_variable_matrix = 235, // optional_varied_variable_matrix
-        S_varied_variable_conclusions = 236,     // varied_variable_conclusions
-        S_varied_variable_conclusion = 237,      // varied_variable_conclusion
-        S_varied_variable_premises = 238,        // varied_variable_premises
-        S_varied_variable_premise = 239,         // varied_variable_premise
-        S_varied_variable_set = 240,             // varied_variable_set
-        S_varied_variable = 241,                 // varied_variable
-        S_optional_varied_in_reduction_variable_matrix = 242, // optional_varied_in_reduction_variable_matrix
-        S_varied_in_reduction_variable_conclusions = 243, // varied_in_reduction_variable_conclusions
-        S_varied_in_reduction_variable_conclusion = 244, // varied_in_reduction_variable_conclusion
-        S_varied_in_reduction_variable_premises = 245, // varied_in_reduction_variable_premises
-        S_varied_in_reduction_variable_premise = 246, // varied_in_reduction_variable_premise
-        S_varied_in_reduction_variable_set = 247, // varied_in_reduction_variable_set
-        S_varied_in_reduction_variable = 248,    // varied_in_reduction_variable
-        S_simple_metaformula = 249,              // simple_metaformula
-        S_atomic_metaformula = 250,              // atomic_metaformula
-        S_special_metaformula = 251,             // special_metaformula
-        S_meta_object_free = 252,                // meta_object_free
-        S_metapredicate = 253,                   // metapredicate
-        S_metapredicate_function = 254,          // metapredicate_function
-        S_metapredicate_argument = 255,          // metapredicate_argument
-        S_metapredicate_argument_body = 256,     // metapredicate_argument_body
-        S_object_formula = 257,                  // object_formula
-        S_hoare_triple = 258,                    // hoare_triple
-        S_code_statement = 259,                  // code_statement
-        S_code_sequence = 260,                   // code_sequence
-        S_code_term = 261,                       // code_term
-        S_very_simple_formula = 262,             // very_simple_formula
-        S_quantized_formula = 263,               // quantized_formula
-        S_simple_formula = 264,                  // simple_formula
-        S_quantized_body = 265,                  // quantized_body
-        S_atomic_formula = 266,                  // atomic_formula
-        S_predicate = 267,                       // predicate
-        S_268_16 = 268,                          // $@16
-        S_269_17 = 269,                          // $@17
-        S_predicate_expression = 270,            // predicate_expression
-        S_predicate_identifier = 271,            // predicate_identifier
-        S_optional_superscript_natural_number_value = 272, // optional_superscript_natural_number_value
-        S_logic_formula = 273,                   // logic_formula
-        S_prefix_logic_formula = 274,            // prefix_logic_formula
-        S_quantizer_declaration = 275,           // quantizer_declaration
-        S_quantized_variable_list = 276,         // quantized_variable_list
-        S_all_variable_list = 277,               // all_variable_list
-        S_exist_variable_list = 278,             // exist_variable_list
-        S_all_identifier_list = 279,             // all_identifier_list
-        S_280_18 = 280,                          // $@18
-        S_exist_identifier_list = 281,           // exist_identifier_list
+        S_subproof_statement = 205,              // subproof_statement
+        S_proof_of_conclusion = 206,             // proof_of_conclusion
+        S_207_optional_result = 207,             // optional-result
+        S_find_statement = 208,                  // find_statement
+        S_find_statement_list = 209,             // find_statement_list
+        S_find_statement_sequence = 210,         // find_statement_sequence
+        S_find_definition_sequence = 211,        // find_definition_sequence
+        S_find_statement_item = 212,             // find_statement_item
+        S_find_statement_name = 213,             // find_statement_name
+        S_214_13 = 214,                          // @13
+        S_statement = 215,                       // statement
+        S_definition_statement = 216,            // definition_statement
+        S_identifier_declaration = 217,          // identifier_declaration
+        S_declarator_list = 218,                 // declarator_list
+        S_declarator_identifier_list = 219,      // declarator_identifier_list
+        S_identifier_function_list = 220,        // identifier_function_list
+        S_identifier_function_name = 221,        // identifier_function_name
+        S_222_14 = 222,                          // $@14
+        S_223_15 = 223,                          // $@15
+        S_identifier_constant_list = 224,        // identifier_constant_list
+        S_identifier_constant_name = 225,        // identifier_constant_name
+        S_identifier_variable_list = 226,        // identifier_variable_list
+        S_identifier_variable_name = 227,        // identifier_variable_name
+        S_definition = 228,                      // definition
+        S_metaformula_definition = 229,          // metaformula_definition
+        S_object_formula_definition = 230,       // object_formula_definition
+        S_term_definition = 231,                 // term_definition
+        S_metaformula = 232,                     // metaformula
+        S_pure_metaformula = 233,                // pure_metaformula
+        S_optional_varied_variable_matrix = 234, // optional_varied_variable_matrix
+        S_varied_variable_conclusions = 235,     // varied_variable_conclusions
+        S_varied_variable_conclusion = 236,      // varied_variable_conclusion
+        S_varied_variable_premises = 237,        // varied_variable_premises
+        S_varied_variable_premise = 238,         // varied_variable_premise
+        S_varied_variable_set = 239,             // varied_variable_set
+        S_varied_variable = 240,                 // varied_variable
+        S_optional_varied_in_reduction_variable_matrix = 241, // optional_varied_in_reduction_variable_matrix
+        S_varied_in_reduction_variable_conclusions = 242, // varied_in_reduction_variable_conclusions
+        S_varied_in_reduction_variable_conclusion = 243, // varied_in_reduction_variable_conclusion
+        S_varied_in_reduction_variable_premises = 244, // varied_in_reduction_variable_premises
+        S_varied_in_reduction_variable_premise = 245, // varied_in_reduction_variable_premise
+        S_varied_in_reduction_variable_set = 246, // varied_in_reduction_variable_set
+        S_varied_in_reduction_variable = 247,    // varied_in_reduction_variable
+        S_simple_metaformula = 248,              // simple_metaformula
+        S_atomic_metaformula = 249,              // atomic_metaformula
+        S_special_metaformula = 250,             // special_metaformula
+        S_meta_object_free = 251,                // meta_object_free
+        S_metapredicate = 252,                   // metapredicate
+        S_metapredicate_function = 253,          // metapredicate_function
+        S_metapredicate_argument = 254,          // metapredicate_argument
+        S_metapredicate_argument_body = 255,     // metapredicate_argument_body
+        S_object_formula = 256,                  // object_formula
+        S_hoare_triple = 257,                    // hoare_triple
+        S_code_statement = 258,                  // code_statement
+        S_code_sequence = 259,                   // code_sequence
+        S_code_term = 260,                       // code_term
+        S_very_simple_formula = 261,             // very_simple_formula
+        S_quantized_formula = 262,               // quantized_formula
+        S_simple_formula = 263,                  // simple_formula
+        S_quantized_body = 264,                  // quantized_body
+        S_atomic_formula = 265,                  // atomic_formula
+        S_predicate = 266,                       // predicate
+        S_267_16 = 267,                          // $@16
+        S_268_17 = 268,                          // $@17
+        S_predicate_expression = 269,            // predicate_expression
+        S_predicate_identifier = 270,            // predicate_identifier
+        S_optional_superscript_natural_number_value = 271, // optional_superscript_natural_number_value
+        S_logic_formula = 272,                   // logic_formula
+        S_prefix_logic_formula = 273,            // prefix_logic_formula
+        S_quantizer_declaration = 274,           // quantizer_declaration
+        S_quantized_variable_list = 275,         // quantized_variable_list
+        S_all_variable_list = 276,               // all_variable_list
+        S_exist_variable_list = 277,             // exist_variable_list
+        S_exclusion_set = 278,                   // exclusion_set
+        S_279_18 = 279,                          // $@18
+        S_exclusion_list = 280,                  // exclusion_list
+        S_all_identifier_list = 281,             // all_identifier_list
         S_282_19 = 282,                          // $@19
-        S_optional_in_term = 283,                // optional_in_term
-        S_tuple = 284,                           // tuple
-        S_tuple_body = 285,                      // tuple_body
-        S_term = 286,                            // term
-        S_simple_term = 287,                     // simple_term
-        S_term_identifier = 288,                 // term_identifier
-        S_variable_exclusion_set = 289,          // variable_exclusion_set
-        S_variable_exclusion_list = 290,         // variable_exclusion_list
-        S_bound_variable = 291,                  // bound_variable
-        S_function_term = 292,                   // function_term
-        S_set_term = 293,                        // set_term
-        S_implicit_set_identifier_list = 294,    // implicit_set_identifier_list
-        S_295_20 = 295,                          // $@20
-        S_296_21 = 296,                          // $@21
-        S_set_member_list = 297,                 // set_member_list
-        S_function_term_identifier = 298         // function_term_identifier
+        S_exist_identifier_list = 283,           // exist_identifier_list
+        S_284_20 = 284,                          // $@20
+        S_optional_in_term = 285,                // optional_in_term
+        S_tuple = 286,                           // tuple
+        S_tuple_body = 287,                      // tuple_body
+        S_term = 288,                            // term
+        S_simple_term = 289,                     // simple_term
+        S_term_identifier = 290,                 // term_identifier
+        S_variable_exclusion_set = 291,          // variable_exclusion_set
+        S_variable_exclusion_list = 292,         // variable_exclusion_list
+        S_bound_variable = 293,                  // bound_variable
+        S_function_term = 294,                   // function_term
+        S_set_term = 295,                        // set_term
+        S_implicit_set_identifier_list = 296,    // implicit_set_identifier_list
+        S_297_21 = 297,                          // $@21
+        S_298_22 = 298,                          // $@22
+        S_set_member_list = 299,                 // set_member_list
+        S_function_term_identifier = 300         // function_term_identifier
       };
     };
 
@@ -789,21 +1173,381 @@ namespace mli {
       /// Move constructor.
       basic_symbol (basic_symbol&& that)
         : Base (std::move (that))
-        , value (std::move (that.value))
+        , value ()
         , location (std::move (that.location))
-      {}
+      {
+        switch (this->kind ())
+    {
+      case symbol_kind::S_integer_value: // "integer value"
+      case symbol_kind::S_subscript_natural_number_value: // "subscript natural number value"
+      case symbol_kind::S_subscript_integer_value: // "subscript integer value"
+      case symbol_kind::S_superscript_natural_number_value: // "superscript natural number value"
+      case symbol_kind::S_superscript_integer_value: // "superscript integer value"
+      case symbol_kind::S_optional_superscript_natural_number_value: // optional_superscript_natural_number_value
+        value.move< integer > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_metaformula_substitution_sequence: // metaformula_substitution_sequence
+      case symbol_kind::S_substitution_for_metaformula: // substitution_for_metaformula
+      case symbol_kind::S_metaformula_substitution: // metaformula_substitution
+      case symbol_kind::S_formula_substitution_sequence: // formula_substitution_sequence
+      case symbol_kind::S_substitution_for_formula: // substitution_for_formula
+      case symbol_kind::S_formula_substitution: // formula_substitution
+      case symbol_kind::S_term_substitution_sequence: // term_substitution_sequence
+      case symbol_kind::S_term_substitution: // term_substitution
+      case symbol_kind::S_predicate_function_application: // predicate_function_application
+      case symbol_kind::S_term_function_application: // term_function_application
+      case symbol_kind::S_theory: // theory
+      case symbol_kind::S_include_theories: // include_theories
+      case symbol_kind::S_include_theory: // include_theory
+      case symbol_kind::S_theory_body: // theory_body
+      case symbol_kind::S_formal_system: // formal_system
+      case symbol_kind::S_formal_system_body: // formal_system_body
+      case symbol_kind::S_formal_system_body_item: // formal_system_body_item
+      case symbol_kind::S_theory_body_list: // theory_body_list
+      case symbol_kind::S_theory_body_item: // theory_body_item
+      case symbol_kind::S_postulate: // postulate
+      case symbol_kind::S_conjecture: // conjecture
+      case symbol_kind::S_theorem: // theorem
+      case symbol_kind::S_theorem_statement: // theorem_statement
+      case symbol_kind::S_proof: // proof
+      case symbol_kind::S_198_11: // $@11
+      case symbol_kind::S_199_compound_proof: // compound-proof
+      case symbol_kind::S_proof_head: // proof_head
+      case symbol_kind::S_proof_lines: // proof_lines
+      case symbol_kind::S_proof_line: // proof_line
+      case symbol_kind::S_proof_of_conclusion: // proof_of_conclusion
+      case symbol_kind::S_find_statement: // find_statement
+      case symbol_kind::S_find_statement_list: // find_statement_list
+      case symbol_kind::S_find_statement_sequence: // find_statement_sequence
+      case symbol_kind::S_find_definition_sequence: // find_definition_sequence
+      case symbol_kind::S_find_statement_item: // find_statement_item
+      case symbol_kind::S_find_statement_name: // find_statement_name
+      case symbol_kind::S_214_13: // @13
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_definition_statement: // definition_statement
+      case symbol_kind::S_identifier_declaration: // identifier_declaration
+      case symbol_kind::S_declarator_list: // declarator_list
+      case symbol_kind::S_declarator_identifier_list: // declarator_identifier_list
+      case symbol_kind::S_identifier_function_list: // identifier_function_list
+      case symbol_kind::S_identifier_function_name: // identifier_function_name
+      case symbol_kind::S_identifier_constant_list: // identifier_constant_list
+      case symbol_kind::S_identifier_constant_name: // identifier_constant_name
+      case symbol_kind::S_identifier_variable_list: // identifier_variable_list
+      case symbol_kind::S_identifier_variable_name: // identifier_variable_name
+      case symbol_kind::S_definition: // definition
+      case symbol_kind::S_metaformula_definition: // metaformula_definition
+      case symbol_kind::S_object_formula_definition: // object_formula_definition
+      case symbol_kind::S_term_definition: // term_definition
+      case symbol_kind::S_metaformula: // metaformula
+      case symbol_kind::S_pure_metaformula: // pure_metaformula
+      case symbol_kind::S_optional_varied_variable_matrix: // optional_varied_variable_matrix
+      case symbol_kind::S_varied_variable_conclusions: // varied_variable_conclusions
+      case symbol_kind::S_varied_variable_conclusion: // varied_variable_conclusion
+      case symbol_kind::S_varied_variable_premises: // varied_variable_premises
+      case symbol_kind::S_varied_variable_premise: // varied_variable_premise
+      case symbol_kind::S_varied_variable_set: // varied_variable_set
+      case symbol_kind::S_varied_variable: // varied_variable
+      case symbol_kind::S_optional_varied_in_reduction_variable_matrix: // optional_varied_in_reduction_variable_matrix
+      case symbol_kind::S_varied_in_reduction_variable_conclusions: // varied_in_reduction_variable_conclusions
+      case symbol_kind::S_varied_in_reduction_variable_conclusion: // varied_in_reduction_variable_conclusion
+      case symbol_kind::S_varied_in_reduction_variable_premises: // varied_in_reduction_variable_premises
+      case symbol_kind::S_varied_in_reduction_variable_premise: // varied_in_reduction_variable_premise
+      case symbol_kind::S_varied_in_reduction_variable_set: // varied_in_reduction_variable_set
+      case symbol_kind::S_varied_in_reduction_variable: // varied_in_reduction_variable
+      case symbol_kind::S_simple_metaformula: // simple_metaformula
+      case symbol_kind::S_atomic_metaformula: // atomic_metaformula
+      case symbol_kind::S_special_metaformula: // special_metaformula
+      case symbol_kind::S_meta_object_free: // meta_object_free
+      case symbol_kind::S_metapredicate: // metapredicate
+      case symbol_kind::S_metapredicate_function: // metapredicate_function
+      case symbol_kind::S_metapredicate_argument: // metapredicate_argument
+      case symbol_kind::S_metapredicate_argument_body: // metapredicate_argument_body
+      case symbol_kind::S_object_formula: // object_formula
+      case symbol_kind::S_hoare_triple: // hoare_triple
+      case symbol_kind::S_code_statement: // code_statement
+      case symbol_kind::S_code_sequence: // code_sequence
+      case symbol_kind::S_code_term: // code_term
+      case symbol_kind::S_very_simple_formula: // very_simple_formula
+      case symbol_kind::S_quantized_formula: // quantized_formula
+      case symbol_kind::S_simple_formula: // simple_formula
+      case symbol_kind::S_quantized_body: // quantized_body
+      case symbol_kind::S_atomic_formula: // atomic_formula
+      case symbol_kind::S_predicate: // predicate
+      case symbol_kind::S_predicate_expression: // predicate_expression
+      case symbol_kind::S_predicate_identifier: // predicate_identifier
+      case symbol_kind::S_logic_formula: // logic_formula
+      case symbol_kind::S_prefix_logic_formula: // prefix_logic_formula
+      case symbol_kind::S_quantizer_declaration: // quantizer_declaration
+      case symbol_kind::S_quantized_variable_list: // quantized_variable_list
+      case symbol_kind::S_all_variable_list: // all_variable_list
+      case symbol_kind::S_exist_variable_list: // exist_variable_list
+      case symbol_kind::S_exclusion_set: // exclusion_set
+      case symbol_kind::S_exclusion_list: // exclusion_list
+      case symbol_kind::S_all_identifier_list: // all_identifier_list
+      case symbol_kind::S_exist_identifier_list: // exist_identifier_list
+      case symbol_kind::S_optional_in_term: // optional_in_term
+      case symbol_kind::S_tuple: // tuple
+      case symbol_kind::S_tuple_body: // tuple_body
+      case symbol_kind::S_term: // term
+      case symbol_kind::S_simple_term: // simple_term
+      case symbol_kind::S_term_identifier: // term_identifier
+      case symbol_kind::S_variable_exclusion_set: // variable_exclusion_set
+      case symbol_kind::S_variable_exclusion_list: // variable_exclusion_list
+      case symbol_kind::S_bound_variable: // bound_variable
+      case symbol_kind::S_function_term: // function_term
+      case symbol_kind::S_set_term: // set_term
+      case symbol_kind::S_implicit_set_identifier_list: // implicit_set_identifier_list
+      case symbol_kind::S_set_member_list: // set_member_list
+      case symbol_kind::S_function_term_identifier: // function_term_identifier
+        value.move< ref6<unit> > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_end_theory_name: // end_theory_name
+        value.move< std::pair<std::string, bool> > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_natural_number_value: // "natural number value"
+        value.move< std::pair<std::string, integer> > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_theorem_head: // theorem_head
+        value.move< std::pair<theorem::type, std::string> > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_result_key: // "result"
+      case symbol_kind::S_plain_name: // "name"
+      case symbol_kind::S_label_key: // "label"
+      case symbol_kind::S_all_key: // "∀"
+      case symbol_kind::S_exist_key: // "∃"
+      case symbol_kind::S_logical_not_key: // "¬"
+      case symbol_kind::S_logical_and_key: // "∧"
+      case symbol_kind::S_logical_or_key: // "∨"
+      case symbol_kind::S_implies_key: // "⇒"
+      case symbol_kind::S_impliedby_key: // "⇐"
+      case symbol_kind::S_equivalent_key: // "⇔"
+      case symbol_kind::S_natural_number_key: // "ℕ"
+      case symbol_kind::S_less_key: // "<"
+      case symbol_kind::S_greater_key: // ">"
+      case symbol_kind::S_less_or_equal_key: // "≤"
+      case symbol_kind::S_greater_or_equal_key: // "≥"
+      case symbol_kind::S_not_less_key: // "≮"
+      case symbol_kind::S_not_greater_key: // "≯"
+      case symbol_kind::S_not_less_or_equal_key: // "≰"
+      case symbol_kind::S_not_greater_or_equal_key: // "≱"
+      case symbol_kind::S_equal_key: // "="
+      case symbol_kind::S_not_equal_key: // "≠"
+      case symbol_kind::S_divides_key: // "∣"
+      case symbol_kind::S_not_divides_key: // "∤"
+      case symbol_kind::S_mapsto_key: // "↦"
+      case symbol_kind::S_Mapsto_key: // "⤇"
+      case symbol_kind::S_factorial_key: // "!"
+      case symbol_kind::S_mult_key: // "⋅"
+      case symbol_kind::S_plus_key: // "+"
+      case symbol_kind::S_minus_key: // "-"
+      case symbol_kind::S_in_key: // "∈"
+      case symbol_kind::S_not_in_key: // "∉"
+      case symbol_kind::S_set_complement_key: // "∁"
+      case symbol_kind::S_set_union_key: // "∪"
+      case symbol_kind::S_set_intersection_key: // "∩"
+      case symbol_kind::S_set_difference_key: // "∖"
+      case symbol_kind::S_set_union_operator_key: // "⋃"
+      case symbol_kind::S_set_intersection_operator_key: // "⋂"
+      case symbol_kind::S_subset_key: // "⊆"
+      case symbol_kind::S_proper_subset_key: // "⊊"
+      case symbol_kind::S_superset_key: // "⊇"
+      case symbol_kind::S_proper_superset_key: // "⊋"
+      case symbol_kind::S_slash_key: // "/"
+      case symbol_kind::S_backslash_key: // "\\"
+      case symbol_kind::S_theory_name: // theory_name
+      case symbol_kind::S_statement_name: // statement_name
+      case symbol_kind::S_statement_label: // statement_label
+      case symbol_kind::S_subproof_statement: // subproof_statement
+      case symbol_kind::S_207_optional_result: // optional-result
+        value.move< std::string > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_theorem_key: // "theorem"
+        value.move< theorem::type > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_definition_labelstatement: // definition_labelstatement
+        value.move< val<definition> > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_metapredicate_constant: // "metapredicate constant"
+      case symbol_kind::S_function_key: // "function"
+      case symbol_kind::S_predicate_key: // "predicate"
+      case symbol_kind::S_predicate_constant: // "predicate constant"
+      case symbol_kind::S_atom_constant: // "atom constant"
+      case symbol_kind::S_function_constant: // "function constant"
+      case symbol_kind::S_term_constant: // "term constant"
+      case symbol_kind::S_metaformula_variable: // "metaformula variable"
+      case symbol_kind::S_object_formula_variable: // "object formula variable"
+      case symbol_kind::S_predicate_variable: // "predicate variable"
+      case symbol_kind::S_atom_variable: // "atom variable"
+      case symbol_kind::S_prefix_formula_variable: // "prefix formula variable"
+      case symbol_kind::S_function_variable: // "function variable"
+      case symbol_kind::S_object_variable: // "object variable"
+      case symbol_kind::S_code_variable: // "code variable"
+      case symbol_kind::S_all_variable: // "all variable"
+      case symbol_kind::S_exist_variable: // "exist variable"
+      case symbol_kind::S_function_map_variable: // "function map variable"
+      case symbol_kind::S_is_set_variable: // "Set variable"
+      case symbol_kind::S_set_variable: // "set variable"
+      case symbol_kind::S_set_variable_definition: // "set variable definition"
+      case symbol_kind::S_implicit_set_variable: // "implicit set variable"
+        value.move< val<unit> > (std::move (that.value));
+        break;
+
+      default:
+        break;
+    }
+
+      }
 #endif
 
       /// Copy constructor.
       basic_symbol (const basic_symbol& that);
-      /// Constructor for valueless symbols.
-      basic_symbol (typename Base::kind_type t,
-                    YY_MOVE_REF (location_type) l);
 
-      /// Constructor for symbols with semantic value.
-      basic_symbol (typename Base::kind_type t,
-                    YY_RVREF (value_type) v,
-                    YY_RVREF (location_type) l);
+      /// Constructors for typed symbols.
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, location_type&& l)
+        : Base (t)
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const location_type& l)
+        : Base (t)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, integer&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const integer& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, ref6<unit>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const ref6<unit>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::pair<std::string, bool>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::pair<std::string, bool>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::pair<std::string, integer>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::pair<std::string, integer>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::pair<theorem::type, std::string>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::pair<theorem::type, std::string>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::string&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::string& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, theorem::type&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const theorem::type& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, val<definition>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const val<definition>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, val<unit>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const val<unit>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
 
       /// Destroy the symbol.
       ~basic_symbol ()
@@ -816,6 +1560,245 @@ namespace mli {
       /// Destroy contents, and record that is empty.
       void clear () YY_NOEXCEPT
       {
+        // User destructor.
+        symbol_kind_type yykind = this->kind ();
+        basic_symbol<Base>& yysym = *this;
+        (void) yysym;
+        switch (yykind)
+        {
+       default:
+          break;
+        }
+
+        // Value type destructor.
+switch (yykind)
+    {
+      case symbol_kind::S_integer_value: // "integer value"
+      case symbol_kind::S_subscript_natural_number_value: // "subscript natural number value"
+      case symbol_kind::S_subscript_integer_value: // "subscript integer value"
+      case symbol_kind::S_superscript_natural_number_value: // "superscript natural number value"
+      case symbol_kind::S_superscript_integer_value: // "superscript integer value"
+      case symbol_kind::S_optional_superscript_natural_number_value: // optional_superscript_natural_number_value
+        value.template destroy< integer > ();
+        break;
+
+      case symbol_kind::S_metaformula_substitution_sequence: // metaformula_substitution_sequence
+      case symbol_kind::S_substitution_for_metaformula: // substitution_for_metaformula
+      case symbol_kind::S_metaformula_substitution: // metaformula_substitution
+      case symbol_kind::S_formula_substitution_sequence: // formula_substitution_sequence
+      case symbol_kind::S_substitution_for_formula: // substitution_for_formula
+      case symbol_kind::S_formula_substitution: // formula_substitution
+      case symbol_kind::S_term_substitution_sequence: // term_substitution_sequence
+      case symbol_kind::S_term_substitution: // term_substitution
+      case symbol_kind::S_predicate_function_application: // predicate_function_application
+      case symbol_kind::S_term_function_application: // term_function_application
+      case symbol_kind::S_theory: // theory
+      case symbol_kind::S_include_theories: // include_theories
+      case symbol_kind::S_include_theory: // include_theory
+      case symbol_kind::S_theory_body: // theory_body
+      case symbol_kind::S_formal_system: // formal_system
+      case symbol_kind::S_formal_system_body: // formal_system_body
+      case symbol_kind::S_formal_system_body_item: // formal_system_body_item
+      case symbol_kind::S_theory_body_list: // theory_body_list
+      case symbol_kind::S_theory_body_item: // theory_body_item
+      case symbol_kind::S_postulate: // postulate
+      case symbol_kind::S_conjecture: // conjecture
+      case symbol_kind::S_theorem: // theorem
+      case symbol_kind::S_theorem_statement: // theorem_statement
+      case symbol_kind::S_proof: // proof
+      case symbol_kind::S_198_11: // $@11
+      case symbol_kind::S_199_compound_proof: // compound-proof
+      case symbol_kind::S_proof_head: // proof_head
+      case symbol_kind::S_proof_lines: // proof_lines
+      case symbol_kind::S_proof_line: // proof_line
+      case symbol_kind::S_proof_of_conclusion: // proof_of_conclusion
+      case symbol_kind::S_find_statement: // find_statement
+      case symbol_kind::S_find_statement_list: // find_statement_list
+      case symbol_kind::S_find_statement_sequence: // find_statement_sequence
+      case symbol_kind::S_find_definition_sequence: // find_definition_sequence
+      case symbol_kind::S_find_statement_item: // find_statement_item
+      case symbol_kind::S_find_statement_name: // find_statement_name
+      case symbol_kind::S_214_13: // @13
+      case symbol_kind::S_statement: // statement
+      case symbol_kind::S_definition_statement: // definition_statement
+      case symbol_kind::S_identifier_declaration: // identifier_declaration
+      case symbol_kind::S_declarator_list: // declarator_list
+      case symbol_kind::S_declarator_identifier_list: // declarator_identifier_list
+      case symbol_kind::S_identifier_function_list: // identifier_function_list
+      case symbol_kind::S_identifier_function_name: // identifier_function_name
+      case symbol_kind::S_identifier_constant_list: // identifier_constant_list
+      case symbol_kind::S_identifier_constant_name: // identifier_constant_name
+      case symbol_kind::S_identifier_variable_list: // identifier_variable_list
+      case symbol_kind::S_identifier_variable_name: // identifier_variable_name
+      case symbol_kind::S_definition: // definition
+      case symbol_kind::S_metaformula_definition: // metaformula_definition
+      case symbol_kind::S_object_formula_definition: // object_formula_definition
+      case symbol_kind::S_term_definition: // term_definition
+      case symbol_kind::S_metaformula: // metaformula
+      case symbol_kind::S_pure_metaformula: // pure_metaformula
+      case symbol_kind::S_optional_varied_variable_matrix: // optional_varied_variable_matrix
+      case symbol_kind::S_varied_variable_conclusions: // varied_variable_conclusions
+      case symbol_kind::S_varied_variable_conclusion: // varied_variable_conclusion
+      case symbol_kind::S_varied_variable_premises: // varied_variable_premises
+      case symbol_kind::S_varied_variable_premise: // varied_variable_premise
+      case symbol_kind::S_varied_variable_set: // varied_variable_set
+      case symbol_kind::S_varied_variable: // varied_variable
+      case symbol_kind::S_optional_varied_in_reduction_variable_matrix: // optional_varied_in_reduction_variable_matrix
+      case symbol_kind::S_varied_in_reduction_variable_conclusions: // varied_in_reduction_variable_conclusions
+      case symbol_kind::S_varied_in_reduction_variable_conclusion: // varied_in_reduction_variable_conclusion
+      case symbol_kind::S_varied_in_reduction_variable_premises: // varied_in_reduction_variable_premises
+      case symbol_kind::S_varied_in_reduction_variable_premise: // varied_in_reduction_variable_premise
+      case symbol_kind::S_varied_in_reduction_variable_set: // varied_in_reduction_variable_set
+      case symbol_kind::S_varied_in_reduction_variable: // varied_in_reduction_variable
+      case symbol_kind::S_simple_metaformula: // simple_metaformula
+      case symbol_kind::S_atomic_metaformula: // atomic_metaformula
+      case symbol_kind::S_special_metaformula: // special_metaformula
+      case symbol_kind::S_meta_object_free: // meta_object_free
+      case symbol_kind::S_metapredicate: // metapredicate
+      case symbol_kind::S_metapredicate_function: // metapredicate_function
+      case symbol_kind::S_metapredicate_argument: // metapredicate_argument
+      case symbol_kind::S_metapredicate_argument_body: // metapredicate_argument_body
+      case symbol_kind::S_object_formula: // object_formula
+      case symbol_kind::S_hoare_triple: // hoare_triple
+      case symbol_kind::S_code_statement: // code_statement
+      case symbol_kind::S_code_sequence: // code_sequence
+      case symbol_kind::S_code_term: // code_term
+      case symbol_kind::S_very_simple_formula: // very_simple_formula
+      case symbol_kind::S_quantized_formula: // quantized_formula
+      case symbol_kind::S_simple_formula: // simple_formula
+      case symbol_kind::S_quantized_body: // quantized_body
+      case symbol_kind::S_atomic_formula: // atomic_formula
+      case symbol_kind::S_predicate: // predicate
+      case symbol_kind::S_predicate_expression: // predicate_expression
+      case symbol_kind::S_predicate_identifier: // predicate_identifier
+      case symbol_kind::S_logic_formula: // logic_formula
+      case symbol_kind::S_prefix_logic_formula: // prefix_logic_formula
+      case symbol_kind::S_quantizer_declaration: // quantizer_declaration
+      case symbol_kind::S_quantized_variable_list: // quantized_variable_list
+      case symbol_kind::S_all_variable_list: // all_variable_list
+      case symbol_kind::S_exist_variable_list: // exist_variable_list
+      case symbol_kind::S_exclusion_set: // exclusion_set
+      case symbol_kind::S_exclusion_list: // exclusion_list
+      case symbol_kind::S_all_identifier_list: // all_identifier_list
+      case symbol_kind::S_exist_identifier_list: // exist_identifier_list
+      case symbol_kind::S_optional_in_term: // optional_in_term
+      case symbol_kind::S_tuple: // tuple
+      case symbol_kind::S_tuple_body: // tuple_body
+      case symbol_kind::S_term: // term
+      case symbol_kind::S_simple_term: // simple_term
+      case symbol_kind::S_term_identifier: // term_identifier
+      case symbol_kind::S_variable_exclusion_set: // variable_exclusion_set
+      case symbol_kind::S_variable_exclusion_list: // variable_exclusion_list
+      case symbol_kind::S_bound_variable: // bound_variable
+      case symbol_kind::S_function_term: // function_term
+      case symbol_kind::S_set_term: // set_term
+      case symbol_kind::S_implicit_set_identifier_list: // implicit_set_identifier_list
+      case symbol_kind::S_set_member_list: // set_member_list
+      case symbol_kind::S_function_term_identifier: // function_term_identifier
+        value.template destroy< ref6<unit> > ();
+        break;
+
+      case symbol_kind::S_end_theory_name: // end_theory_name
+        value.template destroy< std::pair<std::string, bool> > ();
+        break;
+
+      case symbol_kind::S_natural_number_value: // "natural number value"
+        value.template destroy< std::pair<std::string, integer> > ();
+        break;
+
+      case symbol_kind::S_theorem_head: // theorem_head
+        value.template destroy< std::pair<theorem::type, std::string> > ();
+        break;
+
+      case symbol_kind::S_result_key: // "result"
+      case symbol_kind::S_plain_name: // "name"
+      case symbol_kind::S_label_key: // "label"
+      case symbol_kind::S_all_key: // "∀"
+      case symbol_kind::S_exist_key: // "∃"
+      case symbol_kind::S_logical_not_key: // "¬"
+      case symbol_kind::S_logical_and_key: // "∧"
+      case symbol_kind::S_logical_or_key: // "∨"
+      case symbol_kind::S_implies_key: // "⇒"
+      case symbol_kind::S_impliedby_key: // "⇐"
+      case symbol_kind::S_equivalent_key: // "⇔"
+      case symbol_kind::S_natural_number_key: // "ℕ"
+      case symbol_kind::S_less_key: // "<"
+      case symbol_kind::S_greater_key: // ">"
+      case symbol_kind::S_less_or_equal_key: // "≤"
+      case symbol_kind::S_greater_or_equal_key: // "≥"
+      case symbol_kind::S_not_less_key: // "≮"
+      case symbol_kind::S_not_greater_key: // "≯"
+      case symbol_kind::S_not_less_or_equal_key: // "≰"
+      case symbol_kind::S_not_greater_or_equal_key: // "≱"
+      case symbol_kind::S_equal_key: // "="
+      case symbol_kind::S_not_equal_key: // "≠"
+      case symbol_kind::S_divides_key: // "∣"
+      case symbol_kind::S_not_divides_key: // "∤"
+      case symbol_kind::S_mapsto_key: // "↦"
+      case symbol_kind::S_Mapsto_key: // "⤇"
+      case symbol_kind::S_factorial_key: // "!"
+      case symbol_kind::S_mult_key: // "⋅"
+      case symbol_kind::S_plus_key: // "+"
+      case symbol_kind::S_minus_key: // "-"
+      case symbol_kind::S_in_key: // "∈"
+      case symbol_kind::S_not_in_key: // "∉"
+      case symbol_kind::S_set_complement_key: // "∁"
+      case symbol_kind::S_set_union_key: // "∪"
+      case symbol_kind::S_set_intersection_key: // "∩"
+      case symbol_kind::S_set_difference_key: // "∖"
+      case symbol_kind::S_set_union_operator_key: // "⋃"
+      case symbol_kind::S_set_intersection_operator_key: // "⋂"
+      case symbol_kind::S_subset_key: // "⊆"
+      case symbol_kind::S_proper_subset_key: // "⊊"
+      case symbol_kind::S_superset_key: // "⊇"
+      case symbol_kind::S_proper_superset_key: // "⊋"
+      case symbol_kind::S_slash_key: // "/"
+      case symbol_kind::S_backslash_key: // "\\"
+      case symbol_kind::S_theory_name: // theory_name
+      case symbol_kind::S_statement_name: // statement_name
+      case symbol_kind::S_statement_label: // statement_label
+      case symbol_kind::S_subproof_statement: // subproof_statement
+      case symbol_kind::S_207_optional_result: // optional-result
+        value.template destroy< std::string > ();
+        break;
+
+      case symbol_kind::S_theorem_key: // "theorem"
+        value.template destroy< theorem::type > ();
+        break;
+
+      case symbol_kind::S_definition_labelstatement: // definition_labelstatement
+        value.template destroy< val<definition> > ();
+        break;
+
+      case symbol_kind::S_metapredicate_constant: // "metapredicate constant"
+      case symbol_kind::S_function_key: // "function"
+      case symbol_kind::S_predicate_key: // "predicate"
+      case symbol_kind::S_predicate_constant: // "predicate constant"
+      case symbol_kind::S_atom_constant: // "atom constant"
+      case symbol_kind::S_function_constant: // "function constant"
+      case symbol_kind::S_term_constant: // "term constant"
+      case symbol_kind::S_metaformula_variable: // "metaformula variable"
+      case symbol_kind::S_object_formula_variable: // "object formula variable"
+      case symbol_kind::S_predicate_variable: // "predicate variable"
+      case symbol_kind::S_atom_variable: // "atom variable"
+      case symbol_kind::S_prefix_formula_variable: // "prefix formula variable"
+      case symbol_kind::S_function_variable: // "function variable"
+      case symbol_kind::S_object_variable: // "object variable"
+      case symbol_kind::S_code_variable: // "code variable"
+      case symbol_kind::S_all_variable: // "all variable"
+      case symbol_kind::S_exist_variable: // "exist variable"
+      case symbol_kind::S_function_map_variable: // "function map variable"
+      case symbol_kind::S_is_set_variable: // "Set variable"
+      case symbol_kind::S_set_variable: // "set variable"
+      case symbol_kind::S_set_variable_definition: // "set variable definition"
+      case symbol_kind::S_implicit_set_variable: // "implicit set variable"
+        value.template destroy< val<unit> > ();
+        break;
+
+      default:
+        break;
+    }
+
         Base::clear ();
       }
 
@@ -892,7 +1875,63 @@ namespace mli {
 
     /// "External" symbols: returned by the scanner.
     struct symbol_type : basic_symbol<by_kind>
-    {};
+    {
+      /// Superclass.
+      typedef basic_symbol<by_kind> super_type;
+
+      /// Empty symbol.
+      symbol_type () YY_NOEXCEPT {}
+
+      /// Constructor for valueless symbols, and symbols from each type.
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, location_type l)
+        : super_type (token_kind_type (tok), std::move (l))
+#else
+      symbol_type (int tok, const location_type& l)
+        : super_type (token_kind_type (tok), l)
+#endif
+      {}
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, integer v, location_type l)
+        : super_type (token_kind_type (tok), std::move (v), std::move (l))
+#else
+      symbol_type (int tok, const integer& v, const location_type& l)
+        : super_type (token_kind_type (tok), v, l)
+#endif
+      {}
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, std::pair<std::string, integer> v, location_type l)
+        : super_type (token_kind_type (tok), std::move (v), std::move (l))
+#else
+      symbol_type (int tok, const std::pair<std::string, integer>& v, const location_type& l)
+        : super_type (token_kind_type (tok), v, l)
+#endif
+      {}
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, std::string v, location_type l)
+        : super_type (token_kind_type (tok), std::move (v), std::move (l))
+#else
+      symbol_type (int tok, const std::string& v, const location_type& l)
+        : super_type (token_kind_type (tok), v, l)
+#endif
+      {}
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, theorem::type v, location_type l)
+        : super_type (token_kind_type (tok), std::move (v), std::move (l))
+#else
+      symbol_type (int tok, const theorem::type& v, const location_type& l)
+        : super_type (token_kind_type (tok), v, l)
+#endif
+      {}
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, val<unit> v, location_type l)
+        : super_type (token_kind_type (tok), std::move (v), std::move (l))
+#else
+      symbol_type (int tok, const val<unit>& v, const location_type& l)
+        : super_type (token_kind_type (tok), v, l)
+#endif
+      {}
+    };
 
     /// Build a parser object.
     database_parser (mli::theory_database& yypval_yyarg, mli::database_lexer& mlilex_yyarg);
@@ -939,6 +1978,2317 @@ namespace mli {
     /// YYSYMBOL.  No bounds checking.
     static std::string symbol_name (symbol_kind_type yysymbol);
 
+    // Implementation of make_symbol for each token kind.
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MLIEOF (location_type l)
+      {
+        return symbol_type (token::MLIEOF, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_MLIEOF (const location_type& l)
+      {
+        return symbol_type (token::MLIEOF, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MLIerror (location_type l)
+      {
+        return symbol_type (token::MLIerror, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_MLIerror (const location_type& l)
+      {
+        return symbol_type (token::MLIerror, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MLIUNDEF (location_type l)
+      {
+        return symbol_type (token::MLIUNDEF, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_MLIUNDEF (const location_type& l)
+      {
+        return symbol_type (token::MLIUNDEF, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_token_error (location_type l)
+      {
+        return symbol_type (token::token_error, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_token_error (const location_type& l)
+      {
+        return symbol_type (token::token_error, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_include_key (location_type l)
+      {
+        return symbol_type (token::include_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_include_key (const location_type& l)
+      {
+        return symbol_type (token::include_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_theory_key (location_type l)
+      {
+        return symbol_type (token::theory_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_theory_key (const location_type& l)
+      {
+        return symbol_type (token::theory_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_end_key (location_type l)
+      {
+        return symbol_type (token::end_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_end_key (const location_type& l)
+      {
+        return symbol_type (token::end_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_formal_system_key (location_type l)
+      {
+        return symbol_type (token::formal_system_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_formal_system_key (const location_type& l)
+      {
+        return symbol_type (token::formal_system_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_definition_key (location_type l)
+      {
+        return symbol_type (token::definition_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_definition_key (const location_type& l)
+      {
+        return symbol_type (token::definition_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_postulate_key (location_type l)
+      {
+        return symbol_type (token::postulate_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_postulate_key (const location_type& l)
+      {
+        return symbol_type (token::postulate_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_axiom_key (location_type l)
+      {
+        return symbol_type (token::axiom_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_axiom_key (const location_type& l)
+      {
+        return symbol_type (token::axiom_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_rule_key (location_type l)
+      {
+        return symbol_type (token::rule_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_rule_key (const location_type& l)
+      {
+        return symbol_type (token::rule_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_conjecture_key (location_type l)
+      {
+        return symbol_type (token::conjecture_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_conjecture_key (const location_type& l)
+      {
+        return symbol_type (token::conjecture_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_theorem_key (theorem::type v, location_type l)
+      {
+        return symbol_type (token::theorem_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_theorem_key (const theorem::type& v, const location_type& l)
+      {
+        return symbol_type (token::theorem_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_proof_key (location_type l)
+      {
+        return symbol_type (token::proof_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_proof_key (const location_type& l)
+      {
+        return symbol_type (token::proof_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_end_of_proof_key (location_type l)
+      {
+        return symbol_type (token::end_of_proof_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_end_of_proof_key (const location_type& l)
+      {
+        return symbol_type (token::end_of_proof_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_by_key (location_type l)
+      {
+        return symbol_type (token::by_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_by_key (const location_type& l)
+      {
+        return symbol_type (token::by_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_premise_key (location_type l)
+      {
+        return symbol_type (token::premise_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_premise_key (const location_type& l)
+      {
+        return symbol_type (token::premise_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_result_key (std::string v, location_type l)
+      {
+        return symbol_type (token::result_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_result_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::result_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_metainfer_key (location_type l)
+      {
+        return symbol_type (token::metainfer_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_metainfer_key (const location_type& l)
+      {
+        return symbol_type (token::metainfer_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_metaor_key (location_type l)
+      {
+        return symbol_type (token::metaor_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_metaor_key (const location_type& l)
+      {
+        return symbol_type (token::metaor_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_metaand_key (location_type l)
+      {
+        return symbol_type (token::metaand_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_metaand_key (const location_type& l)
+      {
+        return symbol_type (token::metaand_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_metanot_key (location_type l)
+      {
+        return symbol_type (token::metanot_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_metanot_key (const location_type& l)
+      {
+        return symbol_type (token::metanot_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_infer_key (location_type l)
+      {
+        return symbol_type (token::infer_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_infer_key (const location_type& l)
+      {
+        return symbol_type (token::infer_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_object_identical_key (location_type l)
+      {
+        return symbol_type (token::object_identical_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_object_identical_key (const location_type& l)
+      {
+        return symbol_type (token::object_identical_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_object_not_identical_key (location_type l)
+      {
+        return symbol_type (token::object_not_identical_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_object_not_identical_key (const location_type& l)
+      {
+        return symbol_type (token::object_not_identical_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_meta_identical_key (location_type l)
+      {
+        return symbol_type (token::meta_identical_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_meta_identical_key (const location_type& l)
+      {
+        return symbol_type (token::meta_identical_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_meta_not_identical_key (location_type l)
+      {
+        return symbol_type (token::meta_not_identical_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_meta_not_identical_key (const location_type& l)
+      {
+        return symbol_type (token::meta_not_identical_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_fail_key (location_type l)
+      {
+        return symbol_type (token::fail_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_fail_key (const location_type& l)
+      {
+        return symbol_type (token::fail_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_succeed_key (location_type l)
+      {
+        return symbol_type (token::succeed_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_succeed_key (const location_type& l)
+      {
+        return symbol_type (token::succeed_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_free_for_key (location_type l)
+      {
+        return symbol_type (token::free_for_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_free_for_key (const location_type& l)
+      {
+        return symbol_type (token::free_for_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_metain_key (location_type l)
+      {
+        return symbol_type (token::metain_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_metain_key (const location_type& l)
+      {
+        return symbol_type (token::metain_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_free_in_key (location_type l)
+      {
+        return symbol_type (token::free_in_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_free_in_key (const location_type& l)
+      {
+        return symbol_type (token::free_in_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_use_key (location_type l)
+      {
+        return symbol_type (token::use_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_use_key (const location_type& l)
+      {
+        return symbol_type (token::use_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_defined_by_key (location_type l)
+      {
+        return symbol_type (token::defined_by_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_defined_by_key (const location_type& l)
+      {
+        return symbol_type (token::defined_by_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_defines_key (location_type l)
+      {
+        return symbol_type (token::defines_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_defines_key (const location_type& l)
+      {
+        return symbol_type (token::defines_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_defined_equal_key (location_type l)
+      {
+        return symbol_type (token::defined_equal_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_defined_equal_key (const location_type& l)
+      {
+        return symbol_type (token::defined_equal_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_plain_name (std::string v, location_type l)
+      {
+        return symbol_type (token::plain_name, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_plain_name (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::plain_name, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_label_key (std::string v, location_type l)
+      {
+        return symbol_type (token::label_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_label_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::label_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_metapredicate_constant (val<unit> v, location_type l)
+      {
+        return symbol_type (token::metapredicate_constant, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_metapredicate_constant (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::metapredicate_constant, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_function_key (val<unit> v, location_type l)
+      {
+        return symbol_type (token::function_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_function_key (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::function_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_predicate_key (val<unit> v, location_type l)
+      {
+        return symbol_type (token::predicate_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_predicate_key (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::predicate_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_predicate_constant (val<unit> v, location_type l)
+      {
+        return symbol_type (token::predicate_constant, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_predicate_constant (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::predicate_constant, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_atom_constant (val<unit> v, location_type l)
+      {
+        return symbol_type (token::atom_constant, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_atom_constant (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::atom_constant, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_function_constant (val<unit> v, location_type l)
+      {
+        return symbol_type (token::function_constant, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_function_constant (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::function_constant, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_term_constant (val<unit> v, location_type l)
+      {
+        return symbol_type (token::term_constant, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_term_constant (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::term_constant, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_metaformula_variable (val<unit> v, location_type l)
+      {
+        return symbol_type (token::metaformula_variable, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_metaformula_variable (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::metaformula_variable, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_object_formula_variable (val<unit> v, location_type l)
+      {
+        return symbol_type (token::object_formula_variable, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_object_formula_variable (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::object_formula_variable, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_predicate_variable (val<unit> v, location_type l)
+      {
+        return symbol_type (token::predicate_variable, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_predicate_variable (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::predicate_variable, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_atom_variable (val<unit> v, location_type l)
+      {
+        return symbol_type (token::atom_variable, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_atom_variable (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::atom_variable, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_prefix_formula_variable (val<unit> v, location_type l)
+      {
+        return symbol_type (token::prefix_formula_variable, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_prefix_formula_variable (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::prefix_formula_variable, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_function_variable (val<unit> v, location_type l)
+      {
+        return symbol_type (token::function_variable, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_function_variable (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::function_variable, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_object_variable (val<unit> v, location_type l)
+      {
+        return symbol_type (token::object_variable, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_object_variable (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::object_variable, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_code_variable (val<unit> v, location_type l)
+      {
+        return symbol_type (token::code_variable, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_code_variable (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::code_variable, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_all_variable (val<unit> v, location_type l)
+      {
+        return symbol_type (token::all_variable, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_all_variable (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::all_variable, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_exist_variable (val<unit> v, location_type l)
+      {
+        return symbol_type (token::exist_variable, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_exist_variable (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::exist_variable, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_function_map_variable (val<unit> v, location_type l)
+      {
+        return symbol_type (token::function_map_variable, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_function_map_variable (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::function_map_variable, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_is_set_variable (val<unit> v, location_type l)
+      {
+        return symbol_type (token::is_set_variable, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_is_set_variable (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::is_set_variable, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_set_variable (val<unit> v, location_type l)
+      {
+        return symbol_type (token::set_variable, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_set_variable (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::set_variable, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_set_variable_definition (val<unit> v, location_type l)
+      {
+        return symbol_type (token::set_variable_definition, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_set_variable_definition (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::set_variable_definition, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_implicit_set_variable (val<unit> v, location_type l)
+      {
+        return symbol_type (token::implicit_set_variable, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_implicit_set_variable (const val<unit>& v, const location_type& l)
+      {
+        return symbol_type (token::implicit_set_variable, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_identifier_constant_key (location_type l)
+      {
+        return symbol_type (token::identifier_constant_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_identifier_constant_key (const location_type& l)
+      {
+        return symbol_type (token::identifier_constant_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_identifier_variable_key (location_type l)
+      {
+        return symbol_type (token::identifier_variable_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_identifier_variable_key (const location_type& l)
+      {
+        return symbol_type (token::identifier_variable_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_identifier_function_key (location_type l)
+      {
+        return symbol_type (token::identifier_function_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_identifier_function_key (const location_type& l)
+      {
+        return symbol_type (token::identifier_function_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_all_key (std::string v, location_type l)
+      {
+        return symbol_type (token::all_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_all_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::all_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_exist_key (std::string v, location_type l)
+      {
+        return symbol_type (token::exist_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_exist_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::exist_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_logical_not_key (std::string v, location_type l)
+      {
+        return symbol_type (token::logical_not_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_logical_not_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::logical_not_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_logical_and_key (std::string v, location_type l)
+      {
+        return symbol_type (token::logical_and_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_logical_and_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::logical_and_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_logical_or_key (std::string v, location_type l)
+      {
+        return symbol_type (token::logical_or_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_logical_or_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::logical_or_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_implies_key (std::string v, location_type l)
+      {
+        return symbol_type (token::implies_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_implies_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::implies_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_impliedby_key (std::string v, location_type l)
+      {
+        return symbol_type (token::impliedby_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_impliedby_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::impliedby_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_equivalent_key (std::string v, location_type l)
+      {
+        return symbol_type (token::equivalent_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_equivalent_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::equivalent_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_prefix_not_key (location_type l)
+      {
+        return symbol_type (token::prefix_not_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_prefix_not_key (const location_type& l)
+      {
+        return symbol_type (token::prefix_not_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_prefix_and_key (location_type l)
+      {
+        return symbol_type (token::prefix_and_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_prefix_and_key (const location_type& l)
+      {
+        return symbol_type (token::prefix_and_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_prefix_or_key (location_type l)
+      {
+        return symbol_type (token::prefix_or_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_prefix_or_key (const location_type& l)
+      {
+        return symbol_type (token::prefix_or_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_prefix_implies_key (location_type l)
+      {
+        return symbol_type (token::prefix_implies_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_prefix_implies_key (const location_type& l)
+      {
+        return symbol_type (token::prefix_implies_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_prefix_equivalent_key (location_type l)
+      {
+        return symbol_type (token::prefix_equivalent_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_prefix_equivalent_key (const location_type& l)
+      {
+        return symbol_type (token::prefix_equivalent_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_natural_number_key (std::string v, location_type l)
+      {
+        return symbol_type (token::natural_number_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_natural_number_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::natural_number_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_less_key (std::string v, location_type l)
+      {
+        return symbol_type (token::less_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_less_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::less_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_greater_key (std::string v, location_type l)
+      {
+        return symbol_type (token::greater_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_greater_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::greater_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_less_or_equal_key (std::string v, location_type l)
+      {
+        return symbol_type (token::less_or_equal_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_less_or_equal_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::less_or_equal_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_greater_or_equal_key (std::string v, location_type l)
+      {
+        return symbol_type (token::greater_or_equal_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_greater_or_equal_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::greater_or_equal_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_not_less_key (std::string v, location_type l)
+      {
+        return symbol_type (token::not_less_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_not_less_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::not_less_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_not_greater_key (std::string v, location_type l)
+      {
+        return symbol_type (token::not_greater_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_not_greater_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::not_greater_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_not_less_or_equal_key (std::string v, location_type l)
+      {
+        return symbol_type (token::not_less_or_equal_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_not_less_or_equal_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::not_less_or_equal_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_not_greater_or_equal_key (std::string v, location_type l)
+      {
+        return symbol_type (token::not_greater_or_equal_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_not_greater_or_equal_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::not_greater_or_equal_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_equal_key (std::string v, location_type l)
+      {
+        return symbol_type (token::equal_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_equal_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::equal_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_not_equal_key (std::string v, location_type l)
+      {
+        return symbol_type (token::not_equal_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_not_equal_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::not_equal_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_divides_key (std::string v, location_type l)
+      {
+        return symbol_type (token::divides_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_divides_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::divides_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_not_divides_key (std::string v, location_type l)
+      {
+        return symbol_type (token::not_divides_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_not_divides_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::not_divides_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_mapsto_key (std::string v, location_type l)
+      {
+        return symbol_type (token::mapsto_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_mapsto_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::mapsto_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_Mapsto_key (std::string v, location_type l)
+      {
+        return symbol_type (token::Mapsto_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_Mapsto_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::Mapsto_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_function_map_prefix_key (location_type l)
+      {
+        return symbol_type (token::function_map_prefix_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_function_map_prefix_key (const location_type& l)
+      {
+        return symbol_type (token::function_map_prefix_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_degree_key (location_type l)
+      {
+        return symbol_type (token::degree_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_degree_key (const location_type& l)
+      {
+        return symbol_type (token::degree_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_bullet_key (location_type l)
+      {
+        return symbol_type (token::bullet_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_bullet_key (const location_type& l)
+      {
+        return symbol_type (token::bullet_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_subscript_x_key (location_type l)
+      {
+        return symbol_type (token::subscript_x_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_subscript_x_key (const location_type& l)
+      {
+        return symbol_type (token::subscript_x_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_natural_number_value (std::pair<std::string, integer> v, location_type l)
+      {
+        return symbol_type (token::natural_number_value, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_natural_number_value (const std::pair<std::string, integer>& v, const location_type& l)
+      {
+        return symbol_type (token::natural_number_value, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_integer_value (integer v, location_type l)
+      {
+        return symbol_type (token::integer_value, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_integer_value (const integer& v, const location_type& l)
+      {
+        return symbol_type (token::integer_value, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_subscript_natural_number_value (integer v, location_type l)
+      {
+        return symbol_type (token::subscript_natural_number_value, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_subscript_natural_number_value (const integer& v, const location_type& l)
+      {
+        return symbol_type (token::subscript_natural_number_value, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_subscript_integer_value (integer v, location_type l)
+      {
+        return symbol_type (token::subscript_integer_value, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_subscript_integer_value (const integer& v, const location_type& l)
+      {
+        return symbol_type (token::subscript_integer_value, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_superscript_natural_number_value (integer v, location_type l)
+      {
+        return symbol_type (token::superscript_natural_number_value, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_superscript_natural_number_value (const integer& v, const location_type& l)
+      {
+        return symbol_type (token::superscript_natural_number_value, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_superscript_integer_value (integer v, location_type l)
+      {
+        return symbol_type (token::superscript_integer_value, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_superscript_integer_value (const integer& v, const location_type& l)
+      {
+        return symbol_type (token::superscript_integer_value, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_factorial_key (std::string v, location_type l)
+      {
+        return symbol_type (token::factorial_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_factorial_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::factorial_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_mult_key (std::string v, location_type l)
+      {
+        return symbol_type (token::mult_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_mult_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::mult_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_plus_key (std::string v, location_type l)
+      {
+        return symbol_type (token::plus_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_plus_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::plus_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_minus_key (std::string v, location_type l)
+      {
+        return symbol_type (token::minus_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_minus_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::minus_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_is_set_key (location_type l)
+      {
+        return symbol_type (token::is_set_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_is_set_key (const location_type& l)
+      {
+        return symbol_type (token::is_set_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_power_set_key (location_type l)
+      {
+        return symbol_type (token::power_set_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_power_set_key (const location_type& l)
+      {
+        return symbol_type (token::power_set_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_empty_set_key (location_type l)
+      {
+        return symbol_type (token::empty_set_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_empty_set_key (const location_type& l)
+      {
+        return symbol_type (token::empty_set_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_in_key (std::string v, location_type l)
+      {
+        return symbol_type (token::in_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_in_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::in_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_not_in_key (std::string v, location_type l)
+      {
+        return symbol_type (token::not_in_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_not_in_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::not_in_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_set_complement_key (std::string v, location_type l)
+      {
+        return symbol_type (token::set_complement_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_set_complement_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::set_complement_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_set_union_key (std::string v, location_type l)
+      {
+        return symbol_type (token::set_union_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_set_union_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::set_union_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_set_intersection_key (std::string v, location_type l)
+      {
+        return symbol_type (token::set_intersection_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_set_intersection_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::set_intersection_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_set_difference_key (std::string v, location_type l)
+      {
+        return symbol_type (token::set_difference_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_set_difference_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::set_difference_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_set_union_operator_key (std::string v, location_type l)
+      {
+        return symbol_type (token::set_union_operator_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_set_union_operator_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::set_union_operator_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_set_intersection_operator_key (std::string v, location_type l)
+      {
+        return symbol_type (token::set_intersection_operator_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_set_intersection_operator_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::set_intersection_operator_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_subset_key (std::string v, location_type l)
+      {
+        return symbol_type (token::subset_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_subset_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::subset_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_proper_subset_key (std::string v, location_type l)
+      {
+        return symbol_type (token::proper_subset_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_proper_subset_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::proper_subset_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_superset_key (std::string v, location_type l)
+      {
+        return symbol_type (token::superset_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_superset_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::superset_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_proper_superset_key (std::string v, location_type l)
+      {
+        return symbol_type (token::proper_superset_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_proper_superset_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::proper_superset_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_colon_key (location_type l)
+      {
+        return symbol_type (token::colon_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_colon_key (const location_type& l)
+      {
+        return symbol_type (token::colon_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_semicolon_key (location_type l)
+      {
+        return symbol_type (token::semicolon_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_semicolon_key (const location_type& l)
+      {
+        return symbol_type (token::semicolon_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_comma_key (location_type l)
+      {
+        return symbol_type (token::comma_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_comma_key (const location_type& l)
+      {
+        return symbol_type (token::comma_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_period_key (location_type l)
+      {
+        return symbol_type (token::period_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_period_key (const location_type& l)
+      {
+        return symbol_type (token::period_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_left_parenthesis_key (location_type l)
+      {
+        return symbol_type (token::left_parenthesis_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_left_parenthesis_key (const location_type& l)
+      {
+        return symbol_type (token::left_parenthesis_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_right_parenthesis_key (location_type l)
+      {
+        return symbol_type (token::right_parenthesis_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_right_parenthesis_key (const location_type& l)
+      {
+        return symbol_type (token::right_parenthesis_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_left_bracket_key (location_type l)
+      {
+        return symbol_type (token::left_bracket_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_left_bracket_key (const location_type& l)
+      {
+        return symbol_type (token::left_bracket_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_right_bracket_key (location_type l)
+      {
+        return symbol_type (token::right_bracket_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_right_bracket_key (const location_type& l)
+      {
+        return symbol_type (token::right_bracket_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_left_angle_bracket_key (location_type l)
+      {
+        return symbol_type (token::left_angle_bracket_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_left_angle_bracket_key (const location_type& l)
+      {
+        return symbol_type (token::left_angle_bracket_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_right_angle_bracket_key (location_type l)
+      {
+        return symbol_type (token::right_angle_bracket_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_right_angle_bracket_key (const location_type& l)
+      {
+        return symbol_type (token::right_angle_bracket_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_superscript_left_parenthesis_key (location_type l)
+      {
+        return symbol_type (token::superscript_left_parenthesis_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_superscript_left_parenthesis_key (const location_type& l)
+      {
+        return symbol_type (token::superscript_left_parenthesis_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_superscript_right_parenthesis_key (location_type l)
+      {
+        return symbol_type (token::superscript_right_parenthesis_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_superscript_right_parenthesis_key (const location_type& l)
+      {
+        return symbol_type (token::superscript_right_parenthesis_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_subscript_left_parenthesis_key (location_type l)
+      {
+        return symbol_type (token::subscript_left_parenthesis_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_subscript_left_parenthesis_key (const location_type& l)
+      {
+        return symbol_type (token::subscript_left_parenthesis_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_subscript_right_parenthesis_key (location_type l)
+      {
+        return symbol_type (token::subscript_right_parenthesis_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_subscript_right_parenthesis_key (const location_type& l)
+      {
+        return symbol_type (token::subscript_right_parenthesis_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_left_brace_key (location_type l)
+      {
+        return symbol_type (token::left_brace_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_left_brace_key (const location_type& l)
+      {
+        return symbol_type (token::left_brace_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_vertical_line_key (location_type l)
+      {
+        return symbol_type (token::vertical_line_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_vertical_line_key (const location_type& l)
+      {
+        return symbol_type (token::vertical_line_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_right_brace_key (location_type l)
+      {
+        return symbol_type (token::right_brace_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_right_brace_key (const location_type& l)
+      {
+        return symbol_type (token::right_brace_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_tilde_key (location_type l)
+      {
+        return symbol_type (token::tilde_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_tilde_key (const location_type& l)
+      {
+        return symbol_type (token::tilde_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_slash_key (std::string v, location_type l)
+      {
+        return symbol_type (token::slash_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_slash_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::slash_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_backslash_key (std::string v, location_type l)
+      {
+        return symbol_type (token::backslash_key, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_backslash_key (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::backslash_key, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_if_key (location_type l)
+      {
+        return symbol_type (token::if_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_if_key (const location_type& l)
+      {
+        return symbol_type (token::if_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_then_key (location_type l)
+      {
+        return symbol_type (token::then_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_then_key (const location_type& l)
+      {
+        return symbol_type (token::then_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_else_key (location_type l)
+      {
+        return symbol_type (token::else_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_else_key (const location_type& l)
+      {
+        return symbol_type (token::else_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_while_key (location_type l)
+      {
+        return symbol_type (token::while_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_while_key (const location_type& l)
+      {
+        return symbol_type (token::while_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_do_key (location_type l)
+      {
+        return symbol_type (token::do_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_do_key (const location_type& l)
+      {
+        return symbol_type (token::do_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_loop_key (location_type l)
+      {
+        return symbol_type (token::loop_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_loop_key (const location_type& l)
+      {
+        return symbol_type (token::loop_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_for_key (location_type l)
+      {
+        return symbol_type (token::for_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_for_key (const location_type& l)
+      {
+        return symbol_type (token::for_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_break_key (location_type l)
+      {
+        return symbol_type (token::break_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_break_key (const location_type& l)
+      {
+        return symbol_type (token::break_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_continue_key (location_type l)
+      {
+        return symbol_type (token::continue_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_continue_key (const location_type& l)
+      {
+        return symbol_type (token::continue_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_throw_key (location_type l)
+      {
+        return symbol_type (token::throw_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_throw_key (const location_type& l)
+      {
+        return symbol_type (token::throw_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_try_key (location_type l)
+      {
+        return symbol_type (token::try_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_try_key (const location_type& l)
+      {
+        return symbol_type (token::try_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_catch_key (location_type l)
+      {
+        return symbol_type (token::catch_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_catch_key (const location_type& l)
+      {
+        return symbol_type (token::catch_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_unary_minus (location_type l)
+      {
+        return symbol_type (token::unary_minus, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_unary_minus (const location_type& l)
+      {
+        return symbol_type (token::unary_minus, l);
+      }
+#endif
 
 
     class context
@@ -1288,8 +4638,8 @@ namespace mli {
     /// Constants.
     enum
     {
-      yylast_ = 1776,     ///< Last index in yytable_.
-      yynnts_ = 144,  ///< Number of nonterminal symbols.
+      yylast_ = 1765,     ///< Last index in yytable_.
+      yynnts_ = 146,  ///< Number of nonterminal symbols.
       yyfinal_ = 6 ///< Termination state number.
     };
 
@@ -1303,20 +4653,40 @@ namespace mli {
 
 #line 22 "../../mli-root/src/database-parser.yy"
 } // mli
-#line 1307 "../../mli-root/src/database-parser.hh"
+#line 4657 "../../mli-root/src/database-parser.hh"
 
 
 // "%code provides" blocks.
-#line 93 "../../mli-root/src/database-parser.yy"
-
+#line 69 "../../mli-root/src/database-parser.yy"
 
   namespace mli {
+    class database_lexer : public yyFlexLexer {
+    public:
+      using semantic_value = database_parser::value_type;
+
+      semantic_value* yylvalp = nullptr;
+      location_type* yyllocp = nullptr;
+
+      database_lexer() {};
+
+      database_lexer(std::istream& is, std::ostream& os) : yyFlexLexer(&is, &os) {}
+
+      int yylex(); // Defined in database-lexer.cc.
+
+      std::istream& in() { return yyin; }
+
+      int operator()(semantic_value* x) { yylvalp = x;  return yylex(); }
+      int operator()(semantic_value* x, location_type* y) { yylvalp = x;  yyllocp = y;  return yylex(); }
+    };
+
 
     // Symbol table: Pushed & popped at lexical environment boundaries.
     // For statements (theorems, definitions), pushed before the symbol declarations
     // (after the label), and if there is a proof, popped where it ends:
 
-    using symbol_table_t = mli::table_stack<std::string, std::pair<mli::database_parser::token_type, mli::ref<mli::unit>>>;
+    using symbol_table_data = val<unit>;
+    using symbol_table_value = std::pair<database_parser::token_type, symbol_table_data>;
+    using symbol_table_t = table_stack<std::string, symbol_table_value>;
 
     extern symbol_table_t symbol_table;
 
@@ -1326,17 +4696,17 @@ namespace mli {
 
     constexpr database_parser::token_type free_variable_context = database_parser::token_type(0);
 
-    database_parser::token_type define_variable(semantic_type& yylval);
+    database_parser::token_type define_variable(const std::string& text, database_parser::value_type& yylval);
 
     extern kleenean unused_variable;
 
-    int directive_read(std::istream& is, mli::location_type& loc);
-    int directive_read(const std::string& str, mli::location_type&);
+    int directive_read(std::istream& is, location_type& loc);
+    int directive_read(const std::string& str, location_type&);
 
   } // namespace mli
 
 
-#line 1340 "../../mli-root/src/database-parser.hh"
+#line 4710 "../../mli-root/src/database-parser.hh"
 
 
 #endif // !YY_MLI_MLI_ROOT_SRC_DATABASE_PARSER_HH_INCLUDED

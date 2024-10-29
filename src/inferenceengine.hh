@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -64,8 +64,8 @@ namespace mli {
     using leaf_container = std::list<leaf>;
     using iterator = leaf_container::iterator;
 
-    typedef long unsigned size_type;
-    typedef size_type weight;
+    using size_type = long unsigned;
+    using weight = size_type;
 
     struct value {
       alternative alternative_;   // Node data.
@@ -123,7 +123,7 @@ namespace mli {
     // The leaves then hold the goals to be proved.
     // The root just holds the initial goal in the form of a default alternative.
 
-    ref<formula> goal_;         // Initial goal to be proved.
+    val<formula> goal_;         // Initial goal to be proved.
 
     // Proof extracted so far from the proof tree search; proofs are never on the tree itself.
     proofs proofs_;
@@ -205,7 +205,7 @@ namespace mli {
     // The root is initially a single leaf. If all leaves are pruned, also the initial
     // leaf is deleted, preventing it to be re-examined. If the same instance of
     // inference_tree is to be re-used, a new root formula would have to be added.
-    inference_tree(const ref<formula>& x)
+    inference_tree(const val<formula>& x)
      : goal_(x), tree_empty_(false)
     {
       // Boolean cases:
@@ -219,12 +219,12 @@ namespace mli {
         tree_empty_ = true;
         proofs_found = true;
         proof pf(x);
-        pf.push_back(alternative(ref<substitution>(make), x));
+        pf.push_back(alternative(val<substitution>(make), x));
         proofs_.push_back(pf);
         return;
       }
 
-      queue_.push(new node(alternative(ref<substitution>(make), x)));
+      queue_.push(new node(alternative(val<substitution>(make), x)));
     }
 
 
@@ -326,7 +326,7 @@ namespace mli {
 
       degree_pool sl;  // For finding smallest unused definition degree number.
       unify_count = 0;  // Start to count unify() calls for this unification iteration.
-      ref<formula> f = get_goal(i);
+      val<formula> f = get_goal(i);
       size_type lv = get_level(i);
 
       // A reference to the pertinent level part of the database is passed on here, so that in the
@@ -334,7 +334,7 @@ namespace mli {
       // The sublevel is though used for that, and cannot be moved here, as it has to be done during the
       // formula sequence metaand (goal) unification.
 
-      alternatives as = mli::unify(f, {goal, f->metalevel()}, &dbr[lv], {fact, 0_ml}, &dbr[lv], lv, sl);
+      alternatives as = mli::unify(f, {goal, f->metalevel()}, dbr[lv], {fact, 0_ml}, &dbr[lv], lv, sl);
 
       if (trace_value & trace_solve) {
         std::lock_guard<std::recursive_mutex> guard(write_mutex);
@@ -458,7 +458,7 @@ namespace mli {
     }
 
 
-    ref<formula> get_goal(leaf i) {
+    val<formula> get_goal(leaf i) {
       if (i == nullptr)
         return goal_;
       return i->value_.alternative_.goal_;

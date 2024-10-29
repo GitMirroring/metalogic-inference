@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -17,31 +17,33 @@
 
 #include "proposition.hh"
 
+#include <algorithm>
+
 
 namespace mli {
 
-  ref<formula> supposition::rename(level lv, degree sl) const {
-    ref<supposition> rp(make, *this);
+  val<formula> supposition::rename(level lv, degree sl) const {
+    val<supposition> rp(make, *this);
     rp->statement_ = statement_->rename(lv, sl);
     return rp;
   }
 
 
-  ref<formula> supposition::add_exception_set(variable_map& vm) const {
-    ref<supposition> rp(make, *this);
+  val<formula> supposition::add_exception_set(variable_map& vm) const {
+    val<supposition> rp(make, *this);
     rp->statement_ = statement_->add_exception_set(vm);
     return rp;
   }
 
 
-  ref<formula> supposition::substitute(const ref<substitution>& s, substitute_environment vt) const {
-    ref<supposition> rp(make, *this);
+  val<formula> supposition::substitute(const val<substitution>& s, substitute_environment vt) const {
+    val<supposition> rp(make, *this);
     rp->statement_ = statement_->substitute(s, vt);
     return rp;
   }
 
 
-  void supposition::declared(std::set<ref<variable>>& vs) const {
+  void supposition::declared(std::set<val<variable>>& vs) const {
     statement_->contains(vs, occurrence::declared);
   }
 
@@ -79,7 +81,7 @@ namespace mli {
       os << ". ";
 
     if (show_statement) {
-      std::set<ref<variable>> vs;
+      std::set<val<variable>> vs;
       declared(vs);
       write_variable_declaration(vs, os);
       os << "\n  ";
@@ -91,17 +93,17 @@ namespace mli {
 
   // Implementation of class premise.
 
-  premise::premise() : statement("", ref<implicit_premise>(make)) {}
+  premise::premise() : statement("", val<implicit_premise>(make)) {}
 
   premise::premise(size_type k)
-   : statement("", ref<implicit_premise>(make)), premise_index_(k), is_component_(true) {}
+   : statement("", val<implicit_premise>(make)), premise_index_(k), is_component_(true) {}
 
 
-  premise::premise(const std::string& nm, const ref<formula>& b, varied_type vs, size_type k, bool c) :
+  premise::premise(const std::string& nm, const val<formula>& b, varied_type vs, size_type k, bool c) :
     statement(nm, b), premise_index_(k), is_component_(c) {
 #if 1
     // If a named premise is created, it comes from a statement indicated
-    // in the parser, so its varibles are unspecialized, and will not
+    // in the parser, so its variables are unspecialized, and will not
     // become specialized, so therefore the variables are specialized here
     // by first making a copy of the variables to make sure it does
     // not interference with the unspecialization in the statements it
@@ -116,13 +118,13 @@ namespace mli {
       return;
 #endif
 
-    std::set<ref<variable>> ovs, lvs, fsvs;
+    std::set<val<variable>> ovs, lvs, fsvs;
 
     b->contains(ovs, occurrence::not_limited);
     b->contains(lvs, occurrence::limited);
     b->contains(lvs, occurrence::formula_sequence);
 
-    std::set<ref<variable>> lvs1, ovs1;
+    std::set<val<variable>> lvs1, ovs1;
 
     // Make copies to avoid mutation corruption:
     for (auto& i: lvs)
@@ -139,11 +141,11 @@ namespace mli {
     for (auto& i: vs)
       for (auto& j: i.second)
         for (auto& k: j.second) {
-          ref<variable> v = k->rename();
+          val<variable> v = k->rename();
           v->unspecializable_ = false;
 
           // Variables with no free occurrence in the premise are not varied, and removed:
-          kleenean kl = b->has(v, occurrence::free);
+          kleenean kl = statement_->has(v, occurrence::free);
 
           if (kl == false)
             continue;
@@ -154,7 +156,7 @@ namespace mli {
   }
 
 
-  alternatives premise::unify(unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives premise::unify(unify_environment tx, const val<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
 
     // Make sure the premise unify_environment gets a separate bound variables table:
     // Mark the unify environment as premise:
@@ -175,7 +177,7 @@ namespace mli {
 
     alternatives as;
 
-    formula_sequence* xsp = ref_cast<formula_sequence*>(statement_);
+    formula_sequence* xsp = dyn_cast<formula_sequence*>(statement_);
 
     if (xsp != nullptr) {
       size_type n = 0;
@@ -184,14 +186,14 @@ namespace mli {
         unify_environment tx2 = tx1;
         tx2.premise_index_ = n;
 
-        alternatives bs = ref<premise>(make, *this, n)->unify(tx2, y, ty, dbp, lv, sl, dr);
+        alternatives bs = val<premise>(make, *this, n)->unify(tx2, y, ty, dbp, lv, sl, dr);
 
         alternatives cs;
 
         // For alternative, make sure its varied variables are a subset of the inference
         // varied variables, as otherwise the substituion introduces hidden varied variables.
         for (auto& i: bs.alternatives_) {
-          std::set<ref<variable>> vs;
+          std::set<val<variable>> vs;
           i.substitution_->get_varied(vs, xm);
 
           bool b = vs.empty();
@@ -223,7 +225,7 @@ namespace mli {
       // For alternative, make sure its varied variables are a subset of the inference
       // varied variables, as otherwise the substitution introduces hidden varied variables.
       for (auto& i: bs.alternatives_) {
-        std::set<ref<variable>> vs;
+        std::set<val<variable>> vs;
         i.substitution_->get_varied(vs, xm);
 
         bool b = vs.empty();
@@ -245,7 +247,7 @@ namespace mli {
         as.push_back(i);
       }
 
-      as = as.label(this, lv);
+      as = as.label(*this, lv);
     }
 
     return as;
@@ -257,17 +259,17 @@ namespace mli {
   }
 
 
-  void premise::unspecialize(std::set<ref<variable>>& ps, bool b) {
+  void premise::unspecialize(std::set<val<variable>>& ps, bool b) {
     statement_->unspecialize(ps, b);
   }
 
 
-  ref<formula> premise::rename(level lv, degree sl) const {
+  val<formula> premise::rename(level lv, degree sl) const {
 #if 1
-    return this;
+    return *this;
 #else
     premise* rp = this->new_p();
-    ref<formula> rt(rp);
+    val<formula> rt(rp);
     rp->statement_ = statement_->rename(lv, sl);
 
     for (auto& i: varied_)
@@ -305,7 +307,7 @@ namespace mli {
       os << ". ";
 
     if (show_statement) {
-      std::set<ref<variable>> vs;
+      std::set<val<variable>> vs;
       declared(vs);
       write_variable_declaration(vs, os);
       os << "\n  ";
@@ -351,31 +353,31 @@ namespace mli {
 
   // Implementation of class proof_line.
 
-  ref<formula> proof_line::rename(level lv, degree sl) const {
-    ref<proof_line> rp(make, *this);
+  val<formula> proof_line::rename(level lv, degree sl) const {
+    val<proof_line> rp(make, *this);
     rp->statement_ = statement_->rename(lv, sl);
     return rp;
   }
 
 
-  ref<formula> proof_line::add_exception_set(variable_map& vm) const {
-    ref<proof_line> rp(make, *this);
+  val<formula> proof_line::add_exception_set(variable_map& vm) const {
+    val<proof_line> rp(make, *this);
     rp->statement_ = statement_->add_exception_set(vm);
     return rp;
   }
 
 
-  ref<formula> proof_line::substitute(const ref<substitution>& s, substitute_environment vt) const {
-    ref<proof_line> rp(make, *this);
+  val<formula> proof_line::substitute(const val<substitution>& s, substitute_environment vt) const {
+    val<proof_line> rp(make, *this);
     rp->statement_ = statement_->substitute(s, vt);
     return rp;
   }
 
 
-  void proof_line::declared(std::set<ref<variable>>& vs) const {
-    std::set<ref<variable>> vs0;
+  void proof_line::declared(std::set<val<variable>>& vs) const {
+    std::set<val<variable>> vs0;
     statement_->contains(vs0, occurrence::declared);
-    std::set<ref<variable>>::iterator i;
+    std::set<val<variable>>::iterator i;
     for (i = vs0.begin(); i != vs0.end(); ++i) {
       const variable* vp = i->data();
       if (vp == 0)  continue;
@@ -403,10 +405,10 @@ namespace mli {
 #if NEW_PROOF
     // Make an independent copy:
 #if 1
-    ref<formula> st = this->rename(0, 0);
+    val<formula> st = this->rename(0, 0);
 #else
     // debug-mli
-    ref<formula> st = statement_->rename();
+    val<formula> st = statement_->rename();
 #endif
 
     // Make theorem statement variables unspecializable in course of proof:
@@ -426,7 +428,7 @@ namespace mli {
     set_strict();
 
     if (trace_value & trace_result) {
-      std::set<ref<variable>> vs;
+      std::set<val<variable>> vs;
       st->contains(vs, occurrence::any); // Find variables:
       write_variables(std::clog, write_default, vs);
       std::clog << "\n" << std::flush;
@@ -443,12 +445,12 @@ namespace mli {
 #else
     unspecialize(depth_, true);
 
-    proofs_ = mli::prove(this, *database_, n);
+    proofs_ = mli::prove(*this, *database_, n);
 
     set_strict();
 
     if (trace_value & trace_result) {
-      std::set<ref<variable>> vs;
+      std::set<val<variable>> vs;
       statement_->contains(vs, occurrence::any); // Find variables:
       write_variables(std::clog, write_default, vs);
       std::clog << "\n" << std::flush;
@@ -541,7 +543,7 @@ namespace mli {
         // An ordinarily named proof line can become
         if (concluding_)
           os << "[*concluding*] ";
-        std::set<ref<variable>> vs;
+        std::set<val<variable>> vs;
         declared(vs);
         if (!vs.empty()) {
           write_variable_declaration(vs, os);
@@ -580,31 +582,31 @@ namespace mli {
 
   // Implementation of class theorem.
 
-  ref<formula> theorem::rename(level lv, degree sl) const {
-    ref<theorem> rp(make, *this);
+  val<formula> theorem::rename(level lv, degree sl) const {
+    val<theorem> rp(make, *this);
     rp->statement_ = statement_->rename(lv, sl);
     return rp;
   }
 
 
-  ref<formula> theorem::add_exception_set(variable_map& vm) const {
-    ref<theorem> rp(make, *this);
+  val<formula> theorem::add_exception_set(variable_map& vm) const {
+    val<theorem> rp(make, *this);
     rp->statement_ = statement_->add_exception_set(vm);
     return rp;
   }
 
 
-  ref<formula> theorem::substitute(const ref<substitution>& s, substitute_environment vt) const {
-    ref<theorem> rp(make, *this);
+  val<formula> theorem::substitute(const val<substitution>& s, substitute_environment vt) const {
+    val<theorem> rp(make, *this);
     rp->statement_ = statement_->substitute(s, vt);
     return rp;
   }
 
 
-  void theorem::declared(std::set<ref<variable>>& vs) const {
-    std::set<ref<variable>> vs0;
+  void theorem::declared(std::set<val<variable>>& vs) const {
+    std::set<val<variable>> vs0;
     statement_->contains(vs0, occurrence::declared);
-    std::set<ref<variable>>::iterator i;
+    std::set<val<variable>>::iterator i;
     for (i = vs0.begin(); i != vs0.end(); ++i) {
       const variable* vp = i->data();
       if (vp == 0)  continue;
@@ -634,7 +636,7 @@ namespace mli {
 
 #if NEW_PROVE
     // Make an independent copy:
-    ref<formula> st = statement_->rename();
+    val<formula> st = statement_->rename();
 
     // Make theorem statement variables unspecializable in course of proof:
     st->unspecialize(depth_, true);
@@ -671,11 +673,11 @@ namespace mli {
         successful_so_far = false;
 
       // Count the number of proved concluding proof lines, which can be 0 or more:
-      proof_line* plp = ref_cast<proof_line*>(*i);
+      proof_line* plp = dyn_cast<proof_line*>(*i);
       if (plp != 0 && plp->concluding() && plp->is_proved())
         proved_lines_ += 1;
 
-      ref_cast<proof_line*>(*j)->proofs_ = plp->proofs_;
+      dyn_cast<proof_line*>(*j)->proofs_ = plp->proofs_;
     }
 #else
 
@@ -693,7 +695,7 @@ namespace mli {
 
     for (auto& i: proof_lines_) {
 #if NEW_PROVE
-      ref<statement> pl = i->rename();
+      ref4<statement> pl = i->rename();
 
       pl->prove(n);
       if (pl->is_proved() == false)
@@ -701,7 +703,7 @@ namespace mli {
 
       // Count the number of proved concluding proof lines, and
       // the total number of proofs, which can be higher than one per proof line:
-      proof_line* plp = ref_cast<proof_line*>(pl);
+      proof_line* plp = dyn_cast<proof_line*>(pl);
 #else
       i->prove(n);
       if (i->is_proved() == false)
@@ -709,7 +711,7 @@ namespace mli {
 
       // Count the number of proved concluding proof lines, and
       // the total number of proofs, which can be higher than one per proof line:
-      proof_line* plp = ref_cast<proof_line*>(i);
+      proof_line* plp = dyn_cast<proof_line*>(i);
 #endif
 
       if (plp != nullptr && plp->concluding()) {
@@ -757,7 +759,7 @@ namespace mli {
 
 #if 0 // debug.hh
     // Only unspecialize the variable unspecialized in the statement:
-    std::set<ref<variable>> vs;
+    std::set<val<variable>> vs;
     statement_->contains(vs, occurrence::unspecialized);
 
 #if 0 // debug.hh
@@ -829,7 +831,7 @@ namespace mli {
       os << ". ";
 
     if (show_statement) {
-      std::set<ref<variable>> vs;
+      std::set<val<variable>> vs;
       declared(vs);
       if (!vs.empty()) {
         write_variable_declaration(vs, os);
@@ -850,7 +852,7 @@ namespace mli {
       }
 
       if (proof_lines_.size() == 1) {
-        proof_line* plp = ref_cast<proof_line*>(proof_lines_.back());
+        proof_line* plp = dyn_cast<proof_line*>(proof_lines_.back());
 
         if (plp != 0 && plp->concluding()) {
           os << spaces(proof_margin, proof_tab) << proof_lines_.front();
@@ -868,7 +870,7 @@ namespace mli {
         (*i)->write(os, new_ws);
       }
 
-      proof_line* plp = ref_cast<proof_line*>(proof_lines_.back());
+      proof_line* plp = dyn_cast<proof_line*>(proof_lines_.back());
 
       if (plp == 0 || !plp->concluding()) {
         os << "\n" << spaces(proof_margin, proof_tab);

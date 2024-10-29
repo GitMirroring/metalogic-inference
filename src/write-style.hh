@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -23,8 +23,6 @@
 
 #include <mutex>
 #include <thread>
-
-#include "gmp.hh"
 
 
 namespace mli {
@@ -99,10 +97,10 @@ namespace mli {
 
 
   // Write integer k as subscript or superscript index. If k == 0 and z false, return empty string.
-  std::string to_index(index ix, gmp::integer k, bool z = true);
+  std::string to_index(index ix, int64_t k, bool z = true);
 
   // Write integer k as subscript or superscript index, with last argument hide_zero, if k == 0 return empty string.
-  inline std::string to_index(index ix, gmp::integer k, hide_zero_t) { return to_index(ix, k, false); }
+  inline std::string to_index(index ix, int64_t k, hide_zero_t) { return to_index(ix, k, false); }
 
 
   // Write x as superscript (resp. subscript) if sup is true (resp. false).

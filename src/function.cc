@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -21,19 +21,19 @@
 
 namespace mli {
 
-  ref<formula> function::operator()(ref<formula> x) const {
+  val<formula> function::operator()(val<formula> x) const {
     return x;
   }
 
 
-  alternatives function::unify(unify_environment, const ref<formula>& x, unify_environment, database*, level, degree_pool&, direction) const {
+  alternatives function::unify(unify_environment, const val<formula>& x, unify_environment, database*, level, degree_pool&, direction) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
        << "function::unify\n  " << *this << ";\n  " << x << ")" << std::endl;
     }
 
-    function* xp = ref_cast<function*>(x);
+    function* xp = dyn_cast<function*>(x);
     return (xp != 0) && (xp->is_identity())? I : O;
   }
 
@@ -47,26 +47,26 @@ namespace mli {
   // Class function_map
 
   
-  ref<formula> function_map::operator()(ref<formula> x) const {
+  val<formula> function_map::operator()(val<formula> x) const {
     // Function evaluation, (𝒙 ↦ 𝒇)(𝒂) ≔ 𝒇[𝒙 ⤇ 𝒂].
     // variable_ = 𝒙, formula_ = 𝒇, x = 𝒂.
     // Also, when 𝒂 is function argument sequences singleton (x) reduce to x,
     // and when and empty tuple () reduce to an empty formula.
 
-    ref<formula> x1 = x;
+    val<formula> x1 = x;
 
-    sequence* vp = ref_cast<sequence*>(x);
+    sequence* vp = dyn_cast<sequence*>(x);
 
     // Reduce function argument sequences singletons (x) to x, and () to empty formula.
     // As x1 = x above, only these cases need to be considered.
     if (vp != nullptr && (vp->type_ == sequence::tuple || vp->type_ == sequence::logic)) {
       if (vp->formulas_.empty())
-        x1 = ref<formula>(make);
+        x1 = val<formula>(make);
       else if (vp->formulas_.size() == 1)
         x1 = vp->formulas_.front();
     }
 
-    ref<explicit_substitution> vs(make, variable_, x1);
+    val<explicit_substitution> vs(make, variable_, x1);
 
     return vs(formula_);
   }
@@ -79,23 +79,23 @@ namespace mli {
 
 
 
-  ref<formula> function_map::rename(level lv, degree sl) const {
-    ref<function_map> mp(make, *this);
+  val<formula> function_map::rename(level lv, degree sl) const {
+    val<function_map> mp(make, *this);
     mp->variable_ = variable_->rename(lv, sl);
     mp->formula_ = formula_->rename(lv, sl);
     return mp;
   }
 
 
-  ref<formula> function_map::add_exception_set(variable_map& vm) const {
-    ref<function_map> mp(make, *this);
+  val<formula> function_map::add_exception_set(variable_map& vm) const {
+    val<function_map> mp(make, *this);
     mp->variable_ = variable_->add_exception_set(vm);
     mp->formula_ = formula_->add_exception_set(vm);
     return mp;
   }
 
 
-  kleenean function_map::has(const ref<variable>& v, occurrence oc) const {
+  kleenean function_map::has(const val<variable>& v, occurrence oc) const {
     kleenean k1 = variable_->has(v, oc);
     if (k1 == true)  return true;
 
@@ -105,14 +105,14 @@ namespace mli {
   }
 
 
-  void function_map::contains(std::set<ref<variable>>& s, std::set<ref<variable>>& bs, bool& more, occurrence oc) const {
+  void function_map::contains(std::set<val<variable>>& s, std::set<val<variable>>& bs, bool& more, occurrence oc) const {
     variable_->contains(s, bs, more, oc);
     formula_->contains(s, bs, more, oc);
   }
 
 
-  kleenean function_map::free_for(const ref<formula>& f, const ref<variable>& x,
-    std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const {
+  kleenean function_map::free_for(const val<formula>& f, const val<variable>& x,
+    std::set<val<variable>>& s, std::list<val<variable>>& bs) const {
     kleenean k1 = variable_->free_for(f, x, s, bs);
     if (k1 == false) return false;
     kleenean k2 = formula_->free_for(f, x, s, bs);
@@ -126,50 +126,51 @@ namespace mli {
   }
 
 
-  void function_map::unspecialize(std::set<ref<variable>>& vs, bool b) {
+  void function_map::unspecialize(std::set<val<variable>>& vs, bool b) {
     variable_->unspecialize(vs, b);
     formula_->unspecialize(vs, b);
   }
 
 
-  ref<formula> function_map::substitute(const ref<substitution>& s, substitute_environment vt) const {
-    ref<formula> v0 = variable_->substitute(s, vt);
+  val<formula> function_map::substitute(const val<substitution>& s, substitute_environment vt) const {
+    val<formula> v0 = variable_->substitute(s, vt);
 
-    variable* vp = ref_cast<variable*>(v0);
+    variable* vp = dyn_cast<variable*>(v0);
     if (vp == 0)
       throw illegal_substitution("In function_map::substitute, substitution of variable not a variable.");
 
-    ref<function_map> mp(make, *this);
-    mp->variable_ = vp;
+    val<function_map> mp(make, *this);
+    mp->variable_ = v0;
     mp->formula_ = formula_->substitute(s, vt);
 
     return mp;
   }
 
 
-  alternatives function_map::unify(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives function_map::unify(unify_environment tt, const val<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog << "function_map::unify(\n  " << *this << ";\n  " << x << ")\n" << std::flush;
     }
 
-    function_map* xp = ref_cast<function_map*>(x);
+    function_map* xp = dyn_cast<function_map*>(x);
     if (xp == 0)  return O;
-    alternatives as = mli::unify(ref<formula>(variable_), tt, ref<formula>(xp->variable_), tx, dbp, lv, sl, dr);
+    alternatives as = mli::unify(val<formula>(variable_), tt, val<formula>(xp->variable_), tx, dbp, lv, sl, dr);
     return as.unify(formula_, tt, xp->formula_, tx, dbp, lv, sl, dr);
   }
 
 
   split_formula function_map::split(unify_environment tg,
-    const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
-    split_formula sf(this);  // Return value.
+    const val<variable>& x, const val<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
+
+    split_formula sf(*this);  // Return value.
     // If t and *this unify, then *this can be replaced by x:
-    alternatives as = mli::unify(t, tt, this, tg, dbp, lv, sl, dr);
+    alternatives as = mli::unify(t, tt, *this, tg, dbp, lv, sl, dr);
 
     if (!as.empty())
-      sf.push_back(this, ref<formula>(x), tt.table_->find_local());
+      sf.push_back(*this, val<formula>(x), tt.table_.find_local());
 
-    auto 𝜆 = [&](const ref<formula>& x) { ref<function_map> r(*this); r->formula_ = x; return r; };
+    auto 𝜆 = [&](const val<formula>& x) { val<function_map> r(*this); r->formula_ = x; return r; };
 
     sf.append(mli::split(formula_, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
 
@@ -177,23 +178,23 @@ namespace mli {
   }
 
 
-  ref<function> function_map::innermost() const {
-    return this;
+  val<function> function_map::innermost() const {
+    return *this;
   }
 
 
-  ref<function> function_map::without() const {
-    return ref<function>(make);
+  val<function> function_map::without() const {
+    return val<function>(make);
   }
 
 
-  ref<function> function_map::outermost() const {
-    return this;
+  val<function> function_map::outermost() const {
+    return *this;
   }
 
 
-  ref<function> function_map::within() const {
-    return ref<function>(make);
+  val<function> function_map::within() const {
+    return val<function>(make);
   }
 
 
@@ -234,23 +235,23 @@ namespace mli {
   }
 
 
-  ref<formula> function_composition::rename(level lv, degree sl) const {
-    ref<function_composition> mp(make, *this);
+  val<formula> function_composition::rename(level lv, degree sl) const {
+    val<function_composition> mp(make, *this);
     mp->inner_ = inner_->rename(lv, sl);
     mp->outer_ = outer_->rename(lv, sl);
     return mp;
   }
 
 
-  ref<formula> function_composition::add_exception_set(variable_map& vm) const {
-    ref<function_composition> mp(make, *this);
+  val<formula> function_composition::add_exception_set(variable_map& vm) const {
+    val<function_composition> mp(make, *this);
     mp->inner_ = inner_->add_exception_set(vm);
     mp->outer_ = outer_->add_exception_set(vm);
     return mp;
   }
 
 
-  kleenean function_composition::has(const ref<variable>& v, occurrence oc) const {
+  kleenean function_composition::has(const val<variable>& v, occurrence oc) const {
     kleenean k1 = inner_->has(v, oc);
     if (k1 == true)  return true;
 
@@ -260,14 +261,14 @@ namespace mli {
   }
 
 
-  void function_composition::contains(std::set<ref<variable>>& s, std::set<ref<variable>>& bs, bool& more, occurrence oc) const {
+  void function_composition::contains(std::set<val<variable>>& s, std::set<val<variable>>& bs, bool& more, occurrence oc) const {
     inner_->contains(s, bs, more, oc);
     outer_->contains(s, bs, more, oc);
   }
 
 
-  kleenean function_composition::free_for(const ref<formula>& f, const ref<variable>& x,
-    std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const {
+  kleenean function_composition::free_for(const val<formula>& f, const val<variable>& x,
+    std::set<val<variable>>& s, std::list<val<variable>>& bs) const {
     kleenean k1 = inner_->free_for(f, x, s, bs);
     if (k1 == false)  return false;
 
@@ -283,44 +284,45 @@ namespace mli {
   }
 
 
-  void function_composition::unspecialize(std::set<ref<variable>>& vs, bool b) {
+  void function_composition::unspecialize(std::set<val<variable>>& vs, bool b) {
     inner_->unspecialize(vs, b);
     outer_->unspecialize(vs, b);
   }
 
 
-  ref<formula> function_composition::substitute(const ref<substitution>& s, substitute_environment vt) const {
-    ref<function_composition> mp(make, *this);
-    mp->inner_ = ref<substitution>(inner_->substitute(s, vt));
-    mp->outer_ = ref<substitution>(outer_->substitute(s, vt));
+  val<formula> function_composition::substitute(const val<substitution>& s, substitute_environment vt) const {
+    val<function_composition> mp(make, *this);
+    mp->inner_ = val<substitution>(inner_->substitute(s, vt));
+    mp->outer_ = val<substitution>(outer_->substitute(s, vt));
     return mp;
   }
 
 
-  alternatives function_composition::unify(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives function_composition::unify(unify_environment tt, const val<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog << "function_composition::unify(\n  " << *this << ";\n  " << x << ")\n" << std::flush;
     }
 
-    function_composition* xp = ref_cast<function_composition*>(x);
+    function_composition* xp = dyn_cast<function_composition*>(x);
     if (xp == 0)  return O;
-    alternatives as = mli::unify(ref<formula>(inner_), tt, ref<formula>(xp->inner_), tx, dbp, lv, sl, dr);
-    return as.unify(ref<formula>(outer_), tt, ref<formula>(xp->outer_), tx, dbp, lv, sl, dr);
+    alternatives as = mli::unify(val<formula>(inner_), tt, val<formula>(xp->inner_), tx, dbp, lv, sl, dr);
+    return as.unify(val<formula>(outer_), tt, val<formula>(xp->outer_), tx, dbp, lv, sl, dr);
   }
 
 
   split_formula function_composition::split(unify_environment tg,
-    const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
-    split_formula sf(this);  // Return value.
+    const val<variable>& x, const val<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
+
+    split_formula sf(*this);  // Return value.
     // If t and *this unify, then *this can be replaced by x:
-    alternatives as = mli::unify(t, tt, this, tg, dbp, lv, sl, dr);
+    alternatives as = mli::unify(t, tt, *this, tg, dbp, lv, sl, dr);
 
     if (!as.empty())
-      sf.push_back(this, ref<formula>(x), tt.table_->find_local());
+      sf.push_back(*this, val<formula>(x), tt.table_.find_local());
 
-    auto 𝜆 = [&](const ref<formula>& x, const ref<formula>& y) {
-      ref<function_composition> r(*this); r->outer_ = x; r->inner_ = y; return r;
+    auto 𝜆 = [&](const val<formula>& x, const val<formula>& y) {
+      val<function_composition> r(*this); r->outer_ = x; r->inner_ = y; return r;
     };
 
     sf.append(mli::split({outer_, inner_}, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));
@@ -329,29 +331,29 @@ namespace mli {
   }
 
 
-  ref<function> function_composition::innermost() const {
+  val<function> function_composition::innermost() const {
     return inner_->innermost();
   }
 
 
-  ref<function> function_composition::without() const {
-    ref<function> s = inner_->without();
+  val<function> function_composition::without() const {
+    val<function> s = inner_->without();
     if (s->is_identity())
       return outer_;
-    return ref<function_composition>(make, outer_, s);
+    return val<function_composition>(make, outer_, s);
   }
 
 
-  ref<function> function_composition::outermost() const {
+  val<function> function_composition::outermost() const {
     return outer_->outermost();
   }
 
 
-  ref<function> function_composition::within() const {
-    ref<function> s = outer_->within();
+  val<function> function_composition::within() const {
+    val<function> s = outer_->within();
     if (s->is_identity())
       return inner_;
-    return ref<function_composition>(make, s, inner_);
+    return val<function_composition>(make, s, inner_);
   }
 
 
@@ -376,11 +378,11 @@ namespace mli {
   }
 
 
-  ref<function> operator*(const ref<function>& inner, const ref<function>& outer) {
+  val<function> operator*(const val<function>& inner, const val<function>& outer) {
     if (inner->is_identity())  return outer;
     if (outer->is_identity())  return inner;
 
-    return ref<function_composition>(make, outer, inner);
+    return val<function_composition>(make, outer, inner);
   }
 
 
@@ -395,23 +397,23 @@ namespace mli {
   }
 
 
-  ref<formula> function_application::rename(level lv, degree sl) const {
-    ref<function_application> sfp(make, *this);
+  val<formula> function_application::rename(level lv, degree sl) const {
+    val<function_application> sfp(make, *this);
     sfp->function_ = function_->rename(lv, sl);
     sfp->formula_ = formula_->rename(lv, sl);
     return sfp;
   }
 
 
-  ref<formula> function_application::add_exception_set(variable_map& vm) const {
-    ref<function_application> sfp(make, *this);
+  val<formula> function_application::add_exception_set(variable_map& vm) const {
+    val<function_application> sfp(make, *this);
     sfp->function_ = function_->add_exception_set(vm);
     sfp->formula_ = formula_->add_exception_set(vm);
     return sfp;
   }
 
 
-  kleenean function_application::has(const ref<variable>& v, occurrence oc) const {
+  kleenean function_application::has(const val<variable>& v, occurrence oc) const {
     // If v is substituted by function:
     // If oc == free: return false
     // if oc = bound: if function on v is all occurances, return false.
@@ -424,14 +426,14 @@ namespace mli {
   }
 
 
-  void function_application::contains(std::set<ref<variable>>& vs, std::set<ref<variable>>& bs, bool& more, occurrence oc) const {
+  void function_application::contains(std::set<val<variable>>& vs, std::set<val<variable>>& bs, bool& more, occurrence oc) const {
     function_->contains(vs, bs, more, oc);
     formula_->contains(vs, bs, more, oc);
   }
 
 
-  kleenean function_application::free_for(const ref<formula>& f, const ref<variable>& x,
-      std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const {
+  kleenean function_application::free_for(const val<formula>& f, const val<variable>& x,
+      std::set<val<variable>>& s, std::list<val<variable>>& bs) const {
     kleenean k1 = function_->free_for(f, x, s, bs);
     if (k1 == false)  return false;
     kleenean k2 = formula_->free_for(f, x, s, bs);
@@ -445,13 +447,13 @@ namespace mli {
   }
 
 
-  void function_application::unspecialize(std::set<ref<variable>>& vs, bool b) {
+  void function_application::unspecialize(std::set<val<variable>>& vs, bool b) {
     function_->unspecialize(vs, b);
     formula_->unspecialize(vs, b);
   }
 
 
-  ref<formula> function_application::substitute(const ref<substitution>& s, substitute_environment vt) const {
+  val<formula> function_application::substitute(const val<substitution>& s, substitute_environment vt) const {
     if (trace_value & trace_substitute) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
@@ -468,13 +470,13 @@ namespace mli {
     bottom_guard bg(*vt.table_);
 #endif
 
-    ref<formula> fc = function_->substitute(s, vt);
+    val<formula> fc = function_->substitute(s, vt);
 
-    function* fcp = ref_cast<function*>(fc);
+    function* fcp = dyn_cast<function*>(fc);
     if (fcp == 0)
       throw illegal_substitution("In function_map::substitute, substitution of function not a function.");
 
-    ref<formula> fr = formula_->substitute(s, vt);
+    val<formula> fr = formula_->substitute(s, vt);
 
 
     if (trace_value & trace_substitute) {
@@ -490,7 +492,7 @@ namespace mli {
   }
 
 
-  alternatives function_application::unify(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives function_application::unify(unify_environment tt, const val<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
@@ -507,7 +509,7 @@ namespace mli {
     //   𝐮((𝒙 ↦ 𝑨)(𝒕); 𝑩) ≔ 𝐮(; 𝑩)
     //
 
-    function_application* xp = ref_cast<function_application*>(x);
+    function_application* xp = dyn_cast<function_application*>(x);
 
     if (xp == nullptr)
       return mli::unify(function_(formula_), tt, x, tx, dbp, lv, sl, dr);
@@ -517,16 +519,17 @@ namespace mli {
 
 
   split_formula function_application::split(unify_environment tg,
-    const ref<variable>& x, const ref<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
-    split_formula sf(this);  // Return value.
+    const val<variable>& x, const val<formula>& t, unify_environment tt, database* dbp, level lv, degree_pool& sl, direction dr) const {
+
+    split_formula sf(*this);  // Return value.
     // If t and *this unify, then *this can be replaced by x:
-    alternatives as = mli::unify(t, tt, this, tg, dbp, lv, sl, dr);
+    alternatives as = mli::unify(t, tt, *this, tg, dbp, lv, sl, dr);
 
     if (!as.empty())
-      sf.push_back(this, ref<formula>(x), tt.table_->find_local());
+      sf.push_back(*this, val<formula>(x), tt.table_.find_local());
 
-    auto 𝜆 = [&](const ref<formula>& x, const ref<formula>& y) {
-      ref<function_application> r(*this); r->function_ = x; r->formula_ = y; return r;
+    auto 𝜆 = [&](const val<formula>& x, const val<formula>& y) {
+      val<function_application> r(*this); r->function_ = x; r->formula_ = y; return r;
     };
 
     sf.append(mli::split({function_, formula_}, 𝜆, tg, x, t, tt, dbp, lv, sl, dr));

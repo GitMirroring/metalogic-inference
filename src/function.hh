@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -41,16 +41,16 @@ namespace mli {
     //   id(𝒕) ≔ 𝒕
     //   (𝒙 ↦ 𝑨)(𝒕) ≔ 𝑨[𝒙 ⤇ 𝒕]
     //   (𝒇 ∘ 𝒈)(𝒕) ≔ 𝒇(𝒈(𝒕))
-    virtual ref<formula> operator()(ref<formula>) const;
+    virtual val<formula> operator()(val<formula>) const;
 
     formula::type get_formula_type() const override { return formula::logic; }
 
-    virtual kleenean has(const ref<variable>&, occurrence) const { return false; }
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const {}
+    virtual kleenean has(const val<variable>&, occurrence) const { return false; }
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const {}
 
 
     // Find the set of variables varied in the function.
-    virtual void get_varied(std::set<ref<variable>>&, metalevel_t) const {}
+    virtual void get_varied(std::set<val<variable>>&, metalevel_t) const {}
 
     // Variables varied of a premise vs, variables varied in reduction vrs, associated
     // with the formulas set variable fsv, and offset m, the position in the substituted premise
@@ -58,31 +58,31 @@ namespace mli {
     virtual void get_varied(varied_type& vvs, varied_type& vrs, const variable& fsv, size_type m) const {}
 
 
-    virtual kleenean free_for(const ref<formula>&, const ref<variable>&,
-      std::set<ref<variable>>&, std::list<ref<variable>>&) const { return true; }
+    virtual kleenean free_for(const val<formula>&, const val<variable>&,
+      std::set<val<variable>>&, std::list<val<variable>>&) const { return true; }
 
     void unspecialize(depth, bool) override {}
-    void unspecialize(std::set<ref<variable>>&, bool) override {}
+    void unspecialize(std::set<val<variable>>&, bool) override {}
 
-    ref<formula> substitute(const ref<substitution>&, substitute_environment) const override { return this; }
+    val<formula> substitute(const val<substitution>&, substitute_environment) const override { return *this; }
 
     virtual void set_bind(bind&, name_variable_table&) {}
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
 
   #if 0  // Defined in class formula:
-    virtual split_formula split(unify_environment, const ref<variable>&, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
+    virtual split_formula split(unify_environment, const val<variable>&, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
   #endif
 
     // One has *this = innermost()*without(), and innermost() of the form
     // [x↦t] or equal to I:
-    virtual ref<function> innermost() const { return this; }
-    virtual ref<function> without() const { return this; }
+    virtual val<function> innermost() const { return *this; }
+    virtual val<function> without() const { return *this; }
 
     // One has *this = within()*outermost(), and outermost() of the form
     // [x↦t] or equal to I:
-    virtual ref<function> outermost() const { return this; }
-    virtual ref<function> within() const { return this; }
+    virtual val<function> outermost() const { return *this; }
+    virtual val<function> within() const { return *this; }
 
     virtual order compare(const unit&) const;
 
@@ -92,8 +92,8 @@ namespace mli {
 
   class function_map : public function {
   public:
-    ref<variable> variable_;
-    ref<formula> formula_;
+    val<variable> variable_;
+    val<formula> formula_;
 
   public:
     function_map() {}
@@ -101,40 +101,40 @@ namespace mli {
     new_copy(function_map);
     new_move(function_map);
 
-    function_map(const ref<variable>& i, const ref<formula>& t)
+    function_map(const val<variable>& i, const val<formula>& t)
      : variable_(i), formula_(t) {}
 
 
     // Function evaluation, (𝒙 ↦ 𝒇)(𝒂) ≔ 𝒇[𝒙 ⤇ 𝒂].
-    ref<formula> operator()(ref<formula> x) const override;
+    val<formula> operator()(val<formula> x) const override;
 
     bool is_identity() const override { return variable_ == formula_; }
 
     formula::type get_formula_type() const override { return formula::meta; }
 
     void set_bind(bind&, name_variable_table&) override;
-    ref<formula> rename(level, degree) const override;
-    ref<formula> add_exception_set(variable_map&) const override;
+    val<formula> rename(level, degree) const override;
+    val<formula> add_exception_set(variable_map&) const override;
 
-    kleenean has(const ref<variable>&, occurrence) const override;
-    void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const override;
+    kleenean has(const val<variable>&, occurrence) const override;
+    void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const override;
 
-    kleenean free_for(const ref<formula>& f, const ref<variable>& x,
-      std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const override;
+    kleenean free_for(const val<formula>& f, const val<variable>& x,
+      std::set<val<variable>>& s, std::list<val<variable>>& bs) const override;
 
     void unspecialize(depth, bool) override;
-    void unspecialize(std::set<ref<variable>>&, bool) override;
+    void unspecialize(std::set<val<variable>>&, bool) override;
 
-    ref<formula> substitute(const ref<substitution>&, substitute_environment) const override;
+    val<formula> substitute(const val<substitution>&, substitute_environment) const override;
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    virtual split_formula split(unify_environment, const ref<variable>&, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    virtual split_formula split(unify_environment, const val<variable>&, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    ref<function> innermost() const override;
-    ref<function> without() const override;
-    ref<function> outermost() const override;
-    ref<function> within() const override;
+    val<function> innermost() const override;
+    val<function> without() const override;
+    val<function> outermost() const override;
+    val<function> within() const override;
 
     order compare(const unit&) const override;
 
@@ -145,8 +145,8 @@ namespace mli {
 
 
   class function_composition : public function {
-    ref<function> inner_ = ref<function>(make);
-    ref<function> outer_ = ref<function>(make);
+    val<function> inner_ = val<function>(make);
+    val<function> outer_ = val<function>(make);
 
   public:
     function_composition() = default;
@@ -154,11 +154,11 @@ namespace mli {
     new_copy(function_composition);
     new_move(function_composition);
 
-    function_composition(const ref<function>& outer, const ref<function>& inner)
+    function_composition(const val<function>& outer, const val<function>& inner)
      : outer_(outer), inner_(inner) {}
 
     // Function evaluation, (𝒇 ∘ 𝒈)(𝒂) ≔ 𝒇(𝒈(𝒂)).
-    ref<formula> operator()(ref<formula> x) const override { return outer_(inner_(x)); }
+    val<formula> operator()(val<formula> x) const override { return outer_(inner_(x)); }
 
     bool is_identity() const override { return inner_->is_identity() && outer_->is_identity(); }
 
@@ -166,32 +166,32 @@ namespace mli {
 
     // Variable renumbering:
     void set_bind(bind&, name_variable_table&) override;
-    ref<formula> rename(level, degree) const override;
-    ref<formula> add_exception_set(variable_map&) const override;
+    val<formula> rename(level, degree) const override;
+    val<formula> add_exception_set(variable_map&) const override;
 
     // Free variables:
-    kleenean has(const ref<variable>&, occurrence) const override;
-    void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const override;
+    kleenean has(const val<variable>&, occurrence) const override;
+    void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const override;
 
-    kleenean free_for(const ref<formula>& f, const ref<variable>& x,
-      std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const override;
+    kleenean free_for(const val<formula>& f, const val<variable>& x,
+      std::set<val<variable>>& s, std::list<val<variable>>& bs) const override;
 
     // Fixed variables:
     void unspecialize(depth, bool) override;
-    void unspecialize(std::set<ref<variable>>&, bool) override;
+    void unspecialize(std::set<val<variable>>&, bool) override;
 
     // Substitution:
-    ref<formula> substitute(const ref<substitution>&, substitute_environment) const override;
+    val<formula> substitute(const val<substitution>&, substitute_environment) const override;
 
     // Unification:
-    alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    split_formula split(unify_environment, const ref<variable>&, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    split_formula split(unify_environment, const val<variable>&, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    ref<function> innermost() const override;
-    ref<function> without() const override;
-    ref<function> outermost() const override;
-    ref<function> within() const override;
+    val<function> innermost() const override;
+    val<function> without() const override;
+    val<function> outermost() const override;
+    val<function> within() const override;
 
     // Comparison, needed for unification and database lookup.
     order compare(const unit&) const override;
@@ -206,7 +206,7 @@ namespace mli {
   // Reverse function composition f * g = f ∙ g ≔ g ∘ f of functions f, g, in functional
   //   prefix notation: (f ∙ g)(x) = (g ∘ f)(x) ≔ g(f(x))
   //   postfix notation: (x)(f ∙ g) = (x)(g ∘ f) ≔ g(f(x))
-  ref<function> operator*(const ref<function>& f, const ref<function>& g);
+  val<function> operator*(const val<function>& f, const val<function>& g);
 
 
   // Used for explicit function expressions A[x ⤇ t], formally a pair (A, s)
@@ -217,12 +217,12 @@ namespace mli {
   // property be forwarded to x.
   class function_application : public nonempty_formula {
   public:
-    ref<function> function_; // Initializes to the default function id.
-    ref<formula> formula_;
+    val<function> function_; // Initializes to the default function id.
+    val<formula> formula_;
 
     function_application() = default;
 
-    function_application(const ref<function>& f, const ref<formula>& x) : function_(f), formula_(x) {}
+    function_application(const val<function>& f, const val<formula>& x) : function_(f), formula_(x) {}
 
     new_copy(function_application);
     new_move(function_application);
@@ -231,27 +231,27 @@ namespace mli {
 
     // Variable renumbering:
     void set_bind(bind&, name_variable_table&) override;
-    ref<formula> rename(level, degree) const override;
-    ref<formula> add_exception_set(variable_map&) const override;
+    val<formula> rename(level, degree) const override;
+    val<formula> add_exception_set(variable_map&) const override;
 
     // Free variables:
-    kleenean has(const ref<variable>&, occurrence) const override;
-    void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const override;
+    kleenean has(const val<variable>&, occurrence) const override;
+    void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const override;
 
-    kleenean free_for(const ref<formula>& f, const ref<variable>& x,
-      std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const override;
+    kleenean free_for(const val<formula>& f, const val<variable>& x,
+      std::set<val<variable>>& s, std::list<val<variable>>& bs) const override;
 
     // Fixed variables:
     void unspecialize(depth, bool) override;
-    void unspecialize(std::set<ref<variable>>&, bool) override;
+    void unspecialize(std::set<val<variable>>&, bool) override;
 
     // Substitution:
-    ref<formula> substitute(const ref<substitution>&, substitute_environment) const override;
+    val<formula> substitute(const val<substitution>&, substitute_environment) const override;
 
     // Unification:
-    alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    split_formula split(unify_environment, const ref<variable>&, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
+    split_formula split(unify_environment, const val<variable>&, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
     order compare(const unit&) const override;
 

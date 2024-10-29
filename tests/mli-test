@@ -49,12 +49,13 @@ else
   echo "mli:"
   time ${MLI} ${INCLUDE} --theory=${FILENAMEBASE} --include="${INCLUDEDIR}"\
     --output=${OUTFILE} --log=${LOGFILE} ${FILE}
+  error_mli=$?
   echo "end mli"
   cmp ${OUTFILE} ${OUTCOMPARE}
-  error0=$?
+  error_out=$?
   cmp ${LOGFILE} ${LOGCOMPARE}
-  error1=$?
-  exit $((${error0} + ${error1}))
+  error_log=$?
+  exit $((${error_mli} + ${error_out} + ${error_log}))
 fi
 
 

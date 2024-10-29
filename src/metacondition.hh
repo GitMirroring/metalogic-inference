@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -24,32 +24,32 @@ namespace mli {
 
   class metanot : public nonempty_formula {
   public:
-    ref<formula> formula_;
+    val<formula> formula_;
 
     metanot() = default;
 
     new_copy(metanot);
     new_move(metanot);
 
-    metanot(const ref<formula>& x) : formula_(x) {}
+    metanot(const val<formula>& x) : formula_(x) {}
 
 
     formula::type get_formula_type() const override { return formula::meta; }
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
 
-    virtual kleenean has(const ref<variable>&, occurrence) const;
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const;
+    virtual kleenean has(const val<variable>&, occurrence) const;
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const;
 
-    virtual kleenean free_for(const ref<formula>&, const ref<variable>&, 
-      std::set<ref<variable>>&, std::list<ref<variable>>&) const;
+    virtual kleenean free_for(const val<formula>&, const val<variable>&, 
+      std::set<val<variable>>&, std::list<val<variable>>&) const;
 
     void unspecialize(depth, bool) override;
-    void unspecialize(std::set<ref<variable>>&, bool) override;
+    void unspecialize(std::set<val<variable>>&, bool) override;
 
-    virtual ref<formula> rename(level, degree) const;
-    virtual ref<formula> add_exception_set(variable_map&) const override;
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const;
+    virtual val<formula> rename(level, degree) const;
+    virtual val<formula> add_exception_set(variable_map&) const override;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const;
 
     virtual void set_bind(bind&, name_variable_table&);
 
@@ -76,20 +76,20 @@ namespace mli {
 
     formula::type get_formula_type() const override { return formula::meta; }
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
 
-    virtual kleenean has(const ref<variable>&, occurrence) const { return false; }
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const {}
+    virtual kleenean has(const val<variable>&, occurrence) const { return false; }
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const {}
 
-    virtual kleenean free_for(const ref<formula>&, const ref<variable>&, 
-      std::set<ref<variable>>&, std::list<ref<variable>>&) const
+    virtual kleenean free_for(const val<formula>&, const val<variable>&, 
+      std::set<val<variable>>&, std::list<val<variable>>&) const
     { return true; }
 
 
     void unspecialize(depth, bool) override {}
-    void unspecialize(std::set<ref<variable>>&, bool) override {}
+    void unspecialize(std::set<val<variable>>&, bool) override {}
 
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const;
 
     virtual void set_bind(bind&, name_variable_table&) {}
 
@@ -102,7 +102,7 @@ namespace mli {
 
   class identical : public nonempty_formula {
   public:
-    ref<formula> first_, second_;
+    val<formula> first_, second_;
     bool positive_;
 
     identical() = default;
@@ -110,26 +110,26 @@ namespace mli {
     new_copy(identical);
     new_move(identical);
 
-    identical(const ref<formula>& x, const ref<formula>& y, bool not_negated = true)
+    identical(const val<formula>& x, const val<formula>& y, bool not_negated = true)
      : first_(x), second_(y), positive_(not_negated) {}
 
 
     formula::type get_formula_type() const override { return formula::meta; }
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
 
-    virtual kleenean has(const ref<variable>&, occurrence) const;
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const;
+    virtual kleenean has(const val<variable>&, occurrence) const;
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const;
 
-    virtual kleenean free_for(const ref<formula>&, const ref<variable>&, 
-      std::set<ref<variable>>&, std::list<ref<variable>>&) const;
+    virtual kleenean free_for(const val<formula>&, const val<variable>&, 
+      std::set<val<variable>>&, std::list<val<variable>>&) const;
 
     void unspecialize(depth, bool) override;
-    void unspecialize(std::set<ref<variable>>&, bool) override;
+    void unspecialize(std::set<val<variable>>&, bool) override;
 
-    virtual ref<formula> rename(level, degree) const;
-    virtual ref<formula> add_exception_set(variable_map&) const override;
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const;
+    virtual val<formula> rename(level, degree) const;
+    virtual val<formula> add_exception_set(variable_map&) const override;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const;
 
     virtual void set_bind(bind&, name_variable_table&);
 
@@ -145,7 +145,7 @@ namespace mli {
   // and bind numbers disregarded.
   class objectidentical : public nonempty_formula {
   public:
-    ref<variable> first_, second_;
+    val<variable> first_, second_;
     bool positive_;
 
     objectidentical() = default;
@@ -153,26 +153,26 @@ namespace mli {
     new_copy(objectidentical);
     new_move(objectidentical);
 
-    objectidentical(const ref<variable>& x, const ref<variable>& y, bool not_negated = true)
+    objectidentical(const val<variable>& x, const val<variable>& y, bool not_negated = true)
      : first_(x), second_(y), positive_(not_negated) {}
 
 
     formula::type get_formula_type() const override { return formula::meta; }
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
 
-    virtual kleenean has(const ref<variable>&, occurrence) const;
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const;
+    virtual kleenean has(const val<variable>&, occurrence) const;
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const;
 
-    virtual kleenean free_for(const ref<formula>&, const ref<variable>&, 
-      std::set<ref<variable>>&, std::list<ref<variable>>&) const;
+    virtual kleenean free_for(const val<formula>&, const val<variable>&, 
+      std::set<val<variable>>&, std::list<val<variable>>&) const;
 
     void unspecialize(depth, bool) override;
-    void unspecialize(std::set<ref<variable>>&, bool) override;
+    void unspecialize(std::set<val<variable>>&, bool) override;
 
-    virtual ref<formula> rename(level, degree) const;
-    virtual ref<formula> add_exception_set(variable_map&) const override;
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const;
+    virtual val<formula> rename(level, degree) const;
+    virtual val<formula> add_exception_set(variable_map&) const override;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const;
 
     virtual void set_bind(bind&, name_variable_table&);
 
@@ -185,8 +185,8 @@ namespace mli {
 
   class free_in_object : public nonempty_formula {
   public:
-    ref<variable> variable_;
-    ref<formula> formula_;
+    val<variable> variable_;
+    val<formula> formula_;
     bool positive_;    // true iff x free in f
                        // false iff x not free in f
 
@@ -195,26 +195,26 @@ namespace mli {
     new_copy(free_in_object);
     new_move(free_in_object);
 
-    free_in_object(const ref<variable>& x, const ref<formula>& f, bool not_negated)
+    free_in_object(const val<variable>& x, const val<formula>& f, bool not_negated)
      : variable_(x), formula_(f), positive_(not_negated) {}
 
 
     formula::type get_formula_type() const override { return formula::meta; }
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
 
-    virtual kleenean has(const ref<variable>&, occurrence) const;
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const;
+    virtual kleenean has(const val<variable>&, occurrence) const;
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const;
 
-    virtual kleenean free_for(const ref<formula>& f, const ref<variable>& x, 
-      std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const;
+    virtual kleenean free_for(const val<formula>& f, const val<variable>& x, 
+      std::set<val<variable>>& s, std::list<val<variable>>& bs) const;
 
     void unspecialize(depth, bool) override;
-    void unspecialize(std::set<ref<variable>>&, bool) override;
+    void unspecialize(std::set<val<variable>>&, bool) override;
 
-    virtual ref<formula> rename(level, degree) const;
-    virtual ref<formula> add_exception_set(variable_map&) const override;
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const;
+    virtual val<formula> rename(level, degree) const;
+    virtual val<formula> add_exception_set(variable_map&) const override;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const;
 
     virtual void set_bind(bind&, name_variable_table&);
 
@@ -227,9 +227,9 @@ namespace mli {
 
   class free_for_object : public nonempty_formula {
   public:
-    ref<formula> term_;
-    ref<variable> variable_;
-    ref<formula> formula_;
+    val<formula> term_;
+    val<variable> variable_;
+    val<formula> formula_;
     bool positive_;  // true iff t free for x in f,
                      // false iff t not free for x in f
 
@@ -238,26 +238,26 @@ namespace mli {
     new_copy(free_for_object);
     new_move(free_for_object);
 
-    free_for_object(const ref<formula>& t, const ref<variable>& x, const ref<formula>& f, bool not_negated)
+    free_for_object(const val<formula>& t, const val<variable>& x, const val<formula>& f, bool not_negated)
      : term_(t), variable_(x), formula_(f), positive_(not_negated) {}
 
 
     formula::type get_formula_type() const override { return formula::meta; }
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
 
-    virtual kleenean has(const ref<variable>&, occurrence) const;
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const;
+    virtual kleenean has(const val<variable>&, occurrence) const;
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const;
 
-    virtual kleenean free_for(const ref<formula>& f, const ref<variable>& x, 
-      std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const;
+    virtual kleenean free_for(const val<formula>& f, const val<variable>& x, 
+      std::set<val<variable>>& s, std::list<val<variable>>& bs) const;
 
     void unspecialize(depth, bool) override;
-    void unspecialize(std::set<ref<variable>>&, bool) override;
+    void unspecialize(std::set<val<variable>>&, bool) override;
 
-    virtual ref<formula> rename(level, degree) const;
-    virtual ref<formula> add_exception_set(variable_map&) const override;
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const;
+    virtual val<formula> rename(level, degree) const;
+    virtual val<formula> add_exception_set(variable_map&) const override;
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const;
 
     virtual void set_bind(bind&, name_variable_table&);
 

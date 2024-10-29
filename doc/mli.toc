@@ -1,26 +1,26 @@
 @unnchapentry{Introduction}{10001}{Introduction}{1}
 @unnchapentry{Conditions for Using MLI}{10002}{Conditions}{3}
 @unnchapentry{GNU GENERAL PUBLIC LICENSE}{10003}{Copying}{5}
-@numchapentry{The Concepts of MLI}{1}{Concepts}{15}
-@numsecentry{Metatheory and Object Theory}{1.1}{Metatheory and Object Theory}{15}
-@numsecentry{Formal Theories and Formal Proofs}{1.2}{Formal Theories and Formal Proofs}{15}
-@numsecentry{Proof Trees and Unification}{1.3}{Proof Trees and Unification}{17}
-@numsecentry{The Propositional Calculus}{1.4}{The Propositional Calculus}{17}
-@numsecentry{The Predicate Calculus (Quantification Theory)}{1.5}{The Predicate Calculus (Quantification Theory)}{19}
-@numsecentry{Theory with Equality}{1.6}{Theory with Equality}{19}
-@numsecentry{Formal Number Theory}{1.7}{Formal Number Theory}{19}
-@numsecentry{Axiomatic Set Theory}{1.8}{Axiomatic Set Theory}{19}
-@numchapentry{Examples}{2}{Examples}{21}
-@numsecentry{Simple Propositional Calculus}{2.1}{Simple Propositional Calculus}{21}
-@numsubsecentry{Nested proofs}{2.1.1}{Nested proofs}{26}
-@numchapentry{MLI Input Files}{3}{Input File}{27}
-@numchapentry{User Interface.}{4}{Interface}{29}
-@numchapentry{The MLI Inference Algorithm.}{5}{Algorithm}{31}
-@numchapentry{Understanding and Debugging MLI Source Code.}{6}{Debugging}{33}
-@numchapentry{Invoking MLI}{7}{Invocation}{35}
-@numsecentry{MLI Options}{7.1}{MLI Options}{35}
-@numsecentry{Option Cross Key}{7.2}{Option Cross Key}{35}
-@appentry{MLI Symbols}{A}{Table of Symbols}{37}
-@appentry{Glossary}{B}{Glossary}{39}
-@unnchapentry{Bibliography}{10004}{Bibliography}{41}
-@unnchapentry{Index of Terms}{10005}{Index of Terms}{43}
+@numchapentry{The Concepts of MLI}{1}{Concepts}{9}
+@numsecentry{Metatheory and Object Theory}{1.1}{Metatheory and Object Theory}{9}
+@numsecentry{Formal Theories and Formal Proofs}{1.2}{Formal Theories and Formal Proofs}{9}
+@numsecentry{Proof Trees and Unification}{1.3}{Proof Trees and Unification}{10}
+@numsecentry{The Propositional Calculus}{1.4}{The Propositional Calculus}{10}
+@numsecentry{The Predicate Calculus (Quantification Theory)}{1.5}{The Predicate Calculus (Quantification Theory)}{11}
+@numsecentry{Theory with Equality}{1.6}{Theory with Equality}{11}
+@numsecentry{Formal Number Theory}{1.7}{Formal Number Theory}{11}
+@numsecentry{Axiomatic Set Theory}{1.8}{Axiomatic Set Theory}{11}
+@numchapentry{Examples}{2}{Examples}{13}
+@numsecentry{Simple Propositional Calculus}{2.1}{Simple Propositional Calculus}{13}
+@numsubsecentry{Nested proofs}{2.1.1}{Nested proofs}{17}
+@numchapentry{MLI Input Files}{3}{Input File}{19}
+@numchapentry{User Interface.}{4}{Interface}{21}
+@numchapentry{The MLI Inference Algorithm.}{5}{Algorithm}{23}
+@numchapentry{Understanding and Debugging MLI Source Code.}{6}{Debugging}{25}
+@numchapentry{Invoking MLI}{7}{Invocation}{27}
+@numsecentry{MLI Options}{7.1}{MLI Options}{27}
+@numsecentry{Option Cross Key}{7.2}{Option Cross Key}{27}
+@appentry{MLI Symbols}{A}{Table of Symbols}{29}
+@appentry{Glossary}{B}{Glossary}{31}
+@unnchapentry{Bibliography}{10004}{Bibliography}{33}
+@unnchapentry{Index of Terms}{10005}{Index of Terms}{35}

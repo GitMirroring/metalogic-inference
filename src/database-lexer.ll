@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -39,8 +39,9 @@
 
 #define YYERRCODE	256
 
-#define the_text std::string(yytext, yyleng)
-#define get_text yylval.text = std::string(yytext, yyleng)
+#define yystring std::string(yytext, yyleng)
+#define get_string yylval.emplace<std::string>(yytext, yyleng)
+
 
 std::vector<std::string> dirs; // Directory search-paths; for included files.
 
@@ -217,7 +218,7 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 
 %%
 %{
-  mli::semantic_type& yylval = *yylvalp;
+  database_parser::value_type& yylval = *yylvalp;
   mli::location_type& yylloc = *yyllocp;
 
   if (current_token != 0) { int tok = current_token; current_token = 0; return tok; }
@@ -290,61 +291,60 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 }
 
 
-"include"    { get_text; return mli::database_parser::token::include_key; }
-"end"        { get_text; return mli::database_parser::token::end_key; }
+"include"    { return mli::database_parser::token::include_key; }
+"end"        { return mli::database_parser::token::end_key; }
 
-"formal"[[:space:]]+"system" { get_text; return mli::database_parser::token::formal_system_key; }
-"theory"     { get_text; return mli::database_parser::token::theory_key; }
+"formal"[[:space:]]+"system" { return mli::database_parser::token::formal_system_key; }
+"theory"     { return mli::database_parser::token::theory_key; }
 
-"postulate"  { get_text; return mli::database_parser::token::postulate_key; }
-"axiom"      { get_text; return mli::database_parser::token::axiom_key; }
-"rule"       { get_text; return mli::database_parser::token::rule_key; }
-"conjecture" { get_text; return mli::database_parser::token::conjecture_key; }
+"postulate"  { return mli::database_parser::token::postulate_key; }
+"axiom"      { return mli::database_parser::token::axiom_key; }
+"rule"       { return mli::database_parser::token::rule_key; }
+"conjecture" { return mli::database_parser::token::conjecture_key; }
 
-"definition" { get_text; return mli::database_parser::token::definition_key; }
+"definition" { return mli::database_parser::token::definition_key; }
 
-"lemma"       { get_text; yylval.number = mli::theorem::lemma_; return mli::database_parser::token::theorem_key; }
-"proposition" { get_text; yylval.number = mli::theorem::proposition_; return mli::database_parser::token::theorem_key; }
-"theorem"     { get_text; yylval.number = mli::theorem::theorem_; return mli::database_parser::token::theorem_key; }
-"corollary"   { get_text; yylval.number = mli::theorem::corollary_; return mli::database_parser::token::theorem_key; }
+"lemma"       { yylval.emplace<mli::theorem::type>(mli::theorem::lemma_); return mli::database_parser::token::theorem_key; }
+"proposition" { yylval.emplace<mli::theorem::type>(mli::theorem::proposition_); return mli::database_parser::token::theorem_key; }
+"theorem"     { yylval.emplace<mli::theorem::type>(mli::theorem::theorem_); return mli::database_parser::token::theorem_key; }
+"corollary"   { yylval.emplace<mli::theorem::type>(mli::theorem::corollary_); return mli::database_parser::token::theorem_key; }
 
-"proof"       { get_text; return mli::database_parser::token::proof_key; }
-"∎"           { get_text; return mli::database_parser::token::end_of_proof_key; }
+"proof"       { return mli::database_parser::token::proof_key; }
+"∎"           { return mli::database_parser::token::end_of_proof_key; }
 
-"by"         { get_text;
-               proofline_database_context = true;
+"by"         { proofline_database_context = true;
                bracket_depth = 0;
                statement_substitution_context = false;
                return mli::database_parser::token::by_key; }
 
-"result"      { get_text; return mli::database_parser::token::result_key; }
-"premise"     { get_text; return mli::database_parser::token::premise_key; }
+"result"      { get_string; return mli::database_parser::token::result_key; }
+"premise"     { return mli::database_parser::token::premise_key; }
 
 
 "⊩"    { return mli::database_parser::token::metainfer_key; }
 
 "or"   { return mli::database_parser::token::metaor_key; }
 "and"  { return mli::database_parser::token::metaand_key; }
-"not"  { get_text; return mli::database_parser::token::metanot_key; }
+"not"  { return mli::database_parser::token::metanot_key; }
 
 
 "⊢"   { return mli::database_parser::token::infer_key; }
 
-"≡"   { get_text; return mli::database_parser::token::object_identical_key; }
-"≢"   { get_text; return mli::database_parser::token::object_not_identical_key; }
-"≣"   { get_text; return mli::database_parser::token::meta_identical_key; }
-"≣̷"   { get_text; return mli::database_parser::token::meta_not_identical_key; }
+"≡"   { return mli::database_parser::token::object_identical_key; }
+"≢"   { return mli::database_parser::token::object_not_identical_key; }
+"≣"   { return mli::database_parser::token::meta_identical_key; }
+"≣̷"   { return mli::database_parser::token::meta_not_identical_key; }
 
-"fail"    { get_text; return mli::database_parser::token::fail_key; }
-"succeed" { get_text; return mli::database_parser::token::succeed_key; }
+"fail"    { return mli::database_parser::token::fail_key; }
+"succeed" { return mli::database_parser::token::succeed_key; }
 
-"free"[[:space:]]+"for" { get_text; meta_context = true; return mli::database_parser::token::free_for_key; }
-"free"[[:space:]]+"in"  { get_text; return mli::database_parser::token::free_in_key; }
+"free"[[:space:]]+"for" { meta_context = true; return mli::database_parser::token::free_for_key; }
+"free"[[:space:]]+"in"  { return mli::database_parser::token::free_in_key; }
 
-"in"     { get_text; meta_context = false; return mli::database_parser::token::metain_key; }
+"in"     { meta_context = false; return mli::database_parser::token::metain_key; }
 
 
-"use" { get_text; return mli::database_parser::token::use_key; }
+"use" { return mli::database_parser::token::use_key; }
 
 "≔"        { return mli::database_parser::token::defined_by_key; }
 "≕"        { return mli::database_parser::token::defines_key; }
@@ -403,13 +403,13 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 "constant"   { declaration_context = true; declared_token = mli::database_parser::token::term_constant;
                declared_type = formula::object; return mli::database_parser::token::identifier_constant_key; }
 
-"⇒"   { get_text; return mli::database_parser::token::implies_key; }
-"⇐"   { get_text; return mli::database_parser::token::impliedby_key; }
-"⇔"  { get_text; return mli::database_parser::token::equivalent_key; }
+"⇒"   { get_string; return mli::database_parser::token::implies_key; }
+"⇐"   { get_string; return mli::database_parser::token::impliedby_key; }
+"⇔"  { get_string; return mli::database_parser::token::equivalent_key; }
 
-"∧"  { get_text; return mli::database_parser::token::logical_and_key; }
-"∨"   { get_text; return mli::database_parser::token::logical_or_key; }
-"¬"   { get_text; return mli::database_parser::token::logical_not_key; }
+"∧"  { get_string; return mli::database_parser::token::logical_and_key; }
+"∨"   { get_string; return mli::database_parser::token::logical_or_key; }
+"¬"   { get_string; return mli::database_parser::token::logical_not_key; }
 
 ":"  { declaration_context = false;
        bound_variable_type = free_variable_context;
@@ -422,32 +422,32 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 ";"  { return mli::database_parser::token::semicolon_key; }
 
 
-"<"  { get_text; return mli::database_parser::token::less_key; }
-">"  { get_text; return mli::database_parser::token::greater_key; }
-"≤"  { get_text; return mli::database_parser::token::less_or_equal_key; }
-"≥"  { get_text; return mli::database_parser::token::greater_or_equal_key; }
+"<"  { get_string; return mli::database_parser::token::less_key; }
+">"  { get_string; return mli::database_parser::token::greater_key; }
+"≤"  { get_string; return mli::database_parser::token::less_or_equal_key; }
+"≥"  { get_string; return mli::database_parser::token::greater_or_equal_key; }
 
-"≮"  { get_text; return mli::database_parser::token::not_less_key; }
-"≯"  { get_text; return mli::database_parser::token::not_greater_key; }
-"≰"  { get_text; return mli::database_parser::token::not_less_or_equal_key; }
-"≱"  { get_text; return mli::database_parser::token::not_greater_or_equal_key; }
+"≮"  { get_string; return mli::database_parser::token::not_less_key; }
+"≯"  { get_string; return mli::database_parser::token::not_greater_key; }
+"≰"  { get_string; return mli::database_parser::token::not_less_or_equal_key; }
+"≱"  { get_string; return mli::database_parser::token::not_greater_or_equal_key; }
 
-"="  { get_text; return mli::database_parser::token::equal_key; }
-"≠"  { get_text; return mli::database_parser::token::not_equal_key; }
+"="  { get_string; return mli::database_parser::token::equal_key; }
+"≠"  { get_string; return mli::database_parser::token::not_equal_key; }
 
-"∣"  { get_text; return mli::database_parser::token::divides_key; }
-"∤"  { get_text; return mli::database_parser::token::not_divides_key; }
+"∣"  { get_string; return mli::database_parser::token::divides_key; }
+"∤"  { get_string; return mli::database_parser::token::not_divides_key; }
 
-"↦" { get_text; bound_variable_type = free_variable_context; return mli::database_parser::token::mapsto_key; }
-"⤇" { get_text; return mli::database_parser::token::Mapsto_key; }
+"↦" { get_string; bound_variable_type = free_variable_context; return mli::database_parser::token::mapsto_key; }
+"⤇" { get_string; return mli::database_parser::token::Mapsto_key; }
 
-"𝛌" { get_text; bound_variable_type = database_parser::token::function_map_variable; symbol_table.push_level(false);
+"𝛌" { bound_variable_type = database_parser::token::function_map_variable; symbol_table.push_level(false);
       return mli::database_parser::token::function_map_prefix_key; }
 
-"°"  { get_text; return mli::database_parser::token::degree_key; }
-"•"  { get_text; return mli::database_parser::token::bullet_key; }
+"°"  { return mli::database_parser::token::degree_key; }
+"•"  { return mli::database_parser::token::bullet_key; }
 
-"ₓ" { get_text; return mli::database_parser::token::subscript_x_key; }
+"ₓ" { return mli::database_parser::token::subscript_x_key; }
 
 
 "("  { return mli::database_parser::token::left_parenthesis_key; }
@@ -490,10 +490,10 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
   \n+           { yylloc.lines(yyleng); yylloc.step(); line_position = current_position; }
 
   "|"|"∈" {
-    // The set bar | as in {𝒙|𝑨}, or ∈ as in {𝒙∈𝑆|𝑨} has been found, so 𝒙 in yylval.text
+    // The set bar | as in {𝒙|𝑨}, or ∈ as in {𝒙∈𝑆|𝑨} has been found, so 𝒙 in yylval.as<std::string>()
     // should be defined at a new symbol table secondary level as a bound set variable.
     // Save "|" in current_token so that it will returned on the next lexer call.
-    if (std::string(yytext, yyleng) == "|")
+    if (yystring == "|")
       current_token = mli::database_parser::token::vertical_line_key;
     else
       current_token = mli::database_parser::token::in_key;
@@ -502,13 +502,16 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
     BEGIN(INITIAL);
 
     symbol_table.push_level(false);
-    database_parser::token_type ret = define_variable(yylval);
+
+    database_parser::token_type ret = define_variable(yystring, yylval);
+
     bound_variable_type = mli::free_variable_context;
+
     return database_parser::token::set_variable_definition;
   }
 
-  .   { yyless(0); BEGIN(INITIAL); maybe_set_declaration_context = false;
-      database_parser::token_type ret = define_variable(yylval);
+  . { yyless(0); BEGIN(INITIAL); maybe_set_declaration_context = false;
+      database_parser::token_type ret = define_variable(yystring, yylval);
       return ret;
   }
 }
@@ -516,38 +519,36 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 
 "Set"  {
     bound_variable_type = database_parser::token::is_set_variable;
-    get_text;
     return mli::database_parser::token::is_set_key; }
 "Pow"  {
     bound_variable_type = database_parser::token::is_set_variable;
-    get_text;
     return mli::database_parser::token::power_set_key; }
 
-"∅"    { get_text; return mli::database_parser::token::empty_set_key; }
-"∈"    { get_text; return mli::database_parser::token::in_key; }
-"∉"    { get_text; return mli::database_parser::token::not_in_key; }
+"∅"    { return mli::database_parser::token::empty_set_key; }
+"∈"    { get_string; return mli::database_parser::token::in_key; }
+"∉"    { get_string; return mli::database_parser::token::not_in_key; }
 
-"∁"    { get_text; return mli::database_parser::token::set_complement_key; }
-"∪"    { get_text; return mli::database_parser::token::set_union_key; }
-"∩"    { get_text; return mli::database_parser::token::set_intersection_key; }
-"∖"    { get_text; return mli::database_parser::token::set_difference_key; }
-"⋃"    { get_text; return mli::database_parser::token::set_union_operator_key; }
-"⋂"    { get_text; return mli::database_parser::token::set_intersection_operator_key; }
-"⊆"    { get_text; return mli::database_parser::token::subset_key; }
-"⊊"    { get_text; return mli::database_parser::token::proper_subset_key; }
-"⊇"    { get_text; return mli::database_parser::token::superset_key; }
-"⊋"    { get_text; return mli::database_parser::token::proper_superset_key; }
-
-
-"/"   { get_text; return mli::database_parser::token::slash_key; }
-"\\"  { get_text; return mli::database_parser::token::backslash_key; }
+"∁"    { get_string; return mli::database_parser::token::set_complement_key; }
+"∪"    { get_string; return mli::database_parser::token::set_union_key; }
+"∩"    { get_string; return mli::database_parser::token::set_intersection_key; }
+"∖"    { get_string; return mli::database_parser::token::set_difference_key; }
+"⋃"    { get_string; return mli::database_parser::token::set_union_operator_key; }
+"⋂"    { get_string; return mli::database_parser::token::set_intersection_operator_key; }
+"⊆"    { get_string; return mli::database_parser::token::subset_key; }
+"⊊"    { get_string; return mli::database_parser::token::proper_subset_key; }
+"⊇"    { get_string; return mli::database_parser::token::superset_key; }
+"⊋"    { get_string; return mli::database_parser::token::proper_superset_key; }
 
 
-"!"   { get_text; return mli::database_parser::token::factorial_key; }
+"/"   { get_string; return mli::database_parser::token::slash_key; }
+"\\"  { get_string; return mli::database_parser::token::backslash_key; }
 
-"⋅"   { get_text; return mli::database_parser::token::mult_key; }
-"+"   { get_text; return mli::database_parser::token::plus_key; }
-"-"   { get_text; return mli::database_parser::token::minus_key; }
+
+"!"   { get_string; return mli::database_parser::token::factorial_key; }
+
+"⋅"   { get_string; return mli::database_parser::token::mult_key; }
+"+"   { get_string; return mli::database_parser::token::plus_key; }
+"-"   { get_string; return mli::database_parser::token::minus_key; }
 
 
 "if"    { return mli::database_parser::token::if_key; }
@@ -568,40 +569,34 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 
 
 [[:digit:]]+ {
-  get_text;
-  yylval.object = mli::ref<mli::integer>(mli::make, yytext);
+  yylval.emplace<std::pair<std::string, mli::integer>>(std::make_pair(yystring, mli::integer(yytext)));
   return mli::database_parser::token::natural_number_value;
 }
 
 [+-][[:digit:]]+ {
-  get_text;
-  yylval.object = mli::ref<mli::integer>(mli::make, yytext);
+  yylval.emplace<mli::integer>(yystring);
   return mli::database_parser::token::integer_value;
 }
 
 
 {subscript_digit}+ {
-  get_text;
-  yylval.object = mli::ref<mli::integer>(mli::make, subscript_to_string(yytext));
+  yylval.emplace<mli::integer>(subscript_to_string(yystring));
   return mli::database_parser::token::subscript_natural_number_value;
 }
 
 ("₊"|"₋"){subscript_digit}+ {
-  get_text;
-  yylval.object = mli::ref<mli::integer>(mli::make, subscript_to_string(yytext));
+  yylval.emplace<mli::integer>(subscript_to_string(yystring));
   return mli::database_parser::token::subscript_integer_value;
 }
 
 
 {superscript_digit}+ {
-  get_text;
-  yylval.object = mli::ref<mli::integer>(mli::make, superscript_to_string(yytext));
+  yylval.emplace<mli::integer>(superscript_to_string(yystring));
   return mli::database_parser::token::superscript_natural_number_value;
 }
 
 ("⁺"|"⁻"){superscript_digit}+ {
-  get_text;
-  yylval.object = mli::ref<mli::integer>(mli::make, superscript_to_string(yytext));
+  yylval.emplace<mli::integer>(superscript_to_string(yystring));
   return mli::database_parser::token::superscript_integer_value;
 }
 
@@ -609,29 +604,29 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 
 
 <INITIAL,find_set_variable>{identifier} {
-  get_text;
-
   if (maybe_set_declaration_context) {
     BEGIN(find_vertical_line);
     YY_BREAK;
   }
 
-  database_parser::token_type ret = define_variable(yylval);
+  database_parser::token_type ret = define_variable(yystring, yylval);
 
   return ret;
 }
 
 
-{label} { get_text; return mli::database_parser::token::label_key; }
+{label} { 
+  yylval.emplace<std::string>(yytext, yyleng);
+  return mli::database_parser::token::label_key; }
 
 
-<INITIAL,find_set_variable>"“" { yylval.text.clear(); BEGIN(any_identifier); }
+<INITIAL,find_set_variable>"“" { yylval.emplace<std::string>(); BEGIN(any_identifier); }
 
 <any_identifier>{
-  "”" { /* Closing quote - all done. Text now in yylval.text. */
+  "”" { /* Closing quote - all done. Text now in yylval.as<std::string>(). */
     BEGIN(INITIAL);
 
-    database_parser::token_type ret = define_variable(yylval);
+    database_parser::token_type ret = define_variable(yylval.as<std::string>(), yylval);
 
     if (maybe_set_declaration_context) {
       BEGIN(find_vertical_line);
@@ -646,8 +641,8 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
     throw mli::database_parser::syntax_error(yylloc,
      "String with “; an earlier string might be unterminated.");
   }
-  "\\“"  { yylval.text += "“"; }
-  "\\”"  { yylval.text += "”"; }
+  "\\“"  { yylval.as<std::string>() += "“"; }
+  "\\”"  { yylval.as<std::string>() += "”"; }
 
 	\\[0-7]{1,3} { /* Octal escape sequence. */
 	  int result;
@@ -655,9 +650,9 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 	  if (result > 0xff) {
       BEGIN(INITIAL);
       throw mli::database_parser::syntax_error(yylloc,
-        "String octal escape " + the_text + " is out-of-bounds, must be ≤ \\ 377.");
+        "String octal escape " + yystring + " is out-of-bounds, must be ≤ \\ 377.");
     }
-	  yylval.text += (char)result;
+	  yylval.as<std::string>() += (char)result;
 	}
 
 	\\x[[:xdigit:]]{1,2} { /* Hexadecimal escape sequence. */
@@ -667,33 +662,33 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
       // Can actually not get here, as scanning for max 2 hex digits!
       BEGIN(INITIAL);
       throw mli::database_parser::syntax_error(yylloc,
-        "String hexadecimal escape " + the_text + " is out-of-bounds, must be ≤ \\xff.");
+        "String hexadecimal escape " + yystring + " is out-of-bounds, must be ≤ \\xff.");
     }
-	  yylval.text += (char)result;
+	  yylval.as<std::string>() += (char)result;
 	}
 
 	\\[uU][[:xdigit:]]{1,8} { /* Hexadecimal escape sequence to give UTF-8 characters. */
-    yylval.text += to_utf8(std::stoul(yytext + 2, nullptr, 16));
+    yylval.as<std::string>() += to_utf8(std::stoul(yytext + 2, nullptr, 16));
 	}
 
   \\[0-9]+   {
     BEGIN(INITIAL);
     throw mli::database_parser::syntax_error(yylloc,
-      "Bad string escape sequence " + the_text);
+      "Bad string escape sequence " + yystring);
   }
 
-  \\{2}   { yylval.text += '\\'; }
+  \\{2}   { yylval.as<std::string>() += '\\'; }
   \\&     { ; /* Non-character, used to delimit numeric escapes */ }
 
-  \\a     { yylval.text += '\a'; }
-  \\b     { yylval.text += '\b'; }
-  \\f     { yylval.text += '\f'; }
-  \\n     { yylval.text += '\n'; }
-  \\r     { yylval.text += '\r'; }
-  \\t     { yylval.text += '\t'; }
-  \\v     { yylval.text += '\v'; }
+  \\a     { yylval.as<std::string>() += '\a'; }
+  \\b     { yylval.as<std::string>() += '\b'; }
+  \\f     { yylval.as<std::string>() += '\f'; }
+  \\n     { yylval.as<std::string>() += '\n'; }
+  \\r     { yylval.as<std::string>() += '\r'; }
+  \\t     { yylval.as<std::string>() += '\t'; }
+  \\v     { yylval.as<std::string>() += '\v'; }
 
-  .     { yylval.text += the_text; }
+  .     { yylval.as<std::string>() += yystring; }
   \n    {
     BEGIN(INITIAL); yylloc.lines(yyleng); yylloc.step(); line_position = current_position;
     throw mli::database_parser::syntax_error(yylloc, "Newline in string.");
@@ -711,32 +706,33 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 <logic_prefix>{
   [[:space:]]+  {}    /* Eat the whitespace. */
   "N"|"¬"   { return mli::database_parser::token::prefix_not_key; }
-  "A"|"∨"   { get_text; ++logic_prefix_count; return mli::database_parser::token::prefix_or_key; }
-  "K"|"∧"   { get_text; ++logic_prefix_count; return mli::database_parser::token::prefix_and_key; }
-  "C"|"⇒"   { get_text; ++logic_prefix_count; return mli::database_parser::token::prefix_implies_key; }
-  "E"|"⇔"   { get_text; ++logic_prefix_count; return mli::database_parser::token::prefix_equivalent_key; }
+  "A"|"∨"   { ++logic_prefix_count; return mli::database_parser::token::prefix_or_key; }
+  "K"|"∧"   { ++logic_prefix_count; return mli::database_parser::token::prefix_and_key; }
+  "C"|"⇒"   { ++logic_prefix_count; return mli::database_parser::token::prefix_implies_key; }
+  "E"|"⇔"   { ++logic_prefix_count; return mli::database_parser::token::prefix_equivalent_key; }
   {logic_prefix_identifier}   {
-    get_text;
+    get_string;
+
     --logic_prefix_count;
     if (logic_prefix_count < 1) BEGIN(INITIAL);
 
-    auto x = mli::symbol_table.find(yylval.text);
+    auto x = mli::symbol_table.find(yylval.as<std::string>());
 
     if (!x) {
       BEGIN(INITIAL);
       throw mli::database_parser::syntax_error(yylloc,
-        "Logic prefix variable " + yylval.text + " is not declared.");
+        "Logic prefix variable " + yylval.as<std::string>() + " is not declared.");
     }
 
-    mli::variable* vp = mli::ref_cast<mli::variable*>(x->second);
+    mli::variable* vp = mli::dyn_cast<mli::variable*>(x->second);
 
     // Check if it is a variable which is declared without definition, in which case make
     // a copy with right proof depth, insert it in the symbol table, and change x->second
     // so subsequently the new copy is used instead of the original lookup value.
     if (vp != nullptr && vp->depth_ == -1) {
-      mli::ref<mli::variable> v(make, *vp);
+      mli::val<mli::variable> v(make, *vp);
       v->depth_ = proof_depth;
-      symbol_table.insert_or_assign(yylval.text, {x->first, v});
+      symbol_table.insert_or_assign(yylval.as<std::string>(), {x->first, v});
 
       x->second = v;
     }
@@ -744,10 +740,11 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
     if (x->first != mli::database_parser::token::object_formula_variable) {
       BEGIN(INITIAL);
       throw mli::database_parser::syntax_error(yylloc,
-        "Logic prefix variable " + yylval.text + " is not of type formula.");
+        "Logic prefix variable " + yylval.as<std::string>() + " is not of type formula.");
     }
-    yylval.object = x->second;
-    yylval.number = x->first;
+
+    yylval.emplace<mli::ref6<mli::unit>>(x->second);
+
     return mli::database_parser::token::prefix_formula_variable;
   }
   .   {
@@ -758,7 +755,7 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 }
 
 
-"\""      { yylval.text.clear(); BEGIN(C_string); }
+"\""      { yylval.emplace<std::string>(); BEGIN(C_string); }
 
 
 "—"   { yy_push_state(line_comment); }
@@ -820,9 +817,9 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 	  if (result > 0xff) {
       BEGIN(INITIAL);
       throw mli::database_parser::syntax_error(yylloc,
-        "String octal escape " + the_text + " is out-of-bounds, must be ≤ \\377.");
+        "String octal escape " + yystring + " is out-of-bounds, must be ≤ \\377.");
     }
-	  yylval.text += (char)result;
+	  yylval.as<std::string>() += (char)result;
 	}
 
 	\\x[[:xdigit:]]{1,2} { /* Hexadecimal escape sequence. */
@@ -831,36 +828,36 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 	  if (result > 0xff) {
       BEGIN(INITIAL);
       throw mli::database_parser::syntax_error(yylloc,
-        "String hexadecimal escape " + the_text + " is out-of-bounds, must be ≤ \\xff.");
+        "String hexadecimal escape " + yystring + " is out-of-bounds, must be ≤ \\xff.");
     }
-	  yylval.text += (char)result;
+	  yylval.as<std::string>() += (char)result;
 	}
 
   \\[0-9]+    {
     BEGIN(INITIAL);
     throw mli::database_parser::syntax_error(yylloc,
-      "Bad string escape sequence " + the_text);
+      "Bad string escape sequence " + yystring);
   }
 
-  \\{2}   { yylval.text += '\\'; }
+  \\{2}   { yylval.as<std::string>() += '\\'; }
   \\&     { ; /* Non-character, used to delimit numeric escapes */ }
 
-  \\a     { yylval.text += '\a'; }
-  \\b     { yylval.text += '\b'; }
-  \\f     { yylval.text += '\f'; }
-  \\n     { yylval.text += '\n'; }
-  \\r     { yylval.text += '\r'; }
-  \\t     { yylval.text += '\t'; }
-  \\v     { yylval.text += '\v'; }
+  \\a     { yylval.as<std::string>() += '\a'; }
+  \\b     { yylval.as<std::string>() += '\b'; }
+  \\f     { yylval.as<std::string>() += '\f'; }
+  \\n     { yylval.as<std::string>() += '\n'; }
+  \\r     { yylval.as<std::string>() += '\r'; }
+  \\t     { yylval.as<std::string>() += '\t'; }
+  \\v     { yylval.as<std::string>() += '\v'; }
 
-  \\.     { yylval.text += yytext[1]; }
-  \\(\n)  { yylval.text += yytext[1]; yylloc.lines(yyleng); yylloc.step(); line_position = current_position; }
-  [^\\\n\"]+  { /* " */ yylval.text += the_text; }
+  \\.     { yylval.as<std::string>() += yytext[1]; }
+  \\(\n)  { yylval.as<std::string>() += yytext[1]; yylloc.lines(yyleng); yylloc.step(); line_position = current_position; }
+  [^\\\n\"]+  { /* " */ yylval.as<std::string>() += yystring; }
 }
 
 
-{utf8char}   { get_text;
-  throw mli::database_parser::syntax_error(yylloc, "invalid character \"" + yylval.text + "\""); }
+{utf8char}   { throw mli::database_parser::syntax_error(yylloc, "invalid character \""
+                 + yystring + "\""); }
 
 .     { std::stringstream ss;
         ss << std::hex << std::uppercase << (unsigned)(unsigned char)yytext[0] << "ₓ";

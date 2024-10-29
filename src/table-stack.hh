@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -28,13 +28,13 @@ namespace mli {
   template<class Key, class T>
   class table_stack {
   public:
-    typedef Key                                   key_type;
-    typedef std::unordered_map<Key, T>            table;
-    typedef std::vector<std::pair<bool, table>>   stack;
-    typedef typename stack::size_type             size_type;
+    using key_type = Key;
+    using table = std::unordered_map<Key, T>;
+    using stack = std::vector<std::pair<bool, table>>;
+    using size_type = typename stack::size_type;
 
-    typedef T                            mapped_type;
-    typedef std::pair<const key_type, T> value_type;
+    using mapped_type = T;
+    using value_type = std::pair<const key_type, T>;
 
   //private:
     stack table_stack_;
@@ -65,7 +65,7 @@ namespace mli {
         if (j != i->end() && p(j->second))
           return j->second.second;  // Variable key with matching property found:
       }
-      return false;
+      return {};
     }
 
     // Argument b true if a principal level, used by insert_or_assign.
@@ -173,13 +173,13 @@ namespace mli {
   template<class Key>
   class set_stack {
   public:
-    typedef Key                        key_type;
-    typedef std::set<Key>              table;
-    typedef std::vector<table>         stack;
-    typedef typename stack::size_type  size_type;
+    using key_type = Key;
+    using table = std::set<Key>;
+    using stack = std::vector<table>;
+    using size_type = typename stack::size_type;
 
-    typedef Key                            mapped_type;
-    typedef key_type     value_type;
+    using mapped_type = Key;
+    using value_type = key_type;
 
     //private:
     stack table_stack_;

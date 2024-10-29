@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -354,13 +354,13 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 
 [[:digit:]]+ {
   get_text;
-  yylval.object = ref<integer>(mli::make, yytext);
+  yylval.object = val<integer>(mli::make, yytext);
   return mli::directive_parser::token::natural_number_value;
 }
 
 [+-][[:digit:]]+ {
   get_text;
-  yylval.object = ref<integer>(make, yytext);
+  yylval.object = val<integer>(make, yytext);
   return mli::directive_parser::token::integer_value;
 }
 

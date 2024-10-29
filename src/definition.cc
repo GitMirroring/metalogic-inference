@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -22,7 +22,7 @@
 
 namespace mli {
 
-  alternatives abbreviation::unify(unify_environment tt, const ref<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives abbreviation::unify(unify_environment tt, const val<formula>& x, unify_environment tx, database* dbp, level lv, degree_pool& sl, direction dr) const {
     // Change this stuff: Obsolete.
     // Should probably unify as a tuple, as other data.
     // Include condition_.
@@ -42,7 +42,7 @@ namespace mli {
   }
 
 
-  alternatives abbreviation::unify(const ref<formula>& x, unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives abbreviation::unify(const val<formula>& x, unify_environment tx, const val<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
 
    if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
@@ -52,17 +52,17 @@ namespace mli {
       std::clog << std::endl;
     }
 
-    ref<formula> d0 = defined_->rename();
-    ref<formula> d1 = definer_->rename();
+    val<formula> d0 = defined_->rename();
+    val<formula> d1 = definer_->rename();
 
     // Make the abbreviation parameters unspecializable when x is a goal,
     // and specializable again for reuse of the abbreviation in further attempts:
     if (tx.target_ == goal) {
 #if 1
-      d0->unspecialize(const_cast<std::set<ref<variable>>&>(parameters_), true);
-      d1->unspecialize(const_cast<std::set<ref<variable>>&>(parameters_), true);
+      d0->unspecialize(const_cast<std::set<val<variable>>&>(parameters_), true);
+      d1->unspecialize(const_cast<std::set<val<variable>>&>(parameters_), true);
 #else
-      const_cast<abbreviation&>(*this).unspecialize(const_cast<std::set<ref<variable>>&>(parameters_), true);
+      const_cast<abbreviation&>(*this).unspecialize(const_cast<std::set<val<variable>>&>(parameters_), true);
 #endif
 
 #if 0 // debug.hh
@@ -78,6 +78,14 @@ namespace mli {
     }
 
 
+    // Abbreviations (definitions) unify in top level environment with respect to
+    // bound variables. For example, the abbreviation B(t) ≔ 0 + t = t that should unify
+    // with A(x) in ∀x A(x), should not have ∀x in its bound variable table.
+    tx.table_.clear();
+    ty.table_.clear();
+    tx.excluded1_.clear();
+    ty.excluded1_.clear();
+
 
     // Expand abbreviation only in argument x:
     //   u_0(x, d0)*u_0(d1, y).
@@ -87,20 +95,20 @@ namespace mli {
 #if 0
     // Make the abbreviation parameters specializable again when x is a goal:
     if (tx.target_ == goal && as.empty())
-      const_cast<abbreviation&>(*this).unspecialize(const_cast<std::set<ref<variable>>&>(parameters_), false);
+      const_cast<abbreviation&>(*this).unspecialize(const_cast<std::set<val<variable>>&>(parameters_), false);
 #endif
     return as.add_goal(condition_);
   }
 
 
-  void abbreviation::contains(std::set<ref<variable>>& s, std::set<ref<variable>>& bs, bool& more, occurrence oc) const {
+  void abbreviation::contains(std::set<val<variable>>& s, std::set<val<variable>>& bs, bool& more, occurrence oc) const {
     defined_->contains(s, bs, more, oc);
     definer_->contains(s, bs, more, oc);
     condition_->contains(s, bs, more, oc);
   }
 
 
-  kleenean abbreviation::has(const ref<variable>& v, occurrence oc) const {
+  kleenean abbreviation::has(const val<variable>& v, occurrence oc) const {
     kleenean k1 = defined_->has(v, oc);
     if (k1 == true)  return true;
     kleenean k2 = definer_->has(v, oc);
@@ -110,8 +118,8 @@ namespace mli {
   }
 
 
-  kleenean abbreviation::free_for(const ref<formula>& f, const ref<variable>& x,
-    std::set<ref<variable>>& s, std::list<ref<variable>>& bs) const {
+  kleenean abbreviation::free_for(const val<formula>& f, const val<variable>& x,
+    std::set<val<variable>>& s, std::list<val<variable>>& bs) const {
     kleenean k1 = defined_->free_for(f, x, s, bs);
     if (k1 == false)  return false;
     kleenean k2 = definer_->free_for(f, x, s, bs);
@@ -128,15 +136,15 @@ namespace mli {
   }
 
 
-  void abbreviation::unspecialize(std::set<ref<variable>>& vs, bool b) {
+  void abbreviation::unspecialize(std::set<val<variable>>& vs, bool b) {
     defined_->unspecialize(vs, b);
     definer_->unspecialize(vs, b);
     condition_->unspecialize(vs, b);
   }
 
 
-  ref<formula> abbreviation::rename(level lv, degree sl) const {
-    ref<abbreviation> fp(make, *this);
+  val<formula> abbreviation::rename(level lv, degree sl) const {
+    val<abbreviation> fp(make, *this);
     fp->defined_ = defined_->rename(lv, sl);
     fp->definer_ = definer_->rename(lv, sl);
     fp->condition_ = condition_->rename(lv, sl);
@@ -148,8 +156,8 @@ namespace mli {
   }
 
 
-  ref<formula> abbreviation::add_exception_set(variable_map& vm) const {
-    ref<abbreviation> fp(make, *this);
+  val<formula> abbreviation::add_exception_set(variable_map& vm) const {
+    val<abbreviation> fp(make, *this);
     fp->defined_ = defined_->add_exception_set(vm);
     fp->definer_ = definer_->add_exception_set(vm);
     fp->condition_ = condition_->add_exception_set(vm);
@@ -161,8 +169,8 @@ namespace mli {
   }
 
 
-  ref<formula> abbreviation::substitute(const ref<substitution>& s, substitute_environment vt) const {
-    ref<abbreviation> fp(make, *this);
+  val<formula> abbreviation::substitute(const val<substitution>& s, substitute_environment vt) const {
+    val<abbreviation> fp(make, *this);
     fp->defined_ = defined_->substitute(s, vt);
     fp->definer_ = definer_->substitute(s, vt);
     fp->condition_ = condition_->substitute(s, vt);
@@ -232,7 +240,7 @@ namespace mli {
   }
 
 
-  alternatives definition::unify(const ref<formula>& x, unify_environment tx, const ref<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
+  alternatives definition::unify(const val<formula>& x, unify_environment tx, const val<formula>& y, unify_environment ty, database* dbp, level lv, degree_pool& sl, direction dr) const {
 
    if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
@@ -249,9 +257,9 @@ namespace mli {
 
     // When A::unify(x, tx, y, ty, dbp, lv, sl, dr) is in A = formula,
     // then this cast is not necessary:
-    ref<statement> nd = ref<statement>(rename(lv, dg));
-    ref<formula> f = nd->get_formula();
-    abbreviation& di = ref_cast<abbreviation&>(f);
+    val<statement> nd = val<statement>(rename(lv, dg));
+    val<formula> f = nd->get_formula();
+    abbreviation& di = dyn_cast<abbreviation&>(f);
 
     alternatives as;
     as = di.unify(x, tx, y, ty, dbp, lv, sl, dr).label(nd, lv, dg);
@@ -282,7 +290,7 @@ namespace mli {
     if ((show_type || show_name) && show_statement)
       os << ". ";
     if (show_statement) {
-      std::set<ref<variable>> vs;
+      std::set<val<variable>> vs;
       declared(vs);
       write_variable_declaration(vs, os);
       os << "\n";

@@ -1879,7 +1879,7 @@ static const flex_int16_t yy_chk[5420] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "../../mli-root/src/database-lexer.ll"
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -1919,8 +1919,9 @@ static const flex_int16_t yy_chk[5420] =
 
 #define YYERRCODE	256
 
-#define the_text std::string(yytext, yyleng)
-#define get_text yylval.text = std::string(yytext, yyleng)
+#define yystring std::string(yytext, yyleng)
+#define get_string yylval.emplace<std::string>(yytext, yyleng)
+
 
 std::vector<std::string> dirs; // Directory search-paths; for included files.
 
@@ -1961,7 +1962,7 @@ mli::kleenean directive_type = false;
 
 mli::location_type loc0, loc1;
 
-#line 1964 "../../mli-root/src/database-lexer.cc"
+#line 1965 "../../mli-root/src/database-lexer.cc"
 
 /*
 whitespace
@@ -1977,10 +1978,10 @@ whitespace
 " " U+205F medium mathematical space
 */
 /* UTF-8 character with valid Unicode code point. */
-#line 214 "../../mli-root/src/database-lexer.ll"
+#line 215 "../../mli-root/src/database-lexer.ll"
 #define YY_USER_ACTION  yylloc.columns(length_utf8(yytext)); current_position += yyleng;
-#line 1982 "../../mli-root/src/database-lexer.cc"
 #line 1983 "../../mli-root/src/database-lexer.cc"
+#line 1984 "../../mli-root/src/database-lexer.cc"
 
 #define INITIAL 0
 #define comment 1
@@ -2122,11 +2123,11 @@ YY_DECL
 		}
 
 	{
-#line 218 "../../mli-root/src/database-lexer.ll"
+#line 219 "../../mli-root/src/database-lexer.ll"
 
 
-#line 221 "../../mli-root/src/database-lexer.ll"
-  mli::semantic_type& yylval = *yylvalp;
+#line 222 "../../mli-root/src/database-lexer.ll"
+  database_parser::value_type& yylval = *yylvalp;
   mli::location_type& yylloc = *yyllocp;
 
   if (current_token != 0) { int tok = current_token; current_token = 0; return tok; }
@@ -2134,7 +2135,7 @@ YY_DECL
   yylloc.step();
 
 
-#line 2137 "../../mli-root/src/database-lexer.cc"
+#line 2138 "../../mli-root/src/database-lexer.cc"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -2193,29 +2194,29 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 229 "../../mli-root/src/database-lexer.ll"
+#line 230 "../../mli-root/src/database-lexer.ll"
 { yylloc.step(); }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 230 "../../mli-root/src/database-lexer.ll"
+#line 231 "../../mli-root/src/database-lexer.ll"
 { yylloc.lines(yyleng); yylloc.step(); line_position = current_position; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 233 "../../mli-root/src/database-lexer.ll"
+#line 234 "../../mli-root/src/database-lexer.ll"
 { BEGIN(include_file); }
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 235 "../../mli-root/src/database-lexer.ll"
+#line 236 "../../mli-root/src/database-lexer.ll"
 /* Eat the whitespace. */
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 237 "../../mli-root/src/database-lexer.ll"
+#line 238 "../../mli-root/src/database-lexer.ll"
 { /* Get the include file name. */
   include_stack.push(YY_CURRENT_BUFFER);
   std::string str;
@@ -2274,85 +2275,84 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 294 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::include_key; }
+#line 295 "../../mli-root/src/database-lexer.ll"
+{ return mli::database_parser::token::include_key; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 295 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::end_key; }
+#line 296 "../../mli-root/src/database-lexer.ll"
+{ return mli::database_parser::token::end_key; }
 	YY_BREAK
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 297 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::formal_system_key; }
+#line 298 "../../mli-root/src/database-lexer.ll"
+{ return mli::database_parser::token::formal_system_key; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 298 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::theory_key; }
+#line 299 "../../mli-root/src/database-lexer.ll"
+{ return mli::database_parser::token::theory_key; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 300 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::postulate_key; }
+#line 301 "../../mli-root/src/database-lexer.ll"
+{ return mli::database_parser::token::postulate_key; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 301 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::axiom_key; }
+#line 302 "../../mli-root/src/database-lexer.ll"
+{ return mli::database_parser::token::axiom_key; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 302 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::rule_key; }
+#line 303 "../../mli-root/src/database-lexer.ll"
+{ return mli::database_parser::token::rule_key; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 303 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::conjecture_key; }
+#line 304 "../../mli-root/src/database-lexer.ll"
+{ return mli::database_parser::token::conjecture_key; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 305 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::definition_key; }
+#line 306 "../../mli-root/src/database-lexer.ll"
+{ return mli::database_parser::token::definition_key; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 307 "../../mli-root/src/database-lexer.ll"
-{ get_text; yylval.number = mli::theorem::lemma_; return mli::database_parser::token::theorem_key; }
+#line 308 "../../mli-root/src/database-lexer.ll"
+{ yylval.emplace<mli::theorem::type>(mli::theorem::lemma_); return mli::database_parser::token::theorem_key; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 308 "../../mli-root/src/database-lexer.ll"
-{ get_text; yylval.number = mli::theorem::proposition_; return mli::database_parser::token::theorem_key; }
+#line 309 "../../mli-root/src/database-lexer.ll"
+{ yylval.emplace<mli::theorem::type>(mli::theorem::proposition_); return mli::database_parser::token::theorem_key; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 309 "../../mli-root/src/database-lexer.ll"
-{ get_text; yylval.number = mli::theorem::theorem_; return mli::database_parser::token::theorem_key; }
+#line 310 "../../mli-root/src/database-lexer.ll"
+{ yylval.emplace<mli::theorem::type>(mli::theorem::theorem_); return mli::database_parser::token::theorem_key; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 310 "../../mli-root/src/database-lexer.ll"
-{ get_text; yylval.number = mli::theorem::corollary_; return mli::database_parser::token::theorem_key; }
+#line 311 "../../mli-root/src/database-lexer.ll"
+{ yylval.emplace<mli::theorem::type>(mli::theorem::corollary_); return mli::database_parser::token::theorem_key; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 312 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::proof_key; }
+#line 313 "../../mli-root/src/database-lexer.ll"
+{ return mli::database_parser::token::proof_key; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 313 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::end_of_proof_key; }
+#line 314 "../../mli-root/src/database-lexer.ll"
+{ return mli::database_parser::token::end_of_proof_key; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 315 "../../mli-root/src/database-lexer.ll"
-{ get_text;
-               proofline_database_context = true;
+#line 316 "../../mli-root/src/database-lexer.ll"
+{ proofline_database_context = true;
                bracket_depth = 0;
                statement_substitution_context = false;
                return mli::database_parser::token::by_key; }
@@ -2360,12 +2360,12 @@ YY_RULE_SETUP
 case 22:
 YY_RULE_SETUP
 #line 321 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::result_key; }
+{ get_string; return mli::database_parser::token::result_key; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 322 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::premise_key; }
+{ return mli::database_parser::token::premise_key; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
@@ -2385,7 +2385,7 @@ YY_RULE_SETUP
 case 27:
 YY_RULE_SETUP
 #line 329 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::metanot_key; }
+{ return mli::database_parser::token::metanot_key; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
@@ -2395,54 +2395,54 @@ YY_RULE_SETUP
 case 29:
 YY_RULE_SETUP
 #line 334 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::object_identical_key; }
+{ return mli::database_parser::token::object_identical_key; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 335 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::object_not_identical_key; }
+{ return mli::database_parser::token::object_not_identical_key; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 336 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::meta_identical_key; }
+{ return mli::database_parser::token::meta_identical_key; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 337 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::meta_not_identical_key; }
+{ return mli::database_parser::token::meta_not_identical_key; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 339 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::fail_key; }
+{ return mli::database_parser::token::fail_key; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 340 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::succeed_key; }
+{ return mli::database_parser::token::succeed_key; }
 	YY_BREAK
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
 #line 342 "../../mli-root/src/database-lexer.ll"
-{ get_text; meta_context = true; return mli::database_parser::token::free_for_key; }
+{ meta_context = true; return mli::database_parser::token::free_for_key; }
 	YY_BREAK
 case 36:
 /* rule 36 can match eol */
 YY_RULE_SETUP
 #line 343 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::free_in_key; }
+{ return mli::database_parser::token::free_in_key; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 345 "../../mli-root/src/database-lexer.ll"
-{ get_text; meta_context = false; return mli::database_parser::token::metain_key; }
+{ meta_context = false; return mli::database_parser::token::metain_key; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 348 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::use_key; }
+{ return mli::database_parser::token::use_key; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
@@ -2577,32 +2577,32 @@ YY_RULE_SETUP
 case 59:
 YY_RULE_SETUP
 #line 407 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::implies_key; }
+{ get_string; return mli::database_parser::token::implies_key; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
 #line 408 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::impliedby_key; }
+{ get_string; return mli::database_parser::token::impliedby_key; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
 #line 409 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::equivalent_key; }
+{ get_string; return mli::database_parser::token::equivalent_key; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
 #line 411 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::logical_and_key; }
+{ get_string; return mli::database_parser::token::logical_and_key; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
 #line 412 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::logical_or_key; }
+{ get_string; return mli::database_parser::token::logical_or_key; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
 #line 413 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::logical_not_key; }
+{ get_string; return mli::database_parser::token::logical_not_key; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
@@ -2631,93 +2631,93 @@ YY_RULE_SETUP
 case 69:
 YY_RULE_SETUP
 #line 426 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::less_key; }
+{ get_string; return mli::database_parser::token::less_key; }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
 #line 427 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::greater_key; }
+{ get_string; return mli::database_parser::token::greater_key; }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
 #line 428 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::less_or_equal_key; }
+{ get_string; return mli::database_parser::token::less_or_equal_key; }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
 #line 429 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::greater_or_equal_key; }
+{ get_string; return mli::database_parser::token::greater_or_equal_key; }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
 #line 431 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::not_less_key; }
+{ get_string; return mli::database_parser::token::not_less_key; }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
 #line 432 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::not_greater_key; }
+{ get_string; return mli::database_parser::token::not_greater_key; }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
 #line 433 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::not_less_or_equal_key; }
+{ get_string; return mli::database_parser::token::not_less_or_equal_key; }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
 #line 434 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::not_greater_or_equal_key; }
+{ get_string; return mli::database_parser::token::not_greater_or_equal_key; }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
 #line 436 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::equal_key; }
+{ get_string; return mli::database_parser::token::equal_key; }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
 #line 437 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::not_equal_key; }
+{ get_string; return mli::database_parser::token::not_equal_key; }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
 #line 439 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::divides_key; }
+{ get_string; return mli::database_parser::token::divides_key; }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
 #line 440 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::not_divides_key; }
+{ get_string; return mli::database_parser::token::not_divides_key; }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
 #line 442 "../../mli-root/src/database-lexer.ll"
-{ get_text; bound_variable_type = free_variable_context; return mli::database_parser::token::mapsto_key; }
+{ get_string; bound_variable_type = free_variable_context; return mli::database_parser::token::mapsto_key; }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
 #line 443 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::Mapsto_key; }
+{ get_string; return mli::database_parser::token::Mapsto_key; }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
 #line 445 "../../mli-root/src/database-lexer.ll"
-{ get_text; bound_variable_type = database_parser::token::function_map_variable; symbol_table.push_level(false);
+{ bound_variable_type = database_parser::token::function_map_variable; symbol_table.push_level(false);
       return mli::database_parser::token::function_map_prefix_key; }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
 #line 448 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::degree_key; }
+{ return mli::database_parser::token::degree_key; }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
 #line 449 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::bullet_key; }
+{ return mli::database_parser::token::bullet_key; }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
 #line 451 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::subscript_x_key; }
+{ return mli::database_parser::token::subscript_x_key; }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
@@ -2826,10 +2826,10 @@ case 105:
 YY_RULE_SETUP
 #line 493 "../../mli-root/src/database-lexer.ll"
 {
-    // The set bar | as in {𝒙|𝑨}, or ∈ as in {𝒙∈𝑆|𝑨} has been found, so 𝒙 in yylval.text
+    // The set bar | as in {𝒙|𝑨}, or ∈ as in {𝒙∈𝑆|𝑨} has been found, so 𝒙 in yylval.as<std::string>()
     // should be defined at a new symbol table secondary level as a bound set variable.
     // Save "|" in current_token so that it will returned on the next lexer call.
-    if (std::string(yytext, yyleng) == "|")
+    if (yystring == "|")
       current_token = mli::database_parser::token::vertical_line_key;
     else
       current_token = mli::database_parser::token::in_key;
@@ -2838,197 +2838,197 @@ YY_RULE_SETUP
     BEGIN(INITIAL);
 
     symbol_table.push_level(false);
-    database_parser::token_type ret = define_variable(yylval);
+
+    database_parser::token_type ret = define_variable(yystring, yylval);
+
     bound_variable_type = mli::free_variable_context;
+
     return database_parser::token::set_variable_definition;
   }
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 511 "../../mli-root/src/database-lexer.ll"
+#line 514 "../../mli-root/src/database-lexer.ll"
 { yyless(0); BEGIN(INITIAL); maybe_set_declaration_context = false;
-      database_parser::token_type ret = define_variable(yylval);
+      database_parser::token_type ret = define_variable(yystring, yylval);
       return ret;
   }
 	YY_BREAK
 
 case 107:
 YY_RULE_SETUP
-#line 518 "../../mli-root/src/database-lexer.ll"
+#line 521 "../../mli-root/src/database-lexer.ll"
 {
     bound_variable_type = database_parser::token::is_set_variable;
-    get_text;
     return mli::database_parser::token::is_set_key; }
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 522 "../../mli-root/src/database-lexer.ll"
+#line 524 "../../mli-root/src/database-lexer.ll"
 {
     bound_variable_type = database_parser::token::is_set_variable;
-    get_text;
     return mli::database_parser::token::power_set_key; }
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 527 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::empty_set_key; }
+#line 528 "../../mli-root/src/database-lexer.ll"
+{ return mli::database_parser::token::empty_set_key; }
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 528 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::in_key; }
+#line 529 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::in_key; }
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-#line 529 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::not_in_key; }
+#line 530 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::not_in_key; }
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 531 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::set_complement_key; }
+#line 532 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::set_complement_key; }
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 532 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::set_union_key; }
+#line 533 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::set_union_key; }
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 533 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::set_intersection_key; }
+#line 534 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::set_intersection_key; }
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 534 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::set_difference_key; }
+#line 535 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::set_difference_key; }
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 535 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::set_union_operator_key; }
+#line 536 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::set_union_operator_key; }
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 536 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::set_intersection_operator_key; }
+#line 537 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::set_intersection_operator_key; }
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 537 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::subset_key; }
+#line 538 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::subset_key; }
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 538 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::proper_subset_key; }
+#line 539 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::proper_subset_key; }
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 539 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::superset_key; }
+#line 540 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::superset_key; }
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-#line 540 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::proper_superset_key; }
+#line 541 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::proper_superset_key; }
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 543 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::slash_key; }
+#line 544 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::slash_key; }
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 544 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::backslash_key; }
+#line 545 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::backslash_key; }
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 547 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::factorial_key; }
+#line 548 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::factorial_key; }
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-#line 549 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::mult_key; }
+#line 550 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::mult_key; }
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 550 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::plus_key; }
+#line 551 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::plus_key; }
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 551 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::minus_key; }
+#line 552 "../../mli-root/src/database-lexer.ll"
+{ get_string; return mli::database_parser::token::minus_key; }
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 554 "../../mli-root/src/database-lexer.ll"
+#line 555 "../../mli-root/src/database-lexer.ll"
 { return mli::database_parser::token::if_key; }
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
-#line 555 "../../mli-root/src/database-lexer.ll"
+#line 556 "../../mli-root/src/database-lexer.ll"
 { return mli::database_parser::token::then_key; }
 	YY_BREAK
 case 130:
 YY_RULE_SETUP
-#line 556 "../../mli-root/src/database-lexer.ll"
+#line 557 "../../mli-root/src/database-lexer.ll"
 { return mli::database_parser::token::else_key; }
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
-#line 558 "../../mli-root/src/database-lexer.ll"
+#line 559 "../../mli-root/src/database-lexer.ll"
 { return mli::database_parser::token::while_key; }
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
-#line 559 "../../mli-root/src/database-lexer.ll"
+#line 560 "../../mli-root/src/database-lexer.ll"
 { return mli::database_parser::token::do_key; }
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
-#line 560 "../../mli-root/src/database-lexer.ll"
+#line 561 "../../mli-root/src/database-lexer.ll"
 { return mli::database_parser::token::loop_key; }
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
-#line 561 "../../mli-root/src/database-lexer.ll"
+#line 562 "../../mli-root/src/database-lexer.ll"
 { return mli::database_parser::token::for_key; }
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
-#line 563 "../../mli-root/src/database-lexer.ll"
+#line 564 "../../mli-root/src/database-lexer.ll"
 { return mli::database_parser::token::break_key; }
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
-#line 564 "../../mli-root/src/database-lexer.ll"
+#line 565 "../../mli-root/src/database-lexer.ll"
 { return mli::database_parser::token::continue_key; }
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
-#line 566 "../../mli-root/src/database-lexer.ll"
+#line 567 "../../mli-root/src/database-lexer.ll"
 { return mli::database_parser::token::throw_key; }
 	YY_BREAK
 case 138:
 YY_RULE_SETUP
-#line 567 "../../mli-root/src/database-lexer.ll"
+#line 568 "../../mli-root/src/database-lexer.ll"
 { return mli::database_parser::token::try_key; }
 	YY_BREAK
 case 139:
 YY_RULE_SETUP
-#line 568 "../../mli-root/src/database-lexer.ll"
+#line 569 "../../mli-root/src/database-lexer.ll"
 { return mli::database_parser::token::catch_key; }
 	YY_BREAK
 case 140:
 YY_RULE_SETUP
-#line 571 "../../mli-root/src/database-lexer.ll"
+#line 572 "../../mli-root/src/database-lexer.ll"
 {
-  get_text;
-  yylval.object = mli::ref<mli::integer>(mli::make, yytext);
+  yylval.emplace<std::pair<std::string, mli::integer>>(std::make_pair(yystring, mli::integer(yytext)));
   return mli::database_parser::token::natural_number_value;
 }
 	YY_BREAK
@@ -3036,81 +3036,76 @@ case 141:
 YY_RULE_SETUP
 #line 577 "../../mli-root/src/database-lexer.ll"
 {
-  get_text;
-  yylval.object = mli::ref<mli::integer>(mli::make, yytext);
+  yylval.emplace<mli::integer>(yystring);
   return mli::database_parser::token::integer_value;
 }
 	YY_BREAK
 case 142:
 YY_RULE_SETUP
-#line 584 "../../mli-root/src/database-lexer.ll"
+#line 583 "../../mli-root/src/database-lexer.ll"
 {
-  get_text;
-  yylval.object = mli::ref<mli::integer>(mli::make, subscript_to_string(yytext));
+  yylval.emplace<mli::integer>(subscript_to_string(yystring));
   return mli::database_parser::token::subscript_natural_number_value;
 }
 	YY_BREAK
 case 143:
 YY_RULE_SETUP
-#line 590 "../../mli-root/src/database-lexer.ll"
+#line 588 "../../mli-root/src/database-lexer.ll"
 {
-  get_text;
-  yylval.object = mli::ref<mli::integer>(mli::make, subscript_to_string(yytext));
+  yylval.emplace<mli::integer>(subscript_to_string(yystring));
   return mli::database_parser::token::subscript_integer_value;
 }
 	YY_BREAK
 case 144:
 YY_RULE_SETUP
-#line 597 "../../mli-root/src/database-lexer.ll"
+#line 594 "../../mli-root/src/database-lexer.ll"
 {
-  get_text;
-  yylval.object = mli::ref<mli::integer>(mli::make, superscript_to_string(yytext));
+  yylval.emplace<mli::integer>(superscript_to_string(yystring));
   return mli::database_parser::token::superscript_natural_number_value;
 }
 	YY_BREAK
 case 145:
 YY_RULE_SETUP
-#line 603 "../../mli-root/src/database-lexer.ll"
+#line 599 "../../mli-root/src/database-lexer.ll"
 {
-  get_text;
-  yylval.object = mli::ref<mli::integer>(mli::make, superscript_to_string(yytext));
+  yylval.emplace<mli::integer>(superscript_to_string(yystring));
   return mli::database_parser::token::superscript_integer_value;
 }
 	YY_BREAK
 case 146:
 YY_RULE_SETUP
-#line 612 "../../mli-root/src/database-lexer.ll"
+#line 607 "../../mli-root/src/database-lexer.ll"
 {
-  get_text;
-
   if (maybe_set_declaration_context) {
     BEGIN(find_vertical_line);
     YY_BREAK;
   }
 
-  database_parser::token_type ret = define_variable(yylval);
+  database_parser::token_type ret = define_variable(yystring, yylval);
 
   return ret;
 }
 	YY_BREAK
 case 147:
 YY_RULE_SETUP
-#line 626 "../../mli-root/src/database-lexer.ll"
-{ get_text; return mli::database_parser::token::label_key; }
+#line 619 "../../mli-root/src/database-lexer.ll"
+{ 
+  yylval.emplace<std::string>(yytext, yyleng);
+  return mli::database_parser::token::label_key; }
 	YY_BREAK
 case 148:
 YY_RULE_SETUP
-#line 629 "../../mli-root/src/database-lexer.ll"
-{ yylval.text.clear(); BEGIN(any_identifier); }
+#line 624 "../../mli-root/src/database-lexer.ll"
+{ yylval.emplace<std::string>(); BEGIN(any_identifier); }
 	YY_BREAK
 
 case 149:
 YY_RULE_SETUP
-#line 632 "../../mli-root/src/database-lexer.ll"
-{ /* Closing quote - all done. Text now in yylval.text. */
+#line 627 "../../mli-root/src/database-lexer.ll"
+{ /* Closing quote - all done. Text now in yylval.as<std::string>(). */
     BEGIN(INITIAL);
 
-    database_parser::token_type ret = define_variable(yylval);
+    database_parser::token_type ret = define_variable(yylval.as<std::string>(), yylval);
 
     if (maybe_set_declaration_context) {
       BEGIN(find_vertical_line);
@@ -3122,7 +3117,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 150:
 YY_RULE_SETUP
-#line 645 "../../mli-root/src/database-lexer.ll"
+#line 640 "../../mli-root/src/database-lexer.ll"
 {
     BEGIN(INITIAL);
     throw mli::database_parser::syntax_error(yylloc,
@@ -3131,31 +3126,31 @@ YY_RULE_SETUP
 	YY_BREAK
 case 151:
 YY_RULE_SETUP
-#line 650 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += "“"; }
+#line 645 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += "“"; }
 	YY_BREAK
 case 152:
 YY_RULE_SETUP
-#line 651 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += "”"; }
+#line 646 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += "”"; }
 	YY_BREAK
 case 153:
 YY_RULE_SETUP
-#line 653 "../../mli-root/src/database-lexer.ll"
+#line 648 "../../mli-root/src/database-lexer.ll"
 { /* Octal escape sequence. */
 	  int result;
 	  std::sscanf(yytext + 1, "%o", &result);
 	  if (result > 0xff) {
       BEGIN(INITIAL);
       throw mli::database_parser::syntax_error(yylloc,
-        "String octal escape " + the_text + " is out-of-bounds, must be ≤ \\ 377.");
+        "String octal escape " + yystring + " is out-of-bounds, must be ≤ \\ 377.");
     }
-	  yylval.text += (char)result;
+	  yylval.as<std::string>() += (char)result;
 	}
 	YY_BREAK
 case 154:
 YY_RULE_SETUP
-#line 664 "../../mli-root/src/database-lexer.ll"
+#line 659 "../../mli-root/src/database-lexer.ll"
 { /* Hexadecimal escape sequence. */
 	  int result;
 	  std::sscanf(yytext + 2, "%x", &result);
@@ -3163,81 +3158,81 @@ YY_RULE_SETUP
       // Can actually not get here, as scanning for max 2 hex digits!
       BEGIN(INITIAL);
       throw mli::database_parser::syntax_error(yylloc,
-        "String hexadecimal escape " + the_text + " is out-of-bounds, must be ≤ \\xff.");
+        "String hexadecimal escape " + yystring + " is out-of-bounds, must be ≤ \\xff.");
     }
-	  yylval.text += (char)result;
+	  yylval.as<std::string>() += (char)result;
 	}
 	YY_BREAK
 case 155:
 YY_RULE_SETUP
-#line 676 "../../mli-root/src/database-lexer.ll"
+#line 671 "../../mli-root/src/database-lexer.ll"
 { /* Hexadecimal escape sequence to give UTF-8 characters. */
-    yylval.text += to_utf8(std::stoul(yytext + 2, nullptr, 16));
+    yylval.as<std::string>() += to_utf8(std::stoul(yytext + 2, nullptr, 16));
 	}
 	YY_BREAK
 case 156:
 YY_RULE_SETUP
-#line 680 "../../mli-root/src/database-lexer.ll"
+#line 675 "../../mli-root/src/database-lexer.ll"
 {
     BEGIN(INITIAL);
     throw mli::database_parser::syntax_error(yylloc,
-      "Bad string escape sequence " + the_text);
+      "Bad string escape sequence " + yystring);
   }
 	YY_BREAK
 case 157:
 YY_RULE_SETUP
-#line 686 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\\'; }
+#line 681 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\\'; }
 	YY_BREAK
 case 158:
 YY_RULE_SETUP
-#line 687 "../../mli-root/src/database-lexer.ll"
+#line 682 "../../mli-root/src/database-lexer.ll"
 { ; /* Non-character, used to delimit numeric escapes */ }
 	YY_BREAK
 case 159:
 YY_RULE_SETUP
-#line 689 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\a'; }
+#line 684 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\a'; }
 	YY_BREAK
 case 160:
 YY_RULE_SETUP
-#line 690 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\b'; }
+#line 685 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\b'; }
 	YY_BREAK
 case 161:
 YY_RULE_SETUP
-#line 691 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\f'; }
+#line 686 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\f'; }
 	YY_BREAK
 case 162:
 YY_RULE_SETUP
-#line 692 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\n'; }
+#line 687 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\n'; }
 	YY_BREAK
 case 163:
 YY_RULE_SETUP
-#line 693 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\r'; }
+#line 688 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\r'; }
 	YY_BREAK
 case 164:
 YY_RULE_SETUP
-#line 694 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\t'; }
+#line 689 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\t'; }
 	YY_BREAK
 case 165:
 YY_RULE_SETUP
-#line 695 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\v'; }
+#line 690 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\v'; }
 	YY_BREAK
 case 166:
 YY_RULE_SETUP
-#line 697 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += the_text; }
+#line 692 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += yystring; }
 	YY_BREAK
 case 167:
 /* rule 167 can match eol */
 YY_RULE_SETUP
-#line 698 "../../mli-root/src/database-lexer.ll"
+#line 693 "../../mli-root/src/database-lexer.ll"
 {
     BEGIN(INITIAL); yylloc.lines(yyleng); yylloc.step(); line_position = current_position;
     throw mli::database_parser::syntax_error(yylloc, "Newline in string.");
@@ -3247,72 +3242,73 @@ YY_RULE_SETUP
 
 case 168:
 YY_RULE_SETUP
-#line 706 "../../mli-root/src/database-lexer.ll"
+#line 701 "../../mli-root/src/database-lexer.ll"
 { yyless(0); BEGIN(INITIAL); maybe_set_declaration_context = false; }
 	YY_BREAK
 
 case 169:
 YY_RULE_SETUP
-#line 710 "../../mli-root/src/database-lexer.ll"
+#line 705 "../../mli-root/src/database-lexer.ll"
 { logic_prefix_count = 1; BEGIN(logic_prefix); }
 	YY_BREAK
 
 case 170:
 /* rule 170 can match eol */
 YY_RULE_SETUP
-#line 713 "../../mli-root/src/database-lexer.ll"
+#line 708 "../../mli-root/src/database-lexer.ll"
 {}    /* Eat the whitespace. */
 	YY_BREAK
 case 171:
 YY_RULE_SETUP
-#line 714 "../../mli-root/src/database-lexer.ll"
+#line 709 "../../mli-root/src/database-lexer.ll"
 { return mli::database_parser::token::prefix_not_key; }
 	YY_BREAK
 case 172:
 YY_RULE_SETUP
-#line 715 "../../mli-root/src/database-lexer.ll"
-{ get_text; ++logic_prefix_count; return mli::database_parser::token::prefix_or_key; }
+#line 710 "../../mli-root/src/database-lexer.ll"
+{ ++logic_prefix_count; return mli::database_parser::token::prefix_or_key; }
 	YY_BREAK
 case 173:
 YY_RULE_SETUP
-#line 716 "../../mli-root/src/database-lexer.ll"
-{ get_text; ++logic_prefix_count; return mli::database_parser::token::prefix_and_key; }
+#line 711 "../../mli-root/src/database-lexer.ll"
+{ ++logic_prefix_count; return mli::database_parser::token::prefix_and_key; }
 	YY_BREAK
 case 174:
 YY_RULE_SETUP
-#line 717 "../../mli-root/src/database-lexer.ll"
-{ get_text; ++logic_prefix_count; return mli::database_parser::token::prefix_implies_key; }
+#line 712 "../../mli-root/src/database-lexer.ll"
+{ ++logic_prefix_count; return mli::database_parser::token::prefix_implies_key; }
 	YY_BREAK
 case 175:
 YY_RULE_SETUP
-#line 718 "../../mli-root/src/database-lexer.ll"
-{ get_text; ++logic_prefix_count; return mli::database_parser::token::prefix_equivalent_key; }
+#line 713 "../../mli-root/src/database-lexer.ll"
+{ ++logic_prefix_count; return mli::database_parser::token::prefix_equivalent_key; }
 	YY_BREAK
 case 176:
 YY_RULE_SETUP
-#line 719 "../../mli-root/src/database-lexer.ll"
+#line 714 "../../mli-root/src/database-lexer.ll"
 {
-    get_text;
+    get_string;
+
     --logic_prefix_count;
     if (logic_prefix_count < 1) BEGIN(INITIAL);
 
-    auto x = mli::symbol_table.find(yylval.text);
+    auto x = mli::symbol_table.find(yylval.as<std::string>());
 
     if (!x) {
       BEGIN(INITIAL);
       throw mli::database_parser::syntax_error(yylloc,
-        "Logic prefix variable " + yylval.text + " is not declared.");
+        "Logic prefix variable " + yylval.as<std::string>() + " is not declared.");
     }
 
-    mli::variable* vp = mli::ref_cast<mli::variable*>(x->second);
+    mli::variable* vp = mli::dyn_cast<mli::variable*>(x->second);
 
     // Check if it is a variable which is declared without definition, in which case make
     // a copy with right proof depth, insert it in the symbol table, and change x->second
     // so subsequently the new copy is used instead of the original lookup value.
     if (vp != nullptr && vp->depth_ == -1) {
-      mli::ref<mli::variable> v(make, *vp);
+      mli::val<mli::variable> v(make, *vp);
       v->depth_ = proof_depth;
-      symbol_table.insert_or_assign(yylval.text, {x->first, v});
+      symbol_table.insert_or_assign(yylval.as<std::string>(), {x->first, v});
 
       x->second = v;
     }
@@ -3320,16 +3316,17 @@ YY_RULE_SETUP
     if (x->first != mli::database_parser::token::object_formula_variable) {
       BEGIN(INITIAL);
       throw mli::database_parser::syntax_error(yylloc,
-        "Logic prefix variable " + yylval.text + " is not of type formula.");
+        "Logic prefix variable " + yylval.as<std::string>() + " is not of type formula.");
     }
-    yylval.object = x->second;
-    yylval.number = x->first;
+
+    yylval.emplace<mli::ref6<mli::unit>>(x->second);
+
     return mli::database_parser::token::prefix_formula_variable;
   }
 	YY_BREAK
 case 177:
 YY_RULE_SETUP
-#line 754 "../../mli-root/src/database-lexer.ll"
+#line 751 "../../mli-root/src/database-lexer.ll"
 {
     BEGIN(INITIAL);
     throw mli::database_parser::syntax_error(yylloc,
@@ -3339,54 +3336,54 @@ YY_RULE_SETUP
 
 case 178:
 YY_RULE_SETUP
-#line 762 "../../mli-root/src/database-lexer.ll"
-{ yylval.text.clear(); BEGIN(C_string); }
+#line 759 "../../mli-root/src/database-lexer.ll"
+{ yylval.emplace<std::string>(); BEGIN(C_string); }
 	YY_BREAK
 case 179:
 YY_RULE_SETUP
-#line 765 "../../mli-root/src/database-lexer.ll"
+#line 762 "../../mli-root/src/database-lexer.ll"
 { yy_push_state(line_comment); }
 	YY_BREAK
 case 180:
 /* rule 180 can match eol */
 YY_RULE_SETUP
-#line 767 "../../mli-root/src/database-lexer.ll"
+#line 764 "../../mli-root/src/database-lexer.ll"
 { yy_pop_state(); yylloc.lines(1); yylloc.step(); line_position = current_position; }
 	YY_BREAK
 case 181:
 YY_RULE_SETUP
-#line 770 "../../mli-root/src/database-lexer.ll"
+#line 767 "../../mli-root/src/database-lexer.ll"
 { yy_push_state(block_comment); }
 	YY_BREAK
 /* Block comments. */
 case 182:
 YY_RULE_SETUP
-#line 773 "../../mli-root/src/database-lexer.ll"
+#line 770 "../../mli-root/src/database-lexer.ll"
 { yy_pop_state(); /* End of the comment. */ }
 	YY_BREAK
 case 183:
 YY_RULE_SETUP
-#line 775 "../../mli-root/src/database-lexer.ll"
+#line 772 "../../mli-root/src/database-lexer.ll"
 { yy_push_state(block_comment); }
 	YY_BREAK
 case 184:
 YY_RULE_SETUP
-#line 777 "../../mli-root/src/database-lexer.ll"
+#line 774 "../../mli-root/src/database-lexer.ll"
 {}
 	YY_BREAK
 case 185:
 /* rule 185 can match eol */
 YY_RULE_SETUP
-#line 778 "../../mli-root/src/database-lexer.ll"
+#line 775 "../../mli-root/src/database-lexer.ll"
 { yylloc.lines(yyleng); yylloc.step(); line_position = current_position; }
 	YY_BREAK
 case 186:
 YY_RULE_SETUP
-#line 779 "../../mli-root/src/database-lexer.ll"
+#line 776 "../../mli-root/src/database-lexer.ll"
 { /* Stray characters ignored, including — and [. */ }
 	YY_BREAK
 case YY_STATE_EOF(block_comment):
-#line 781 "../../mli-root/src/database-lexer.ll"
+#line 778 "../../mli-root/src/database-lexer.ll"
 {
     BEGIN(INITIAL);
     throw mli::database_parser::syntax_error(yylloc,
@@ -3396,7 +3393,7 @@ case YY_STATE_EOF(block_comment):
 
 case 187:
 YY_RULE_SETUP
-#line 788 "../../mli-root/src/database-lexer.ll"
+#line 785 "../../mli-root/src/database-lexer.ll"
 {
   BEGIN(INITIAL);
   throw mli::database_parser::syntax_error(yylloc,
@@ -3405,7 +3402,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 188:
 YY_RULE_SETUP
-#line 795 "../../mli-root/src/database-lexer.ll"
+#line 792 "../../mli-root/src/database-lexer.ll"
 { yylloc.step();
     int r = directive_read(yyin, yylloc);
 
@@ -3417,7 +3414,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 189:
 YY_RULE_SETUP
-#line 805 "../../mli-root/src/database-lexer.ll"
+#line 802 "../../mli-root/src/database-lexer.ll"
 {
   BEGIN(INITIAL);
   throw mli::database_parser::syntax_error(yylloc, "No directive open {— to match the close —}.");
@@ -3426,13 +3423,13 @@ YY_RULE_SETUP
 
 case 190:
 YY_RULE_SETUP
-#line 812 "../../mli-root/src/database-lexer.ll"
+#line 809 "../../mli-root/src/database-lexer.ll"
 { /* Closing quote - all done. */ BEGIN(INITIAL); return mli::database_parser::token::plain_name; }
 	YY_BREAK
 case 191:
 /* rule 191 can match eol */
 YY_RULE_SETUP
-#line 813 "../../mli-root/src/database-lexer.ll"
+#line 810 "../../mli-root/src/database-lexer.ll"
 {
     BEGIN(INITIAL); yylloc.lines(yyleng); yylloc.step(); line_position = current_position;
     throw mli::database_parser::syntax_error(yylloc, "Unterminated C-string.");
@@ -3440,113 +3437,113 @@ YY_RULE_SETUP
 	YY_BREAK
 case 192:
 YY_RULE_SETUP
-#line 818 "../../mli-root/src/database-lexer.ll"
+#line 815 "../../mli-root/src/database-lexer.ll"
 { /* Octal escape sequence. */
 	  int result;
 	  std::sscanf(yytext + 1, "%o", &result);
 	  if (result > 0xff) {
       BEGIN(INITIAL);
       throw mli::database_parser::syntax_error(yylloc,
-        "String octal escape " + the_text + " is out-of-bounds, must be ≤ \\377.");
+        "String octal escape " + yystring + " is out-of-bounds, must be ≤ \\377.");
     }
-	  yylval.text += (char)result;
+	  yylval.as<std::string>() += (char)result;
 	}
 	YY_BREAK
 case 193:
 YY_RULE_SETUP
-#line 829 "../../mli-root/src/database-lexer.ll"
+#line 826 "../../mli-root/src/database-lexer.ll"
 { /* Hexadecimal escape sequence. */
 	  int result;
 	  std::sscanf(yytext + 2, "%x", &result);
 	  if (result > 0xff) {
       BEGIN(INITIAL);
       throw mli::database_parser::syntax_error(yylloc,
-        "String hexadecimal escape " + the_text + " is out-of-bounds, must be ≤ \\xff.");
+        "String hexadecimal escape " + yystring + " is out-of-bounds, must be ≤ \\xff.");
     }
-	  yylval.text += (char)result;
+	  yylval.as<std::string>() += (char)result;
 	}
 	YY_BREAK
 case 194:
 YY_RULE_SETUP
-#line 840 "../../mli-root/src/database-lexer.ll"
+#line 837 "../../mli-root/src/database-lexer.ll"
 {
     BEGIN(INITIAL);
     throw mli::database_parser::syntax_error(yylloc,
-      "Bad string escape sequence " + the_text);
+      "Bad string escape sequence " + yystring);
   }
 	YY_BREAK
 case 195:
 YY_RULE_SETUP
-#line 846 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\\'; }
+#line 843 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\\'; }
 	YY_BREAK
 case 196:
 YY_RULE_SETUP
-#line 847 "../../mli-root/src/database-lexer.ll"
+#line 844 "../../mli-root/src/database-lexer.ll"
 { ; /* Non-character, used to delimit numeric escapes */ }
 	YY_BREAK
 case 197:
 YY_RULE_SETUP
-#line 849 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\a'; }
+#line 846 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\a'; }
 	YY_BREAK
 case 198:
 YY_RULE_SETUP
-#line 850 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\b'; }
+#line 847 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\b'; }
 	YY_BREAK
 case 199:
 YY_RULE_SETUP
-#line 851 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\f'; }
+#line 848 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\f'; }
 	YY_BREAK
 case 200:
 YY_RULE_SETUP
-#line 852 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\n'; }
+#line 849 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\n'; }
 	YY_BREAK
 case 201:
 YY_RULE_SETUP
-#line 853 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\r'; }
+#line 850 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\r'; }
 	YY_BREAK
 case 202:
 YY_RULE_SETUP
-#line 854 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\t'; }
+#line 851 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\t'; }
 	YY_BREAK
 case 203:
 YY_RULE_SETUP
-#line 855 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += '\v'; }
+#line 852 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += '\v'; }
 	YY_BREAK
 case 204:
 YY_RULE_SETUP
-#line 857 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += yytext[1]; }
+#line 854 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += yytext[1]; }
 	YY_BREAK
 case 205:
 /* rule 205 can match eol */
 YY_RULE_SETUP
-#line 858 "../../mli-root/src/database-lexer.ll"
-{ yylval.text += yytext[1]; yylloc.lines(yyleng); yylloc.step(); line_position = current_position; }
+#line 855 "../../mli-root/src/database-lexer.ll"
+{ yylval.as<std::string>() += yytext[1]; yylloc.lines(yyleng); yylloc.step(); line_position = current_position; }
 	YY_BREAK
 case 206:
 YY_RULE_SETUP
-#line 859 "../../mli-root/src/database-lexer.ll"
-{ /* " */ yylval.text += the_text; }
+#line 856 "../../mli-root/src/database-lexer.ll"
+{ /* " */ yylval.as<std::string>() += yystring; }
 	YY_BREAK
 
 case 207:
 /* rule 207 can match eol */
 YY_RULE_SETUP
-#line 863 "../../mli-root/src/database-lexer.ll"
-{ get_text;
-  throw mli::database_parser::syntax_error(yylloc, "invalid character \"" + yylval.text + "\""); }
+#line 860 "../../mli-root/src/database-lexer.ll"
+{ throw mli::database_parser::syntax_error(yylloc, "invalid character \""
+                 + yystring + "\""); }
 	YY_BREAK
 case 208:
 YY_RULE_SETUP
-#line 866 "../../mli-root/src/database-lexer.ll"
+#line 863 "../../mli-root/src/database-lexer.ll"
 { std::stringstream ss;
         ss << std::hex << std::uppercase << (unsigned)(unsigned char)yytext[0] << "ₓ";
         throw mli::database_parser::syntax_error(yylloc, "invalid byte " + ss.str()); }
@@ -3561,7 +3558,7 @@ case YY_STATE_EOF(find_set_variable):
 case YY_STATE_EOF(find_vertical_line):
 case YY_STATE_EOF(include_file):
 case YY_STATE_EOF(logic_prefix):
-#line 870 "../../mli-root/src/database-lexer.ll"
+#line 867 "../../mli-root/src/database-lexer.ll"
 {
   if (include_stack.empty())
     return EOF;
@@ -3596,10 +3593,10 @@ case YY_STATE_EOF(logic_prefix):
 	YY_BREAK
 case 209:
 YY_RULE_SETUP
-#line 902 "../../mli-root/src/database-lexer.ll"
+#line 899 "../../mli-root/src/database-lexer.ll"
 ECHO;
 	YY_BREAK
-#line 3602 "../../mli-root/src/database-lexer.cc"
+#line 3599 "../../mli-root/src/database-lexer.cc"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -4560,7 +4557,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 902 "../../mli-root/src/database-lexer.ll"
+#line 899 "../../mli-root/src/database-lexer.ll"
 
 
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2023 Hans Åberg.
+/* Copyright (C) 2017, 2021-2024 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -18,14 +18,13 @@
 #pragma once
 
 #include "MLI.hh"
-#include "gmp.hh"
 
 
 namespace mli {
 
   class integer : public nonempty_formula {
   public:
-    gmp::integer value;
+    int64_t value;
 
     integer() = default;
 
@@ -34,25 +33,25 @@ namespace mli {
 
     integer(long x) : value(x) {}
 
-    integer(const char* xp, int base = 10) : value(xp, base) {}
-    integer(const std::string& x, int base = 10) : value(x, base) {}
+    integer(const char* xp, int base = 10) : value(std::stol(xp, nullptr, base)) {}
+    integer(const std::string& x, int base = 10) : value(std::stol(x, nullptr, base)) {}
 
     explicit operator signed long int() const { return (signed long)value; }
     explicit operator unsigned long int() const { return (unsigned long)value; }
 
     formula::type get_formula_type() const override { return formula::object; }
 
-    virtual alternatives unify(unify_environment, const ref<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
+    virtual alternatives unify(unify_environment, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
 
-    virtual kleenean has(const ref<variable>&, occurrence) const { return false; }
-    virtual void contains(std::set<ref<variable>>&, std::set<ref<variable>>&, bool&, occurrence) const {}
+    virtual kleenean has(const val<variable>&, occurrence) const { return false; }
+    virtual void contains(std::set<val<variable>>&, std::set<val<variable>>&, bool&, occurrence) const {}
 
-    virtual kleenean free_for(const ref<formula>&, const ref<variable>&, 
-      std::set<ref<variable>>&, std::list<ref<variable>>&) const
+    virtual kleenean free_for(const val<formula>&, const val<variable>&, 
+      std::set<val<variable>>&, std::list<val<variable>>&) const
     { return true; }
 
-    virtual ref<formula> rename(level, degree) const { return this; }
-    virtual ref<formula> substitute(const ref<substitution>&, substitute_environment) const { return this; }
+    virtual val<formula> rename(level, degree) const { return *this; }
+    virtual val<formula> substitute(const val<substitution>&, substitute_environment) const { return *this; }
 
     virtual void set_bind(bind&, name_variable_table&) {}
 

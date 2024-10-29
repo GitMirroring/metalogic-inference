@@ -1,6 +1,6 @@
-This is mli.info, produced by makeinfo version 6.8 from mli.texi.
+This is mli.info, produced by makeinfo version 7.1 from mli.texi.
 
-This manual (4 October 2022) is for GNU MLI (version 0.1), the GNU
+This manual (19 July 2024) is for GNU MLI (version 0.1), the GNU
 MetaLogic Inference program.
 
    Copyright © 2017 Hans Åberg
@@ -9,13 +9,13 @@ MetaLogic Inference program.
      document under the terms of the GNU Free Documentation License,
      Version 1.3 or any later version published by the Free Software
      Foundation; with no Invariant Sections, with the Front-Cover texts
-     being “A GNU Manual,” and with the Back-Cover Texts as in (a)
+     being "A GNU Manual," and with the Back-Cover Texts as in (a)
      below.  A copy of the license is included in the section entitled
-     “GNU Free Documentation License.”
+     "GNU Free Documentation License."
 
-     (a) The FSF’s Back-Cover Text is: “You have the freedom to copy and
+     (a) The FSF's Back-Cover Text is: "You have the freedom to copy and
      modify this GNU manual.  Buying copies from the FSF supports it in
-     developing GNU and promoting software freedom.”
+     developing GNU and promoting software freedom."
 INFO-DIR-SECTION Software development
 START-INFO-DIR-ENTRY
 * mli: (mli).       GNU MetaLogic Inference Program
@@ -27,7 +27,7 @@ File: mli.info,  Node: Top,  Next: Introduction,  Up: (dir)
 MLI
 ***
 
-This manual (4 October 2022) is for GNU MLI (version 0.1), the GNU
+This manual (19 July 2024) is for GNU MLI (version 0.1), the GNU
 MetaLogic Inference program.
 
    Copyright © 2017 Hans Åberg
@@ -36,13 +36,13 @@ MetaLogic Inference program.
      document under the terms of the GNU Free Documentation License,
      Version 1.3 or any later version published by the Free Software
      Foundation; with no Invariant Sections, with the Front-Cover texts
-     being “A GNU Manual,” and with the Back-Cover Texts as in (a)
+     being "A GNU Manual," and with the Back-Cover Texts as in (a)
      below.  A copy of the license is included in the section entitled
-     “GNU Free Documentation License.”
+     "GNU Free Documentation License."
 
-     (a) The FSF’s Back-Cover Text is: “You have the freedom to copy and
+     (a) The FSF's Back-Cover Text is: "You have the freedom to copy and
      modify this GNU manual.  Buying copies from the FSF supports it in
-     developing GNU and promoting software freedom.”
+     developing GNU and promoting software freedom."
 
 * Menu:
 
@@ -74,7 +74,7 @@ Reference sections:
 * Index of Terms::      Cross-references to the text.
 
 
- — The Detailed Node Listing —
+ -- The Detailed Node Listing --
 
 The Concepts of MLI
 
@@ -148,7 +148,7 @@ and other kinds of works.
    The licenses for most software and other practical works are designed
 to take away your freedom to share and change the works.  By contrast,
 the GNU General Public License is intended to guarantee your freedom to
-share and change all versions of a program—to make sure it remains free
+share and change all versions of a program--to make sure it remains free
 software for all its users.  We, the Free Software Foundation, use the
 GNU General Public License for most of our software; it applies also to
 any other work released this way by its authors.  You can apply it to
@@ -176,16 +176,16 @@ know their rights.
 (1) assert copyright on the software, and (2) offer you this License
 giving you legal permission to copy, distribute and/or modify it.
 
-   For the developers’ and authors’ protection, the GPL clearly explains
-that there is no warranty for this free software.  For both users’ and
-authors’ sake, the GPL requires that modified versions be marked as
+   For the developers' and authors' protection, the GPL clearly explains
+that there is no warranty for this free software.  For both users' and
+authors' sake, the GPL requires that modified versions be marked as
 changed, so that their problems will not be attributed erroneously to
 authors of previous versions.
 
    Some devices are designed to deny users access to install or run
 modified versions of the software inside them, although the manufacturer
 can do so.  This is fundamentally incompatible with the aim of
-protecting users’ freedom to change the software.  The systematic
+protecting users' freedom to change the software.  The systematic
 pattern of such abuse occurs in the area of products for individuals to
 use, which is precisely where it is most unacceptable.  Therefore, we
 have designed this version of the GPL to prohibit the practice for those
@@ -208,25 +208,25 @@ TERMS AND CONDITIONS
 
   0. Definitions.
 
-     “This License” refers to version 3 of the GNU General Public
+     "This License" refers to version 3 of the GNU General Public
      License.
 
-     “Copyright” also means copyright-like laws that apply to other
+     "Copyright" also means copyright-like laws that apply to other
      kinds of works, such as semiconductor masks.
 
-     “The Program” refers to any copyrightable work licensed under this
-     License.  Each licensee is addressed as “you”.  “Licensees” and
-     “recipients” may be individuals or organizations.
+     "The Program" refers to any copyrightable work licensed under this
+     License.  Each licensee is addressed as "you".  "Licensees" and
+     "recipients" may be individuals or organizations.
 
-     To “modify” a work means to copy from or adapt all or part of the
+     To "modify" a work means to copy from or adapt all or part of the
      work in a fashion requiring copyright permission, other than the
-     making of an exact copy.  The resulting work is called a “modified
-     version” of the earlier work or a work “based on” the earlier work.
+     making of an exact copy.  The resulting work is called a "modified
+     version" of the earlier work or a work "based on" the earlier work.
 
-     A “covered work” means either the unmodified Program or a work
+     A "covered work" means either the unmodified Program or a work
      based on the Program.
 
-     To “propagate” a work means to do anything with it that, without
+     To "propagate" a work means to do anything with it that, without
      permission, would make you directly or secondarily liable for
      infringement under applicable copyright law, except executing it on
      a computer or modifying a private copy.  Propagation includes
@@ -234,12 +234,12 @@ TERMS AND CONDITIONS
      available to the public, and in some countries other activities as
      well.
 
-     To “convey” a work means any kind of propagation that enables other
+     To "convey" a work means any kind of propagation that enables other
      parties to make or receive copies.  Mere interaction with a user
      through a computer network, with no transfer of a copy, is not
      conveying.
 
-     An interactive user interface displays “Appropriate Legal Notices”
+     An interactive user interface displays "Appropriate Legal Notices"
      to the extent that it includes a convenient and prominently visible
      feature that (1) displays an appropriate copyright notice, and (2)
      tells the user that there is no warranty for the work (except to
@@ -251,33 +251,33 @@ TERMS AND CONDITIONS
 
   1. Source Code.
 
-     The “source code” for a work means the preferred form of the work
-     for making modifications to it.  “Object code” means any non-source
+     The "source code" for a work means the preferred form of the work
+     for making modifications to it.  "Object code" means any non-source
      form of a work.
 
-     A “Standard Interface” means an interface that either is an
+     A "Standard Interface" means an interface that either is an
      official standard defined by a recognized standards body, or, in
      the case of interfaces specified for a particular programming
      language, one that is widely used among developers working in that
      language.
 
-     The “System Libraries” of an executable work include anything,
+     The "System Libraries" of an executable work include anything,
      other than the work as a whole, that (a) is included in the normal
      form of packaging a Major Component, but which is not part of that
      Major Component, and (b) serves only to enable use of the work with
      that Major Component, or to implement a Standard Interface for
      which an implementation is available to the public in source code
-     form.  A “Major Component”, in this context, means a major
+     form.  A "Major Component", in this context, means a major
      essential component (kernel, window system, and so on) of the
      specific operating system (if any) on which the executable work
      runs, or a compiler used to produce the work, or an object code
      interpreter used to run it.
 
-     The “Corresponding Source” for a work in object code form means all
+     The "Corresponding Source" for a work in object code form means all
      the source code needed to generate, install, and (for an executable
      work) run the object code and to modify the work, including scripts
      to control those activities.  However, it does not include the
-     work’s System Libraries, or general-purpose tools or generally
+     work's System Libraries, or general-purpose tools or generally
      available free programs which are used unmodified in performing
      those activities but which are not part of the work.  For example,
      Corresponding Source includes interface definition files associated
@@ -321,7 +321,7 @@ TERMS AND CONDITIONS
      the conditions stated below.  Sublicensing is not allowed; section
      10 makes it unnecessary.
 
-  3. Protecting Users’ Legal Rights From Anti-Circumvention Law.
+  3. Protecting Users' Legal Rights From Anti-Circumvention Law.
 
      No covered work shall be deemed part of an effective technological
      measure under any applicable law fulfilling obligations under
@@ -334,12 +334,12 @@ TERMS AND CONDITIONS
      circumvention is effected by exercising rights under this License
      with respect to the covered work, and you disclaim any intention to
      limit operation or modification of the work as a means of
-     enforcing, against the work’s users, your or third parties’ legal
+     enforcing, against the work's users, your or third parties' legal
      rights to forbid circumvention of technological measures.
 
   4. Conveying Verbatim Copies.
 
-     You may convey verbatim copies of the Program’s source code as you
+     You may convey verbatim copies of the Program's source code as you
      receive it, in any medium, provided that you conspicuously and
      appropriately publish on each copy an appropriate copyright notice;
      keep intact all notices stating that this License and any
@@ -363,7 +363,7 @@ TERMS AND CONDITIONS
        b. The work must carry prominent notices stating that it is
           released under this License and any conditions added under
           section 7.  This requirement modifies the requirement in
-          section 4 to “keep intact all notices”.
+          section 4 to "keep intact all notices".
 
        c. You must license the entire work, as a whole, under this
           License to anyone who comes into possession of a copy.  This
@@ -383,9 +383,9 @@ TERMS AND CONDITIONS
      works, which are not by their nature extensions of the covered
      work, and which are not combined with it such as to form a larger
      program, in or on a volume of a storage or distribution medium, is
-     called an “aggregate” if the compilation and its resulting
+     called an "aggregate" if the compilation and its resulting
      copyright are not used to limit the access or legal rights of the
-     compilation’s users beyond what the individual works permit.
+     compilation's users beyond what the individual works permit.
      Inclusion of a covered work in an aggregate does not cause this
      License to apply to the other parts of the aggregate.
 
@@ -443,13 +443,13 @@ TERMS AND CONDITIONS
      excluded from the Corresponding Source as a System Library, need
      not be included in conveying the object code work.
 
-     A “User Product” is either (1) a “consumer product”, which means
+     A "User Product" is either (1) a "consumer product", which means
      any tangible personal property which is normally used for personal,
      family, or household purposes, or (2) anything designed or sold for
      incorporation into a dwelling.  In determining whether a product is
      a consumer product, doubtful cases shall be resolved in favor of
      coverage.  For a particular product received by a particular user,
-     “normally used” refers to a typical or common use of that class of
+     "normally used" refers to a typical or common use of that class of
      product, regardless of the status of the particular user or of the
      way in which the particular user actually uses, or expects or is
      expected to use, the product.  A product is a consumer product
@@ -457,7 +457,7 @@ TERMS AND CONDITIONS
      industrial or non-consumer uses, unless such uses represent the
      only significant mode of use of the product.
 
-     “Installation Information” for a User Product means any methods,
+     "Installation Information" for a User Product means any methods,
      procedures, authorization keys, or other information required to
      install and execute modified versions of a covered work in that
      User Product from a modified version of its Corresponding Source.
@@ -493,7 +493,7 @@ TERMS AND CONDITIONS
 
   7. Additional Terms.
 
-     “Additional permissions” are terms that supplement the terms of
+     "Additional permissions" are terms that supplement the terms of
      this License by making exceptions from one or more of its
      conditions.  Additional permissions that are applicable to the
      entire Program shall be treated as though they were included in
@@ -538,8 +538,8 @@ TERMS AND CONDITIONS
           the recipient, for any liability that these contractual
           assumptions directly impose on those licensors and authors.
 
-     All other non-permissive additional terms are considered “further
-     restrictions” within the meaning of section 10.  If the Program as
+     All other non-permissive additional terms are considered "further
+     restrictions" within the meaning of section 10.  If the Program as
      you received it, or any part of it, contains a notice stating that
      it is governed by this License along with a term that is a further
      restriction, you may remove that term.  If a license document
@@ -605,12 +605,12 @@ TERMS AND CONDITIONS
      responsible for enforcing compliance by third parties with this
      License.
 
-     An “entity transaction” is a transaction transferring control of an
+     An "entity transaction" is a transaction transferring control of an
      organization, or substantially all assets of one, or subdividing an
      organization, or merging organizations.  If propagation of a
      covered work results from an entity transaction, each party to that
      transaction who receives a copy of the work also receives whatever
-     licenses to the work the party’s predecessor in interest had or
+     licenses to the work the party's predecessor in interest had or
      could give under the previous paragraph, plus a right to possession
      of the Corresponding Source of the work from the predecessor in
      interest, if the predecessor has it or can get it with reasonable
@@ -627,31 +627,31 @@ TERMS AND CONDITIONS
 
   11. Patents.
 
-     A “contributor” is a copyright holder who authorizes use under this
+     A "contributor" is a copyright holder who authorizes use under this
      License of the Program or a work on which the Program is based.
-     The work thus licensed is called the contributor’s “contributor
-     version”.
+     The work thus licensed is called the contributor's "contributor
+     version".
 
-     A contributor’s “essential patent claims” are all patent claims
+     A contributor's "essential patent claims" are all patent claims
      owned or controlled by the contributor, whether already acquired or
      hereafter acquired, that would be infringed by some manner,
      permitted by this License, of making, using, or selling its
      contributor version, but do not include claims that would be
      infringed only as a consequence of further modification of the
-     contributor version.  For purposes of this definition, “control”
+     contributor version.  For purposes of this definition, "control"
      includes the right to grant patent sublicenses in a manner
      consistent with the requirements of this License.
 
      Each contributor grants you a non-exclusive, worldwide,
-     royalty-free patent license under the contributor’s essential
+     royalty-free patent license under the contributor's essential
      patent claims, to make, use, sell, offer for sale, import and
      otherwise run, modify and propagate the contents of its contributor
      version.
 
-     In the following three paragraphs, a “patent license” is any
+     In the following three paragraphs, a "patent license" is any
      express agreement or commitment, however denominated, not to
      enforce a patent (such as an express permission to practice a
-     patent or covenant not to sue for patent infringement).  To “grant”
+     patent or covenant not to sue for patent infringement).  To "grant"
      such a patent license to a party means to make such an agreement or
      commitment not to enforce a patent against the party.
 
@@ -664,9 +664,9 @@ TERMS AND CONDITIONS
      yourself of the benefit of the patent license for this particular
      work, or (3) arrange, in a manner consistent with the requirements
      of this License, to extend the patent license to downstream
-     recipients.  “Knowingly relying” means you have actual knowledge
+     recipients.  "Knowingly relying" means you have actual knowledge
      that, but for the patent license, your conveying the covered work
-     in a country, or your recipient’s use of the covered work in a
+     in a country, or your recipient's use of the covered work in a
      country, would infringe one or more identifiable patents in that
      country that you have reason to believe are valid.
 
@@ -678,7 +678,7 @@ TERMS AND CONDITIONS
      patent license you grant is automatically extended to all
      recipients of the covered work and works based on it.
 
-     A patent license is “discriminatory” if it does not include within
+     A patent license is "discriminatory" if it does not include within
      the scope of its coverage, prohibits the exercise of, or is
      conditioned on the non-exercise of one or more of the rights that
      are specifically granted under this License.  You may not convey a
@@ -698,7 +698,7 @@ TERMS AND CONDITIONS
      any implied license or other defenses to infringement that may
      otherwise be available to you under applicable patent law.
 
-  12. No Surrender of Others’ Freedom.
+  12. No Surrender of Others' Freedom.
 
      If conditions are imposed on you (whether by court order, agreement
      or otherwise) that contradict the conditions of this License, they
@@ -731,7 +731,7 @@ TERMS AND CONDITIONS
 
      Each version is given a distinguishing version number.  If the
      Program specifies that a certain numbered version of the GNU
-     General Public License “or any later version” applies to it, you
+     General Public License "or any later version" applies to it, you
      have the option of following the terms and conditions either of
      that numbered version or of any later version published by the Free
      Software Foundation.  If the Program does not specify a version
@@ -740,7 +740,7 @@ TERMS AND CONDITIONS
 
      If the Program specifies that a proxy can decide which future
      versions of the GNU General Public License can be used, that
-     proxy’s public statement of acceptance of a version permanently
+     proxy's public statement of acceptance of a version permanently
      authorizes you to choose that version for the Program.
 
      Later license versions may give you additional or different
@@ -752,7 +752,7 @@ TERMS AND CONDITIONS
 
      THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
      APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE
-     COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM “AS IS”
+     COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS"
      WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
      INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
      MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE
@@ -796,7 +796,7 @@ terms.
    To do so, attach the following notices to the program.  It is safest
 to attach them to the start of each source file to most effectively
 state the exclusion of warranty; and each file should have at least the
-“copyright” line and a pointer to where the full notice is found.
+"copyright" line and a pointer to where the full notice is found.
 
      ONE LINE TO GIVE THE PROGRAM'S NAME AND A BRIEF IDEA OF WHAT IT DOES.
      Copyright (C) YEAR NAME OF AUTHOR
@@ -827,11 +827,11 @@ notice like this when it starts in an interactive mode:
 
    The hypothetical commands ‘show w’ and ‘show c’ should show the
 appropriate parts of the General Public License.  Of course, your
-program’s commands might be different; for a GUI interface, you would
-use an “about box”.
+program's commands might be different; for a GUI interface, you would
+use an "about box".
 
    You should also get your employer (if you work as a programmer) or
-school, if any, to sign a “copyright disclaimer” for the program, if
+school, if any, to sign a "copyright disclaimer" for the program, if
 necessary.  For more information on this, and how to apply and follow
 the GNU GPL, see <http://www.gnu.org/licenses/>.
 
@@ -1278,7 +1278,7 @@ might even want to look for more than one proof, though the default is
 to just find one, which usually is a short one, in view of the
 breadth-first proof tree search.
 
-   Now, let’s make a short proof: From the proof above, we can see that
+   Now, let's make a short proof: From the proof above, we can see that
 it is proved using A1, A2 and MP. As MLI uses a breadth-first proof tree
 search.  So write
      lemma “XL.1”. formula 𝑨. 𝑨 ⇒ 𝑨.
@@ -1344,7 +1344,7 @@ later point in the input code, one language token should suffice.
      [𝑨₂₁ ↦ 𝑨₃₀ ⇒ (𝑩₃₀ ⇒ 𝑨₃₀)][𝑨₃₀ ↦ 𝑨₃₁][𝑩₃₀ ↦ 𝑩₃₁][𝑨₃₁ ↦ 𝑪₃₁][𝑨₂₀ ↦ 𝑪₃₁][𝑩₃₁ ↦ 𝑩₂₀ ⇒ 𝑪₃₁][𝑪₃₁ ↦ 𝑨]
      ∎
 
-   Let’s jog through the different components of this output.  The first
+   Let's jog through the different components of this output.  The first
 part
      Proving lemma XL.1. formula 𝑨.
        ⊢ 𝑨 ⇒ 𝑨.
@@ -1416,7 +1416,7 @@ clash with any existing variables.  The use of multiple indices is just
 one way to implement it; a single index, or some other method to avoid
 variable clashes, might do just as well.
 
-   Let’s work these substitutions by hand, in part to see how it works,
+   Let's work these substitutions by hand, in part to see how it works,
 and to check that the program did it right.  The first part is
        𝑨 ⇒ 𝑨
      rule MP. formula 𝑨₁₀, 𝑩₁₀.
@@ -1671,11 +1671,11 @@ Index of Terms
  [index ]
 * Menu:
 
-* ¬:                                     The Propositional Calculus.
-                                                              (line  28)
 * ⇒:                                     The Propositional Calculus.
                                                               (line  28)
 * ⇔:                                     The Propositional Calculus.
+                                                              (line  28)
+* ¬:                                     The Propositional Calculus.
                                                               (line  28)
 * ∧:                                     The Propositional Calculus.
                                                               (line  28)
@@ -1749,6 +1749,8 @@ Index of Terms
 * examples, simple:                      Examples.            (line   6)
 * excluded middle:                       The Propositional Calculus.
                                                               (line   6)
+* 𝕗:                                     The Propositional Calculus.
+                                                              (line  28)
 * false, logical:                        The Propositional Calculus.
                                                               (line  28)
 * first order logic:                     Metatheory and Object Theory.
@@ -1938,6 +1940,8 @@ Index of Terms
                                                               (line  28)
 * system, intuitionistic:                The Propositional Calculus.
                                                               (line  28)
+* 𝕥:                                     The Propositional Calculus.
+                                                              (line  28)
 * tautology:                             The Propositional Calculus.
                                                               (line   6)
 * theorem:                               Table of Symbols.    (line   6)
@@ -1979,41 +1983,37 @@ Index of Terms
                                                               (line  41)
 * well-formed formula:                   Formal Theories and Formal Proofs.
                                                               (line   6)
-* 𝕗:                                     The Propositional Calculus.
-                                                              (line  28)
-* 𝕥:                                     The Propositional Calculus.
-                                                              (line  28)
 
 
 
 Tag Table:
-Node: Top995
-Node: Introduction3403
-Node: Conditions3925
-Node: Copying4225
-Node: Concepts41963
-Node: Metatheory and Object Theory42952
-Node: Formal Theories and Formal Proofs45726
-Node: Proof Trees and Unification52377
-Node: The Propositional Calculus53721
-Node: The Predicate Calculus (Quantification Theory)58083
-Node: Theory with Equality58338
-Node: Formal Number Theory58535
-Node: Axiomatic Set Theory58706
-Node: Examples58848
-Node: Simple Propositional Calculus59236
-Node: Nested proofs77332
-Node: Input File78046
-Node: Interface78165
-Node: Algorithm78285
-Node: Debugging78430
-Node: Invocation78608
-Node: MLI Options79589
-Node: Option Cross Key81271
-Node: Table of Symbols81425
-Node: Glossary81614
-Node: Bibliography81941
-Node: Index of Terms82431
+Node: Top979
+Node: Introduction3369
+Node: Conditions3891
+Node: Copying4191
+Node: Concepts41726
+Node: Metatheory and Object Theory42715
+Node: Formal Theories and Formal Proofs45489
+Node: Proof Trees and Unification52140
+Node: The Propositional Calculus53484
+Node: The Predicate Calculus (Quantification Theory)57846
+Node: Theory with Equality58101
+Node: Formal Number Theory58298
+Node: Axiomatic Set Theory58469
+Node: Examples58611
+Node: Simple Propositional Calculus58999
+Node: Nested proofs77089
+Node: Input File77803
+Node: Interface77922
+Node: Algorithm78042
+Node: Debugging78187
+Node: Invocation78365
+Node: MLI Options79346
+Node: Option Cross Key81028
+Node: Table of Symbols81182
+Node: Glossary81371
+Node: Bibliography81698
+Node: Index of Terms82188
 
 End Tag Table
 
