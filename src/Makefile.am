@@ -29,7 +29,7 @@ mli_SOURCES = MLI.cc MLI.hh main.cc \
   metacondition.cc metacondition.hh  precedence.cc precedence.hh \
   proposition.cc proposition.hh  reassign.hh  substitution.cc substitution.hh \
   function.cc function.hh \
-  hoare_logic.cc hoare_logic.hh
+  hoare_logic.cc hoare_logic.hh utf.hh
 
 dist_noinst_HEADERS = database-parser.yy database-lexer.ll directive-parser.yy directive-lexer.ll
 

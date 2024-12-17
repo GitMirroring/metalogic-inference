@@ -38,8 +38,6 @@
 
 #include <optional>
 
-
-#include "config.h"
 #include "pragmas.hh"
 
 #include "exception.hh"
@@ -47,6 +45,7 @@
 #include "polymorphy.hh"
 #include "precedence.hh"
 #include "table-stack.hh"
+#include "utf.hh"
 #include "write-style.hh"
 
 
@@ -830,7 +829,7 @@ namespace mli {
 
   class variable : public nonempty_formula {
   public:
-    std::string name;
+    utf::u32string name;
 
     // Level numbers. Semantically, name plus level numbers act as a variable
     // identifier.
