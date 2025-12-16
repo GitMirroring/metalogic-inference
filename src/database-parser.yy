@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2024 Hans Åberg.
+/* Copyright (C) 2017, 2021-2025 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -15,9 +15,12 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-%skeleton "lalr1.cc"                          /*  -*- C++ -*- */
-%require "3.8"
+%require "3.8.2"
 %defines
+
+%language "c++"
+%define parse.lac full
+%define lr.type ielr
 
 %define api.namespace {mli}
 %define api.prefix {mli}
@@ -26,7 +29,6 @@
 
 %parse-param {mli::theory_database& yypval} {mli::database_lexer& mlilex}
 
-%define parse.lac full
 
 %locations
 %initial-action
@@ -319,6 +321,7 @@
 %token end_key "end"
 
 %token formal_system_key "formal system"
+%token system_key "system"
 
 %token definition_key "definition"
 
@@ -953,7 +956,11 @@ theory_body:
 
 
 formal_system:
-    "formal system" "."
+    "system" "name"[x] "{"
+    { symbol_table.push_level(); }
+    formal_system_body
+    "}" { symbol_table.pop_level(); }
+  | "formal system" "."
     { symbol_table.push_level(); }
     formal_system_body
     "end" "formal system" "." { symbol_table.pop_level(); }

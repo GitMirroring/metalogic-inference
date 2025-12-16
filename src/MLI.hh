@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2024 Hans Åberg.
+/* Copyright (C) 2017, 2021-2025 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -132,7 +132,7 @@ namespace mli {
     constexpr operator size_type() const { return value; }
   };
 
-  constexpr metalevel_t operator "" _ml(unsigned long long k) { return metalevel_t(k); }
+  constexpr metalevel_t operator ""_ml(unsigned long long k) { return metalevel_t(k); }
 
 
   using bind = size_type;    // Numbering for variable binding.

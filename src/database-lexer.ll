@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2024 Hans Åberg.
+/* Copyright (C) 2017, 2021-2025 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -294,6 +294,7 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 "include"    { return mli::database_parser::token::include_key; }
 "end"        { return mli::database_parser::token::end_key; }
 
+"system" { return mli::database_parser::token::system_key; }
 "formal"[[:space:]]+"system" { return mli::database_parser::token::formal_system_key; }
 "theory"     { return mli::database_parser::token::theory_key; }
 
@@ -639,7 +640,7 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
   "“"    {
     BEGIN(INITIAL);
     throw mli::database_parser::syntax_error(yylloc,
-     "String with “; an earlier string might be unterminated.");
+     "String with unescaped “; an earlier string might be unterminated.");
   }
   "\\“"  { yylval.as<std::string>() += "“"; }
   "\\”"  { yylval.as<std::string>() += "”"; }

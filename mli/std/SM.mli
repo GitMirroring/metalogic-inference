@@ -1,4 +1,4 @@
-[— Copyright (C) 2017, 2021-2024 Hans Åberg.
+[— Copyright (C) 2017, 2021-2025 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -21,8 +21,8 @@ input std/KM.mli
 
 theory SM.  — Natural numbers, Mendelson:
   include theory KM.
-  
-  formal system.
+
+  system ℕ {
     — predicate · = ·, · + ·, · ⋅ ·. — Implicitly defined.
     function constant s.
   
@@ -100,7 +100,7 @@ theory SM.  — Natural numbers, Mendelson:
     definition n3. 3 ≔ s(2).
     definition n4. 4 ≔ s(3).
 
-  end formal system.
+  } — system ℕ
 
 end theory SM.
 

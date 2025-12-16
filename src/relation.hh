@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2024 Hans Åberg.
+/* Copyright (C) 2017, 2021-2025 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -86,10 +86,10 @@ namespace mli {
      ≱  1  1  0  0   not greater or equal  !(x >= y)
      =  0  0  0  1   equal                   x = y
      ≠  1  1  1  0   not equal               x != y
-     ⋚̸  1  0  0  0   ordered               (x <= y) || (x >= y)
-     ⋚  0  1  1  1   unordered             !(x <= y) && !(x >= y)
      ≶  0  1  1  0   less or greater       (x < y) || (x > y)
      ≸  1  0  0  1   not less or greater   !(x < y) && !(x > y)
+     ⋚  0  1  1  1   ordered               (x <= y) || (x >= y)
+     ⋚̸  1  0  0  0   unordered             !(x <= y) && !(x >= y)
    */
 
   // type relation: total order, partial order.

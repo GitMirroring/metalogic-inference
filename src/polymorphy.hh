@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2024 Hans Åberg.
+/* Copyright (C) 2017, 2021-2025 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -329,7 +329,7 @@ namespace mli {
     template<class... B>
     val(const std::variant<B...>& v)
      : data_(std::visit([](auto&& x) -> A*
-     { return &dynamic_cast<A&>(*new std::decay_t<decltype(x)>(x)); }, v)) {}
+    { return &dynamic_cast<A&>(*new std::decay_t<decltype(x)>(x)); }, v)) {}
 
 
     // Access to stored pointer:

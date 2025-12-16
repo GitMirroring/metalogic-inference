@@ -45,7 +45,7 @@
 #ifndef YY_MLI_MLI_ROOT_SRC_DATABASE_PARSER_HH_INCLUDED
 # define YY_MLI_MLI_ROOT_SRC_DATABASE_PARSER_HH_INCLUDED
 // "%code requires" blocks.
-#line 42 "../../mli-root/src/database-parser.yy"
+#line 44 "../../mli-root/src/database-parser.yy"
 
   #include "MLI.hh"
   #include "database.hh"
@@ -213,7 +213,7 @@
 # endif /* ! defined YYDEBUG */
 #endif  /* ! defined MLIDEBUG */
 
-#line 22 "../../mli-root/src/database-parser.yy"
+#line 25 "../../mli-root/src/database-parser.yy"
 namespace mli {
 #line 219 "../../mli-root/src/database-parser.hh"
 
@@ -443,7 +443,7 @@ namespace mli {
       // theorem
       // theorem_statement
       // proof
-      // $@11
+      // $@12
       // compound-proof
       // proof_head
       // proof_lines
@@ -455,7 +455,7 @@ namespace mli {
       // find_definition_sequence
       // find_statement_item
       // find_statement_name
-      // @13
+      // @14
       // statement
       // definition_statement
       // identifier_declaration
@@ -677,152 +677,153 @@ namespace mli {
     theory_key = 260,              // "theory"
     end_key = 261,                 // "end"
     formal_system_key = 262,       // "formal system"
-    definition_key = 263,          // "definition"
-    postulate_key = 264,           // "postulate"
-    axiom_key = 265,               // "axiom"
-    rule_key = 266,                // "rule"
-    conjecture_key = 267,          // "conjecture"
-    theorem_key = 268,             // "theorem"
-    proof_key = 269,               // "proof"
-    end_of_proof_key = 270,        // "∎"
-    by_key = 271,                  // "by"
-    premise_key = 272,             // "premise"
-    result_key = 273,              // "result"
-    metainfer_key = 274,           // "⊩"
-    metaor_key = 275,              // "or"
-    metaand_key = 276,             // "and"
-    metanot_key = 277,             // "not"
-    infer_key = 278,               // "⊢"
-    object_identical_key = 279,    // "≡"
-    object_not_identical_key = 280, // "≢"
-    meta_identical_key = 281,      // "≣"
-    meta_not_identical_key = 282,  // "≣̷"
-    fail_key = 283,                // "fail"
-    succeed_key = 284,             // "succeed"
-    free_for_key = 285,            // "free for"
-    metain_key = 286,              // "in"
-    free_in_key = 287,             // "free in"
-    use_key = 288,                 // "use"
-    defined_by_key = 289,          // "≔"
-    defines_key = 290,             // "≕"
-    defined_equal_key = 291,       // "≝"
-    plain_name = 292,              // "name"
-    label_key = 293,               // "label"
-    metapredicate_constant = 294,  // "metapredicate constant"
-    function_key = 295,            // "function"
-    predicate_key = 296,           // "predicate"
-    predicate_constant = 297,      // "predicate constant"
-    atom_constant = 298,           // "atom constant"
-    function_constant = 299,       // "function constant"
-    term_constant = 300,           // "term constant"
-    metaformula_variable = 301,    // "metaformula variable"
-    object_formula_variable = 302, // "object formula variable"
-    predicate_variable = 303,      // "predicate variable"
-    atom_variable = 304,           // "atom variable"
-    prefix_formula_variable = 305, // "prefix formula variable"
-    function_variable = 306,       // "function variable"
-    object_variable = 307,         // "object variable"
-    code_variable = 308,           // "code variable"
-    all_variable = 309,            // "all variable"
-    exist_variable = 310,          // "exist variable"
-    function_map_variable = 311,   // "function map variable"
-    is_set_variable = 312,         // "Set variable"
-    set_variable = 313,            // "set variable"
-    set_variable_definition = 314, // "set variable definition"
-    implicit_set_variable = 315,   // "implicit set variable"
-    identifier_constant_key = 316, // "identifier constant"
-    identifier_variable_key = 317, // "identifier variable"
-    identifier_function_key = 318, // "identifier function"
-    all_key = 319,                 // "∀"
-    exist_key = 320,               // "∃"
-    logical_not_key = 321,         // "¬"
-    logical_and_key = 322,         // "∧"
-    logical_or_key = 323,          // "∨"
-    implies_key = 324,             // "⇒"
-    impliedby_key = 325,           // "⇐"
-    equivalent_key = 326,          // "⇔"
-    prefix_not_key = 327,          // prefix_not_key
-    prefix_and_key = 328,          // prefix_and_key
-    prefix_or_key = 329,           // prefix_or_key
-    prefix_implies_key = 330,      // prefix_implies_key
-    prefix_equivalent_key = 331,   // prefix_equivalent_key
-    natural_number_key = 332,      // "ℕ"
-    less_key = 333,                // "<"
-    greater_key = 334,             // ">"
-    less_or_equal_key = 335,       // "≤"
-    greater_or_equal_key = 336,    // "≥"
-    not_less_key = 337,            // "≮"
-    not_greater_key = 338,         // "≯"
-    not_less_or_equal_key = 339,   // "≰"
-    not_greater_or_equal_key = 340, // "≱"
-    equal_key = 341,               // "="
-    not_equal_key = 342,           // "≠"
-    divides_key = 343,             // "∣"
-    not_divides_key = 344,         // "∤"
-    mapsto_key = 345,              // "↦"
-    Mapsto_key = 346,              // "⤇"
-    function_map_prefix_key = 347, // "𝛌"
-    degree_key = 348,              // "°"
-    bullet_key = 349,              // "•"
-    subscript_x_key = 350,         // "ₓ"
-    natural_number_value = 351,    // "natural number value"
-    integer_value = 352,           // "integer value"
-    subscript_natural_number_value = 353, // "subscript natural number value"
-    subscript_integer_value = 354, // "subscript integer value"
-    superscript_natural_number_value = 355, // "superscript natural number value"
-    superscript_integer_value = 356, // "superscript integer value"
-    factorial_key = 357,           // "!"
-    mult_key = 358,                // "⋅"
-    plus_key = 359,                // "+"
-    minus_key = 360,               // "-"
-    is_set_key = 361,              // "Set"
-    power_set_key = 362,           // "Pow"
-    empty_set_key = 363,           // "∅"
-    in_key = 364,                  // "∈"
-    not_in_key = 365,              // "∉"
-    set_complement_key = 366,      // "∁"
-    set_union_key = 367,           // "∪"
-    set_intersection_key = 368,    // "∩"
-    set_difference_key = 369,      // "∖"
-    set_union_operator_key = 370,  // "⋃"
-    set_intersection_operator_key = 371, // "⋂"
-    subset_key = 372,              // "⊆"
-    proper_subset_key = 373,       // "⊊"
-    superset_key = 374,            // "⊇"
-    proper_superset_key = 375,     // "⊋"
-    colon_key = 376,               // ":"
-    semicolon_key = 377,           // ";"
-    comma_key = 378,               // ","
-    period_key = 379,              // "."
-    left_parenthesis_key = 380,    // "("
-    right_parenthesis_key = 381,   // ")"
-    left_bracket_key = 382,        // "["
-    right_bracket_key = 383,       // "]"
-    left_angle_bracket_key = 384,  // "⟨"
-    right_angle_bracket_key = 385, // "⟩"
-    superscript_left_parenthesis_key = 386, // "⁽"
-    superscript_right_parenthesis_key = 387, // "⁾"
-    subscript_left_parenthesis_key = 388, // "₍"
-    subscript_right_parenthesis_key = 389, // "₎"
-    left_brace_key = 390,          // "{"
-    vertical_line_key = 391,       // "|"
-    right_brace_key = 392,         // "}"
-    tilde_key = 393,               // "~"
-    slash_key = 394,               // "/"
-    backslash_key = 395,           // "\\"
-    if_key = 396,                  // "if"
-    then_key = 397,                // "then"
-    else_key = 398,                // "else"
-    while_key = 399,               // "while"
-    do_key = 400,                  // "do"
-    loop_key = 401,                // "loop"
-    for_key = 402,                 // "for"
-    break_key = 403,               // "break"
-    continue_key = 404,            // "continue"
-    throw_key = 405,               // "throw"
-    try_key = 406,                 // "try"
-    catch_key = 407,               // "catch"
-    unary_minus = 409              // unary_minus
+    system_key = 263,              // "system"
+    definition_key = 264,          // "definition"
+    postulate_key = 265,           // "postulate"
+    axiom_key = 266,               // "axiom"
+    rule_key = 267,                // "rule"
+    conjecture_key = 268,          // "conjecture"
+    theorem_key = 269,             // "theorem"
+    proof_key = 270,               // "proof"
+    end_of_proof_key = 271,        // "∎"
+    by_key = 272,                  // "by"
+    premise_key = 273,             // "premise"
+    result_key = 274,              // "result"
+    metainfer_key = 275,           // "⊩"
+    metaor_key = 276,              // "or"
+    metaand_key = 277,             // "and"
+    metanot_key = 278,             // "not"
+    infer_key = 279,               // "⊢"
+    object_identical_key = 280,    // "≡"
+    object_not_identical_key = 281, // "≢"
+    meta_identical_key = 282,      // "≣"
+    meta_not_identical_key = 283,  // "≣̷"
+    fail_key = 284,                // "fail"
+    succeed_key = 285,             // "succeed"
+    free_for_key = 286,            // "free for"
+    metain_key = 287,              // "in"
+    free_in_key = 288,             // "free in"
+    use_key = 289,                 // "use"
+    defined_by_key = 290,          // "≔"
+    defines_key = 291,             // "≕"
+    defined_equal_key = 292,       // "≝"
+    plain_name = 293,              // "name"
+    label_key = 294,               // "label"
+    metapredicate_constant = 295,  // "metapredicate constant"
+    function_key = 296,            // "function"
+    predicate_key = 297,           // "predicate"
+    predicate_constant = 298,      // "predicate constant"
+    atom_constant = 299,           // "atom constant"
+    function_constant = 300,       // "function constant"
+    term_constant = 301,           // "term constant"
+    metaformula_variable = 302,    // "metaformula variable"
+    object_formula_variable = 303, // "object formula variable"
+    predicate_variable = 304,      // "predicate variable"
+    atom_variable = 305,           // "atom variable"
+    prefix_formula_variable = 306, // "prefix formula variable"
+    function_variable = 307,       // "function variable"
+    object_variable = 308,         // "object variable"
+    code_variable = 309,           // "code variable"
+    all_variable = 310,            // "all variable"
+    exist_variable = 311,          // "exist variable"
+    function_map_variable = 312,   // "function map variable"
+    is_set_variable = 313,         // "Set variable"
+    set_variable = 314,            // "set variable"
+    set_variable_definition = 315, // "set variable definition"
+    implicit_set_variable = 316,   // "implicit set variable"
+    identifier_constant_key = 317, // "identifier constant"
+    identifier_variable_key = 318, // "identifier variable"
+    identifier_function_key = 319, // "identifier function"
+    all_key = 320,                 // "∀"
+    exist_key = 321,               // "∃"
+    logical_not_key = 322,         // "¬"
+    logical_and_key = 323,         // "∧"
+    logical_or_key = 324,          // "∨"
+    implies_key = 325,             // "⇒"
+    impliedby_key = 326,           // "⇐"
+    equivalent_key = 327,          // "⇔"
+    prefix_not_key = 328,          // prefix_not_key
+    prefix_and_key = 329,          // prefix_and_key
+    prefix_or_key = 330,           // prefix_or_key
+    prefix_implies_key = 331,      // prefix_implies_key
+    prefix_equivalent_key = 332,   // prefix_equivalent_key
+    natural_number_key = 333,      // "ℕ"
+    less_key = 334,                // "<"
+    greater_key = 335,             // ">"
+    less_or_equal_key = 336,       // "≤"
+    greater_or_equal_key = 337,    // "≥"
+    not_less_key = 338,            // "≮"
+    not_greater_key = 339,         // "≯"
+    not_less_or_equal_key = 340,   // "≰"
+    not_greater_or_equal_key = 341, // "≱"
+    equal_key = 342,               // "="
+    not_equal_key = 343,           // "≠"
+    divides_key = 344,             // "∣"
+    not_divides_key = 345,         // "∤"
+    mapsto_key = 346,              // "↦"
+    Mapsto_key = 347,              // "⤇"
+    function_map_prefix_key = 348, // "𝛌"
+    degree_key = 349,              // "°"
+    bullet_key = 350,              // "•"
+    subscript_x_key = 351,         // "ₓ"
+    natural_number_value = 352,    // "natural number value"
+    integer_value = 353,           // "integer value"
+    subscript_natural_number_value = 354, // "subscript natural number value"
+    subscript_integer_value = 355, // "subscript integer value"
+    superscript_natural_number_value = 356, // "superscript natural number value"
+    superscript_integer_value = 357, // "superscript integer value"
+    factorial_key = 358,           // "!"
+    mult_key = 359,                // "⋅"
+    plus_key = 360,                // "+"
+    minus_key = 361,               // "-"
+    is_set_key = 362,              // "Set"
+    power_set_key = 363,           // "Pow"
+    empty_set_key = 364,           // "∅"
+    in_key = 365,                  // "∈"
+    not_in_key = 366,              // "∉"
+    set_complement_key = 367,      // "∁"
+    set_union_key = 368,           // "∪"
+    set_intersection_key = 369,    // "∩"
+    set_difference_key = 370,      // "∖"
+    set_union_operator_key = 371,  // "⋃"
+    set_intersection_operator_key = 372, // "⋂"
+    subset_key = 373,              // "⊆"
+    proper_subset_key = 374,       // "⊊"
+    superset_key = 375,            // "⊇"
+    proper_superset_key = 376,     // "⊋"
+    colon_key = 377,               // ":"
+    semicolon_key = 378,           // ";"
+    comma_key = 379,               // ","
+    period_key = 380,              // "."
+    left_parenthesis_key = 381,    // "("
+    right_parenthesis_key = 382,   // ")"
+    left_bracket_key = 383,        // "["
+    right_bracket_key = 384,       // "]"
+    left_angle_bracket_key = 385,  // "⟨"
+    right_angle_bracket_key = 386, // "⟩"
+    superscript_left_parenthesis_key = 387, // "⁽"
+    superscript_right_parenthesis_key = 388, // "⁾"
+    subscript_left_parenthesis_key = 389, // "₍"
+    subscript_right_parenthesis_key = 390, // "₎"
+    left_brace_key = 391,          // "{"
+    vertical_line_key = 392,       // "|"
+    right_brace_key = 393,         // "}"
+    tilde_key = 394,               // "~"
+    slash_key = 395,               // "/"
+    backslash_key = 396,           // "\\"
+    if_key = 397,                  // "if"
+    then_key = 398,                // "then"
+    else_key = 399,                // "else"
+    while_key = 400,               // "while"
+    do_key = 401,                  // "do"
+    loop_key = 402,                // "loop"
+    for_key = 403,                 // "for"
+    break_key = 404,               // "break"
+    continue_key = 405,            // "continue"
+    throw_key = 406,               // "throw"
+    try_key = 407,                 // "try"
+    catch_key = 408,               // "catch"
+    unary_minus = 410              // unary_minus
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -839,7 +840,7 @@ namespace mli {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 155, ///< Number of tokens.
+        YYNTOKENS = 156, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -849,299 +850,301 @@ namespace mli {
         S_theory_key = 5,                        // "theory"
         S_end_key = 6,                           // "end"
         S_formal_system_key = 7,                 // "formal system"
-        S_definition_key = 8,                    // "definition"
-        S_postulate_key = 9,                     // "postulate"
-        S_axiom_key = 10,                        // "axiom"
-        S_rule_key = 11,                         // "rule"
-        S_conjecture_key = 12,                   // "conjecture"
-        S_theorem_key = 13,                      // "theorem"
-        S_proof_key = 14,                        // "proof"
-        S_end_of_proof_key = 15,                 // "∎"
-        S_by_key = 16,                           // "by"
-        S_premise_key = 17,                      // "premise"
-        S_result_key = 18,                       // "result"
-        S_metainfer_key = 19,                    // "⊩"
-        S_metaor_key = 20,                       // "or"
-        S_metaand_key = 21,                      // "and"
-        S_metanot_key = 22,                      // "not"
-        S_infer_key = 23,                        // "⊢"
-        S_object_identical_key = 24,             // "≡"
-        S_object_not_identical_key = 25,         // "≢"
-        S_meta_identical_key = 26,               // "≣"
-        S_meta_not_identical_key = 27,           // "≣̷"
-        S_fail_key = 28,                         // "fail"
-        S_succeed_key = 29,                      // "succeed"
-        S_free_for_key = 30,                     // "free for"
-        S_metain_key = 31,                       // "in"
-        S_free_in_key = 32,                      // "free in"
-        S_use_key = 33,                          // "use"
-        S_defined_by_key = 34,                   // "≔"
-        S_defines_key = 35,                      // "≕"
-        S_defined_equal_key = 36,                // "≝"
-        S_plain_name = 37,                       // "name"
-        S_label_key = 38,                        // "label"
-        S_metapredicate_constant = 39,           // "metapredicate constant"
-        S_function_key = 40,                     // "function"
-        S_predicate_key = 41,                    // "predicate"
-        S_predicate_constant = 42,               // "predicate constant"
-        S_atom_constant = 43,                    // "atom constant"
-        S_function_constant = 44,                // "function constant"
-        S_term_constant = 45,                    // "term constant"
-        S_metaformula_variable = 46,             // "metaformula variable"
-        S_object_formula_variable = 47,          // "object formula variable"
-        S_predicate_variable = 48,               // "predicate variable"
-        S_atom_variable = 49,                    // "atom variable"
-        S_prefix_formula_variable = 50,          // "prefix formula variable"
-        S_function_variable = 51,                // "function variable"
-        S_object_variable = 52,                  // "object variable"
-        S_code_variable = 53,                    // "code variable"
-        S_all_variable = 54,                     // "all variable"
-        S_exist_variable = 55,                   // "exist variable"
-        S_function_map_variable = 56,            // "function map variable"
-        S_is_set_variable = 57,                  // "Set variable"
-        S_set_variable = 58,                     // "set variable"
-        S_set_variable_definition = 59,          // "set variable definition"
-        S_implicit_set_variable = 60,            // "implicit set variable"
-        S_identifier_constant_key = 61,          // "identifier constant"
-        S_identifier_variable_key = 62,          // "identifier variable"
-        S_identifier_function_key = 63,          // "identifier function"
-        S_all_key = 64,                          // "∀"
-        S_exist_key = 65,                        // "∃"
-        S_logical_not_key = 66,                  // "¬"
-        S_logical_and_key = 67,                  // "∧"
-        S_logical_or_key = 68,                   // "∨"
-        S_implies_key = 69,                      // "⇒"
-        S_impliedby_key = 70,                    // "⇐"
-        S_equivalent_key = 71,                   // "⇔"
-        S_prefix_not_key = 72,                   // prefix_not_key
-        S_prefix_and_key = 73,                   // prefix_and_key
-        S_prefix_or_key = 74,                    // prefix_or_key
-        S_prefix_implies_key = 75,               // prefix_implies_key
-        S_prefix_equivalent_key = 76,            // prefix_equivalent_key
-        S_natural_number_key = 77,               // "ℕ"
-        S_less_key = 78,                         // "<"
-        S_greater_key = 79,                      // ">"
-        S_less_or_equal_key = 80,                // "≤"
-        S_greater_or_equal_key = 81,             // "≥"
-        S_not_less_key = 82,                     // "≮"
-        S_not_greater_key = 83,                  // "≯"
-        S_not_less_or_equal_key = 84,            // "≰"
-        S_not_greater_or_equal_key = 85,         // "≱"
-        S_equal_key = 86,                        // "="
-        S_not_equal_key = 87,                    // "≠"
-        S_divides_key = 88,                      // "∣"
-        S_not_divides_key = 89,                  // "∤"
-        S_mapsto_key = 90,                       // "↦"
-        S_Mapsto_key = 91,                       // "⤇"
-        S_function_map_prefix_key = 92,          // "𝛌"
-        S_degree_key = 93,                       // "°"
-        S_bullet_key = 94,                       // "•"
-        S_subscript_x_key = 95,                  // "ₓ"
-        S_natural_number_value = 96,             // "natural number value"
-        S_integer_value = 97,                    // "integer value"
-        S_subscript_natural_number_value = 98,   // "subscript natural number value"
-        S_subscript_integer_value = 99,          // "subscript integer value"
-        S_superscript_natural_number_value = 100, // "superscript natural number value"
-        S_superscript_integer_value = 101,       // "superscript integer value"
-        S_factorial_key = 102,                   // "!"
-        S_mult_key = 103,                        // "⋅"
-        S_plus_key = 104,                        // "+"
-        S_minus_key = 105,                       // "-"
-        S_is_set_key = 106,                      // "Set"
-        S_power_set_key = 107,                   // "Pow"
-        S_empty_set_key = 108,                   // "∅"
-        S_in_key = 109,                          // "∈"
-        S_not_in_key = 110,                      // "∉"
-        S_set_complement_key = 111,              // "∁"
-        S_set_union_key = 112,                   // "∪"
-        S_set_intersection_key = 113,            // "∩"
-        S_set_difference_key = 114,              // "∖"
-        S_set_union_operator_key = 115,          // "⋃"
-        S_set_intersection_operator_key = 116,   // "⋂"
-        S_subset_key = 117,                      // "⊆"
-        S_proper_subset_key = 118,               // "⊊"
-        S_superset_key = 119,                    // "⊇"
-        S_proper_superset_key = 120,             // "⊋"
-        S_colon_key = 121,                       // ":"
-        S_semicolon_key = 122,                   // ";"
-        S_comma_key = 123,                       // ","
-        S_period_key = 124,                      // "."
-        S_left_parenthesis_key = 125,            // "("
-        S_right_parenthesis_key = 126,           // ")"
-        S_left_bracket_key = 127,                // "["
-        S_right_bracket_key = 128,               // "]"
-        S_left_angle_bracket_key = 129,          // "⟨"
-        S_right_angle_bracket_key = 130,         // "⟩"
-        S_superscript_left_parenthesis_key = 131, // "⁽"
-        S_superscript_right_parenthesis_key = 132, // "⁾"
-        S_subscript_left_parenthesis_key = 133,  // "₍"
-        S_subscript_right_parenthesis_key = 134, // "₎"
-        S_left_brace_key = 135,                  // "{"
-        S_vertical_line_key = 136,               // "|"
-        S_right_brace_key = 137,                 // "}"
-        S_tilde_key = 138,                       // "~"
-        S_slash_key = 139,                       // "/"
-        S_backslash_key = 140,                   // "\\"
-        S_if_key = 141,                          // "if"
-        S_then_key = 142,                        // "then"
-        S_else_key = 143,                        // "else"
-        S_while_key = 144,                       // "while"
-        S_do_key = 145,                          // "do"
-        S_loop_key = 146,                        // "loop"
-        S_for_key = 147,                         // "for"
-        S_break_key = 148,                       // "break"
-        S_continue_key = 149,                    // "continue"
-        S_throw_key = 150,                       // "throw"
-        S_try_key = 151,                         // "try"
-        S_catch_key = 152,                       // "catch"
-        S_153_ = 153,                            // "⊣"
-        S_unary_minus = 154,                     // unary_minus
-        S_YYACCEPT = 155,                        // $accept
-        S_file = 156,                            // file
-        S_file_contents = 157,                   // file_contents
-        S_command = 158,                         // command
-        S_159_1 = 159,                           // $@1
-        S_metaformula_substitution_sequence = 160, // metaformula_substitution_sequence
-        S_substitution_for_metaformula = 161,    // substitution_for_metaformula
-        S_metaformula_substitution = 162,        // metaformula_substitution
-        S_formula_substitution_sequence = 163,   // formula_substitution_sequence
-        S_substitution_for_formula = 164,        // substitution_for_formula
-        S_formula_substitution = 165,            // formula_substitution
-        S_term_substitution_sequence = 166,      // term_substitution_sequence
-        S_term_substitution = 167,               // term_substitution
-        S_predicate_function_application = 168,  // predicate_function_application
-        S_169_2 = 169,                           // $@2
-        S_term_function_application = 170,       // term_function_application
-        S_171_3 = 171,                           // $@3
-        S_theory = 172,                          // theory
-        S_173_4 = 173,                           // $@4
-        S_end_theory_name = 174,                 // end_theory_name
-        S_include_theories = 175,                // include_theories
-        S_include_theory = 176,                  // include_theory
-        S_theory_name = 177,                     // theory_name
-        S_theory_body = 178,                     // theory_body
-        S_formal_system = 179,                   // formal_system
-        S_180_5 = 180,                           // $@5
-        S_formal_system_body = 181,              // formal_system_body
-        S_formal_system_body_item = 182,         // formal_system_body_item
-        S_theory_body_list = 183,                // theory_body_list
-        S_theory_body_item = 184,                // theory_body_item
-        S_postulate = 185,                       // postulate
-        S_186_6 = 186,                           // $@6
-        S_187_7 = 187,                           // $@7
-        S_188_8 = 188,                           // $@8
-        S_conjecture = 189,                      // conjecture
+        S_system_key = 8,                        // "system"
+        S_definition_key = 9,                    // "definition"
+        S_postulate_key = 10,                    // "postulate"
+        S_axiom_key = 11,                        // "axiom"
+        S_rule_key = 12,                         // "rule"
+        S_conjecture_key = 13,                   // "conjecture"
+        S_theorem_key = 14,                      // "theorem"
+        S_proof_key = 15,                        // "proof"
+        S_end_of_proof_key = 16,                 // "∎"
+        S_by_key = 17,                           // "by"
+        S_premise_key = 18,                      // "premise"
+        S_result_key = 19,                       // "result"
+        S_metainfer_key = 20,                    // "⊩"
+        S_metaor_key = 21,                       // "or"
+        S_metaand_key = 22,                      // "and"
+        S_metanot_key = 23,                      // "not"
+        S_infer_key = 24,                        // "⊢"
+        S_object_identical_key = 25,             // "≡"
+        S_object_not_identical_key = 26,         // "≢"
+        S_meta_identical_key = 27,               // "≣"
+        S_meta_not_identical_key = 28,           // "≣̷"
+        S_fail_key = 29,                         // "fail"
+        S_succeed_key = 30,                      // "succeed"
+        S_free_for_key = 31,                     // "free for"
+        S_metain_key = 32,                       // "in"
+        S_free_in_key = 33,                      // "free in"
+        S_use_key = 34,                          // "use"
+        S_defined_by_key = 35,                   // "≔"
+        S_defines_key = 36,                      // "≕"
+        S_defined_equal_key = 37,                // "≝"
+        S_plain_name = 38,                       // "name"
+        S_label_key = 39,                        // "label"
+        S_metapredicate_constant = 40,           // "metapredicate constant"
+        S_function_key = 41,                     // "function"
+        S_predicate_key = 42,                    // "predicate"
+        S_predicate_constant = 43,               // "predicate constant"
+        S_atom_constant = 44,                    // "atom constant"
+        S_function_constant = 45,                // "function constant"
+        S_term_constant = 46,                    // "term constant"
+        S_metaformula_variable = 47,             // "metaformula variable"
+        S_object_formula_variable = 48,          // "object formula variable"
+        S_predicate_variable = 49,               // "predicate variable"
+        S_atom_variable = 50,                    // "atom variable"
+        S_prefix_formula_variable = 51,          // "prefix formula variable"
+        S_function_variable = 52,                // "function variable"
+        S_object_variable = 53,                  // "object variable"
+        S_code_variable = 54,                    // "code variable"
+        S_all_variable = 55,                     // "all variable"
+        S_exist_variable = 56,                   // "exist variable"
+        S_function_map_variable = 57,            // "function map variable"
+        S_is_set_variable = 58,                  // "Set variable"
+        S_set_variable = 59,                     // "set variable"
+        S_set_variable_definition = 60,          // "set variable definition"
+        S_implicit_set_variable = 61,            // "implicit set variable"
+        S_identifier_constant_key = 62,          // "identifier constant"
+        S_identifier_variable_key = 63,          // "identifier variable"
+        S_identifier_function_key = 64,          // "identifier function"
+        S_all_key = 65,                          // "∀"
+        S_exist_key = 66,                        // "∃"
+        S_logical_not_key = 67,                  // "¬"
+        S_logical_and_key = 68,                  // "∧"
+        S_logical_or_key = 69,                   // "∨"
+        S_implies_key = 70,                      // "⇒"
+        S_impliedby_key = 71,                    // "⇐"
+        S_equivalent_key = 72,                   // "⇔"
+        S_prefix_not_key = 73,                   // prefix_not_key
+        S_prefix_and_key = 74,                   // prefix_and_key
+        S_prefix_or_key = 75,                    // prefix_or_key
+        S_prefix_implies_key = 76,               // prefix_implies_key
+        S_prefix_equivalent_key = 77,            // prefix_equivalent_key
+        S_natural_number_key = 78,               // "ℕ"
+        S_less_key = 79,                         // "<"
+        S_greater_key = 80,                      // ">"
+        S_less_or_equal_key = 81,                // "≤"
+        S_greater_or_equal_key = 82,             // "≥"
+        S_not_less_key = 83,                     // "≮"
+        S_not_greater_key = 84,                  // "≯"
+        S_not_less_or_equal_key = 85,            // "≰"
+        S_not_greater_or_equal_key = 86,         // "≱"
+        S_equal_key = 87,                        // "="
+        S_not_equal_key = 88,                    // "≠"
+        S_divides_key = 89,                      // "∣"
+        S_not_divides_key = 90,                  // "∤"
+        S_mapsto_key = 91,                       // "↦"
+        S_Mapsto_key = 92,                       // "⤇"
+        S_function_map_prefix_key = 93,          // "𝛌"
+        S_degree_key = 94,                       // "°"
+        S_bullet_key = 95,                       // "•"
+        S_subscript_x_key = 96,                  // "ₓ"
+        S_natural_number_value = 97,             // "natural number value"
+        S_integer_value = 98,                    // "integer value"
+        S_subscript_natural_number_value = 99,   // "subscript natural number value"
+        S_subscript_integer_value = 100,         // "subscript integer value"
+        S_superscript_natural_number_value = 101, // "superscript natural number value"
+        S_superscript_integer_value = 102,       // "superscript integer value"
+        S_factorial_key = 103,                   // "!"
+        S_mult_key = 104,                        // "⋅"
+        S_plus_key = 105,                        // "+"
+        S_minus_key = 106,                       // "-"
+        S_is_set_key = 107,                      // "Set"
+        S_power_set_key = 108,                   // "Pow"
+        S_empty_set_key = 109,                   // "∅"
+        S_in_key = 110,                          // "∈"
+        S_not_in_key = 111,                      // "∉"
+        S_set_complement_key = 112,              // "∁"
+        S_set_union_key = 113,                   // "∪"
+        S_set_intersection_key = 114,            // "∩"
+        S_set_difference_key = 115,              // "∖"
+        S_set_union_operator_key = 116,          // "⋃"
+        S_set_intersection_operator_key = 117,   // "⋂"
+        S_subset_key = 118,                      // "⊆"
+        S_proper_subset_key = 119,               // "⊊"
+        S_superset_key = 120,                    // "⊇"
+        S_proper_superset_key = 121,             // "⊋"
+        S_colon_key = 122,                       // ":"
+        S_semicolon_key = 123,                   // ";"
+        S_comma_key = 124,                       // ","
+        S_period_key = 125,                      // "."
+        S_left_parenthesis_key = 126,            // "("
+        S_right_parenthesis_key = 127,           // ")"
+        S_left_bracket_key = 128,                // "["
+        S_right_bracket_key = 129,               // "]"
+        S_left_angle_bracket_key = 130,          // "⟨"
+        S_right_angle_bracket_key = 131,         // "⟩"
+        S_superscript_left_parenthesis_key = 132, // "⁽"
+        S_superscript_right_parenthesis_key = 133, // "⁾"
+        S_subscript_left_parenthesis_key = 134,  // "₍"
+        S_subscript_right_parenthesis_key = 135, // "₎"
+        S_left_brace_key = 136,                  // "{"
+        S_vertical_line_key = 137,               // "|"
+        S_right_brace_key = 138,                 // "}"
+        S_tilde_key = 139,                       // "~"
+        S_slash_key = 140,                       // "/"
+        S_backslash_key = 141,                   // "\\"
+        S_if_key = 142,                          // "if"
+        S_then_key = 143,                        // "then"
+        S_else_key = 144,                        // "else"
+        S_while_key = 145,                       // "while"
+        S_do_key = 146,                          // "do"
+        S_loop_key = 147,                        // "loop"
+        S_for_key = 148,                         // "for"
+        S_break_key = 149,                       // "break"
+        S_continue_key = 150,                    // "continue"
+        S_throw_key = 151,                       // "throw"
+        S_try_key = 152,                         // "try"
+        S_catch_key = 153,                       // "catch"
+        S_154_ = 154,                            // "⊣"
+        S_unary_minus = 155,                     // unary_minus
+        S_YYACCEPT = 156,                        // $accept
+        S_file = 157,                            // file
+        S_file_contents = 158,                   // file_contents
+        S_command = 159,                         // command
+        S_160_1 = 160,                           // $@1
+        S_metaformula_substitution_sequence = 161, // metaformula_substitution_sequence
+        S_substitution_for_metaformula = 162,    // substitution_for_metaformula
+        S_metaformula_substitution = 163,        // metaformula_substitution
+        S_formula_substitution_sequence = 164,   // formula_substitution_sequence
+        S_substitution_for_formula = 165,        // substitution_for_formula
+        S_formula_substitution = 166,            // formula_substitution
+        S_term_substitution_sequence = 167,      // term_substitution_sequence
+        S_term_substitution = 168,               // term_substitution
+        S_predicate_function_application = 169,  // predicate_function_application
+        S_170_2 = 170,                           // $@2
+        S_term_function_application = 171,       // term_function_application
+        S_172_3 = 172,                           // $@3
+        S_theory = 173,                          // theory
+        S_174_4 = 174,                           // $@4
+        S_end_theory_name = 175,                 // end_theory_name
+        S_include_theories = 176,                // include_theories
+        S_include_theory = 177,                  // include_theory
+        S_theory_name = 178,                     // theory_name
+        S_theory_body = 179,                     // theory_body
+        S_formal_system = 180,                   // formal_system
+        S_181_5 = 181,                           // $@5
+        S_182_6 = 182,                           // $@6
+        S_formal_system_body = 183,              // formal_system_body
+        S_formal_system_body_item = 184,         // formal_system_body_item
+        S_theory_body_list = 185,                // theory_body_list
+        S_theory_body_item = 186,                // theory_body_item
+        S_postulate = 187,                       // postulate
+        S_188_7 = 188,                           // $@7
+        S_189_8 = 189,                           // $@8
         S_190_9 = 190,                           // $@9
-        S_definition_labelstatement = 191,       // definition_labelstatement
+        S_conjecture = 191,                      // conjecture
         S_192_10 = 192,                          // $@10
-        S_statement_name = 193,                  // statement_name
-        S_theorem = 194,                         // theorem
-        S_theorem_statement = 195,               // theorem_statement
-        S_theorem_head = 196,                    // theorem_head
-        S_proof = 197,                           // proof
-        S_198_11 = 198,                          // $@11
-        S_199_compound_proof = 199,              // compound-proof
-        S_proof_head = 200,                      // proof_head
-        S_proof_lines = 201,                     // proof_lines
-        S_statement_label = 202,                 // statement_label
-        S_proof_line = 203,                      // proof_line
-        S_204_12 = 204,                          // $@12
-        S_subproof_statement = 205,              // subproof_statement
-        S_proof_of_conclusion = 206,             // proof_of_conclusion
-        S_207_optional_result = 207,             // optional-result
-        S_find_statement = 208,                  // find_statement
-        S_find_statement_list = 209,             // find_statement_list
-        S_find_statement_sequence = 210,         // find_statement_sequence
-        S_find_definition_sequence = 211,        // find_definition_sequence
-        S_find_statement_item = 212,             // find_statement_item
-        S_find_statement_name = 213,             // find_statement_name
-        S_214_13 = 214,                          // @13
-        S_statement = 215,                       // statement
-        S_definition_statement = 216,            // definition_statement
-        S_identifier_declaration = 217,          // identifier_declaration
-        S_declarator_list = 218,                 // declarator_list
-        S_declarator_identifier_list = 219,      // declarator_identifier_list
-        S_identifier_function_list = 220,        // identifier_function_list
-        S_identifier_function_name = 221,        // identifier_function_name
-        S_222_14 = 222,                          // $@14
-        S_223_15 = 223,                          // $@15
-        S_identifier_constant_list = 224,        // identifier_constant_list
-        S_identifier_constant_name = 225,        // identifier_constant_name
-        S_identifier_variable_list = 226,        // identifier_variable_list
-        S_identifier_variable_name = 227,        // identifier_variable_name
-        S_definition = 228,                      // definition
-        S_metaformula_definition = 229,          // metaformula_definition
-        S_object_formula_definition = 230,       // object_formula_definition
-        S_term_definition = 231,                 // term_definition
-        S_metaformula = 232,                     // metaformula
-        S_pure_metaformula = 233,                // pure_metaformula
-        S_optional_varied_variable_matrix = 234, // optional_varied_variable_matrix
-        S_varied_variable_conclusions = 235,     // varied_variable_conclusions
-        S_varied_variable_conclusion = 236,      // varied_variable_conclusion
-        S_varied_variable_premises = 237,        // varied_variable_premises
-        S_varied_variable_premise = 238,         // varied_variable_premise
-        S_varied_variable_set = 239,             // varied_variable_set
-        S_varied_variable = 240,                 // varied_variable
-        S_optional_varied_in_reduction_variable_matrix = 241, // optional_varied_in_reduction_variable_matrix
-        S_varied_in_reduction_variable_conclusions = 242, // varied_in_reduction_variable_conclusions
-        S_varied_in_reduction_variable_conclusion = 243, // varied_in_reduction_variable_conclusion
-        S_varied_in_reduction_variable_premises = 244, // varied_in_reduction_variable_premises
-        S_varied_in_reduction_variable_premise = 245, // varied_in_reduction_variable_premise
-        S_varied_in_reduction_variable_set = 246, // varied_in_reduction_variable_set
-        S_varied_in_reduction_variable = 247,    // varied_in_reduction_variable
-        S_simple_metaformula = 248,              // simple_metaformula
-        S_atomic_metaformula = 249,              // atomic_metaformula
-        S_special_metaformula = 250,             // special_metaformula
-        S_meta_object_free = 251,                // meta_object_free
-        S_metapredicate = 252,                   // metapredicate
-        S_metapredicate_function = 253,          // metapredicate_function
-        S_metapredicate_argument = 254,          // metapredicate_argument
-        S_metapredicate_argument_body = 255,     // metapredicate_argument_body
-        S_object_formula = 256,                  // object_formula
-        S_hoare_triple = 257,                    // hoare_triple
-        S_code_statement = 258,                  // code_statement
-        S_code_sequence = 259,                   // code_sequence
-        S_code_term = 260,                       // code_term
-        S_very_simple_formula = 261,             // very_simple_formula
-        S_quantized_formula = 262,               // quantized_formula
-        S_simple_formula = 263,                  // simple_formula
-        S_quantized_body = 264,                  // quantized_body
-        S_atomic_formula = 265,                  // atomic_formula
-        S_predicate = 266,                       // predicate
-        S_267_16 = 267,                          // $@16
-        S_268_17 = 268,                          // $@17
-        S_predicate_expression = 269,            // predicate_expression
-        S_predicate_identifier = 270,            // predicate_identifier
-        S_optional_superscript_natural_number_value = 271, // optional_superscript_natural_number_value
-        S_logic_formula = 272,                   // logic_formula
-        S_prefix_logic_formula = 273,            // prefix_logic_formula
-        S_quantizer_declaration = 274,           // quantizer_declaration
-        S_quantized_variable_list = 275,         // quantized_variable_list
-        S_all_variable_list = 276,               // all_variable_list
-        S_exist_variable_list = 277,             // exist_variable_list
-        S_exclusion_set = 278,                   // exclusion_set
-        S_279_18 = 279,                          // $@18
-        S_exclusion_list = 280,                  // exclusion_list
-        S_all_identifier_list = 281,             // all_identifier_list
-        S_282_19 = 282,                          // $@19
-        S_exist_identifier_list = 283,           // exist_identifier_list
+        S_definition_labelstatement = 193,       // definition_labelstatement
+        S_194_11 = 194,                          // $@11
+        S_statement_name = 195,                  // statement_name
+        S_theorem = 196,                         // theorem
+        S_theorem_statement = 197,               // theorem_statement
+        S_theorem_head = 198,                    // theorem_head
+        S_proof = 199,                           // proof
+        S_200_12 = 200,                          // $@12
+        S_201_compound_proof = 201,              // compound-proof
+        S_proof_head = 202,                      // proof_head
+        S_proof_lines = 203,                     // proof_lines
+        S_statement_label = 204,                 // statement_label
+        S_proof_line = 205,                      // proof_line
+        S_206_13 = 206,                          // $@13
+        S_subproof_statement = 207,              // subproof_statement
+        S_proof_of_conclusion = 208,             // proof_of_conclusion
+        S_209_optional_result = 209,             // optional-result
+        S_find_statement = 210,                  // find_statement
+        S_find_statement_list = 211,             // find_statement_list
+        S_find_statement_sequence = 212,         // find_statement_sequence
+        S_find_definition_sequence = 213,        // find_definition_sequence
+        S_find_statement_item = 214,             // find_statement_item
+        S_find_statement_name = 215,             // find_statement_name
+        S_216_14 = 216,                          // @14
+        S_statement = 217,                       // statement
+        S_definition_statement = 218,            // definition_statement
+        S_identifier_declaration = 219,          // identifier_declaration
+        S_declarator_list = 220,                 // declarator_list
+        S_declarator_identifier_list = 221,      // declarator_identifier_list
+        S_identifier_function_list = 222,        // identifier_function_list
+        S_identifier_function_name = 223,        // identifier_function_name
+        S_224_15 = 224,                          // $@15
+        S_225_16 = 225,                          // $@16
+        S_identifier_constant_list = 226,        // identifier_constant_list
+        S_identifier_constant_name = 227,        // identifier_constant_name
+        S_identifier_variable_list = 228,        // identifier_variable_list
+        S_identifier_variable_name = 229,        // identifier_variable_name
+        S_definition = 230,                      // definition
+        S_metaformula_definition = 231,          // metaformula_definition
+        S_object_formula_definition = 232,       // object_formula_definition
+        S_term_definition = 233,                 // term_definition
+        S_metaformula = 234,                     // metaformula
+        S_pure_metaformula = 235,                // pure_metaformula
+        S_optional_varied_variable_matrix = 236, // optional_varied_variable_matrix
+        S_varied_variable_conclusions = 237,     // varied_variable_conclusions
+        S_varied_variable_conclusion = 238,      // varied_variable_conclusion
+        S_varied_variable_premises = 239,        // varied_variable_premises
+        S_varied_variable_premise = 240,         // varied_variable_premise
+        S_varied_variable_set = 241,             // varied_variable_set
+        S_varied_variable = 242,                 // varied_variable
+        S_optional_varied_in_reduction_variable_matrix = 243, // optional_varied_in_reduction_variable_matrix
+        S_varied_in_reduction_variable_conclusions = 244, // varied_in_reduction_variable_conclusions
+        S_varied_in_reduction_variable_conclusion = 245, // varied_in_reduction_variable_conclusion
+        S_varied_in_reduction_variable_premises = 246, // varied_in_reduction_variable_premises
+        S_varied_in_reduction_variable_premise = 247, // varied_in_reduction_variable_premise
+        S_varied_in_reduction_variable_set = 248, // varied_in_reduction_variable_set
+        S_varied_in_reduction_variable = 249,    // varied_in_reduction_variable
+        S_simple_metaformula = 250,              // simple_metaformula
+        S_atomic_metaformula = 251,              // atomic_metaformula
+        S_special_metaformula = 252,             // special_metaformula
+        S_meta_object_free = 253,                // meta_object_free
+        S_metapredicate = 254,                   // metapredicate
+        S_metapredicate_function = 255,          // metapredicate_function
+        S_metapredicate_argument = 256,          // metapredicate_argument
+        S_metapredicate_argument_body = 257,     // metapredicate_argument_body
+        S_object_formula = 258,                  // object_formula
+        S_hoare_triple = 259,                    // hoare_triple
+        S_code_statement = 260,                  // code_statement
+        S_code_sequence = 261,                   // code_sequence
+        S_code_term = 262,                       // code_term
+        S_very_simple_formula = 263,             // very_simple_formula
+        S_quantized_formula = 264,               // quantized_formula
+        S_simple_formula = 265,                  // simple_formula
+        S_quantized_body = 266,                  // quantized_body
+        S_atomic_formula = 267,                  // atomic_formula
+        S_predicate = 268,                       // predicate
+        S_269_17 = 269,                          // $@17
+        S_270_18 = 270,                          // $@18
+        S_predicate_expression = 271,            // predicate_expression
+        S_predicate_identifier = 272,            // predicate_identifier
+        S_optional_superscript_natural_number_value = 273, // optional_superscript_natural_number_value
+        S_logic_formula = 274,                   // logic_formula
+        S_prefix_logic_formula = 275,            // prefix_logic_formula
+        S_quantizer_declaration = 276,           // quantizer_declaration
+        S_quantized_variable_list = 277,         // quantized_variable_list
+        S_all_variable_list = 278,               // all_variable_list
+        S_exist_variable_list = 279,             // exist_variable_list
+        S_exclusion_set = 280,                   // exclusion_set
+        S_281_19 = 281,                          // $@19
+        S_exclusion_list = 282,                  // exclusion_list
+        S_all_identifier_list = 283,             // all_identifier_list
         S_284_20 = 284,                          // $@20
-        S_optional_in_term = 285,                // optional_in_term
-        S_tuple = 286,                           // tuple
-        S_tuple_body = 287,                      // tuple_body
-        S_term = 288,                            // term
-        S_simple_term = 289,                     // simple_term
-        S_term_identifier = 290,                 // term_identifier
-        S_variable_exclusion_set = 291,          // variable_exclusion_set
-        S_variable_exclusion_list = 292,         // variable_exclusion_list
-        S_bound_variable = 293,                  // bound_variable
-        S_function_term = 294,                   // function_term
-        S_set_term = 295,                        // set_term
-        S_implicit_set_identifier_list = 296,    // implicit_set_identifier_list
-        S_297_21 = 297,                          // $@21
-        S_298_22 = 298,                          // $@22
-        S_set_member_list = 299,                 // set_member_list
-        S_function_term_identifier = 300         // function_term_identifier
+        S_exist_identifier_list = 285,           // exist_identifier_list
+        S_286_21 = 286,                          // $@21
+        S_optional_in_term = 287,                // optional_in_term
+        S_tuple = 288,                           // tuple
+        S_tuple_body = 289,                      // tuple_body
+        S_term = 290,                            // term
+        S_simple_term = 291,                     // simple_term
+        S_term_identifier = 292,                 // term_identifier
+        S_variable_exclusion_set = 293,          // variable_exclusion_set
+        S_variable_exclusion_list = 294,         // variable_exclusion_list
+        S_bound_variable = 295,                  // bound_variable
+        S_function_term = 296,                   // function_term
+        S_set_term = 297,                        // set_term
+        S_implicit_set_identifier_list = 298,    // implicit_set_identifier_list
+        S_299_22 = 299,                          // $@22
+        S_300_23 = 300,                          // $@23
+        S_set_member_list = 301,                 // set_member_list
+        S_function_term_identifier = 302         // function_term_identifier
       };
     };
 
@@ -1211,8 +1214,8 @@ namespace mli {
       case symbol_kind::S_theorem: // theorem
       case symbol_kind::S_theorem_statement: // theorem_statement
       case symbol_kind::S_proof: // proof
-      case symbol_kind::S_198_11: // $@11
-      case symbol_kind::S_199_compound_proof: // compound-proof
+      case symbol_kind::S_200_12: // $@12
+      case symbol_kind::S_201_compound_proof: // compound-proof
       case symbol_kind::S_proof_head: // proof_head
       case symbol_kind::S_proof_lines: // proof_lines
       case symbol_kind::S_proof_line: // proof_line
@@ -1223,7 +1226,7 @@ namespace mli {
       case symbol_kind::S_find_definition_sequence: // find_definition_sequence
       case symbol_kind::S_find_statement_item: // find_statement_item
       case symbol_kind::S_find_statement_name: // find_statement_name
-      case symbol_kind::S_214_13: // @13
+      case symbol_kind::S_216_14: // @14
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_definition_statement: // definition_statement
       case symbol_kind::S_identifier_declaration: // identifier_declaration
@@ -1363,7 +1366,7 @@ namespace mli {
       case symbol_kind::S_statement_name: // statement_name
       case symbol_kind::S_statement_label: // statement_label
       case symbol_kind::S_subproof_statement: // subproof_statement
-      case symbol_kind::S_207_optional_result: // optional-result
+      case symbol_kind::S_209_optional_result: // optional-result
         value.move< std::string > (std::move (that.value));
         break;
 
@@ -1606,8 +1609,8 @@ switch (yykind)
       case symbol_kind::S_theorem: // theorem
       case symbol_kind::S_theorem_statement: // theorem_statement
       case symbol_kind::S_proof: // proof
-      case symbol_kind::S_198_11: // $@11
-      case symbol_kind::S_199_compound_proof: // compound-proof
+      case symbol_kind::S_200_12: // $@12
+      case symbol_kind::S_201_compound_proof: // compound-proof
       case symbol_kind::S_proof_head: // proof_head
       case symbol_kind::S_proof_lines: // proof_lines
       case symbol_kind::S_proof_line: // proof_line
@@ -1618,7 +1621,7 @@ switch (yykind)
       case symbol_kind::S_find_definition_sequence: // find_definition_sequence
       case symbol_kind::S_find_statement_item: // find_statement_item
       case symbol_kind::S_find_statement_name: // find_statement_name
-      case symbol_kind::S_214_13: // @13
+      case symbol_kind::S_216_14: // @14
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_definition_statement: // definition_statement
       case symbol_kind::S_identifier_declaration: // identifier_declaration
@@ -1758,7 +1761,7 @@ switch (yykind)
       case symbol_kind::S_statement_name: // statement_name
       case symbol_kind::S_statement_label: // statement_label
       case symbol_kind::S_subproof_statement: // subproof_statement
-      case symbol_kind::S_207_optional_result: // optional-result
+      case symbol_kind::S_209_optional_result: // optional-result
         value.template destroy< std::string > ();
         break;
 
@@ -2097,6 +2100,21 @@ switch (yykind)
       make_formal_system_key (const location_type& l)
       {
         return symbol_type (token::formal_system_key, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_system_key (location_type l)
+      {
+        return symbol_type (token::system_key, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_system_key (const location_type& l)
+      {
+        return symbol_type (token::system_key, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -4638,8 +4656,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 1765,     ///< Last index in yytable_.
-      yynnts_ = 146,  ///< Number of nonterminal symbols.
+      yylast_ = 1822,     ///< Last index in yytable_.
+      yynnts_ = 147,  ///< Number of nonterminal symbols.
       yyfinal_ = 6 ///< Termination state number.
     };
 
@@ -4651,13 +4669,13 @@ switch (yykind)
   };
 
 
-#line 22 "../../mli-root/src/database-parser.yy"
+#line 25 "../../mli-root/src/database-parser.yy"
 } // mli
-#line 4657 "../../mli-root/src/database-parser.hh"
+#line 4675 "../../mli-root/src/database-parser.hh"
 
 
 // "%code provides" blocks.
-#line 69 "../../mli-root/src/database-parser.yy"
+#line 71 "../../mli-root/src/database-parser.yy"
 
   namespace mli {
     class database_lexer : public yyFlexLexer {
@@ -4706,7 +4724,7 @@ switch (yykind)
   } // namespace mli
 
 
-#line 4710 "../../mli-root/src/database-parser.hh"
+#line 4728 "../../mli-root/src/database-parser.hh"
 
 
 #endif // !YY_MLI_MLI_ROOT_SRC_DATABASE_PARSER_HH_INCLUDED

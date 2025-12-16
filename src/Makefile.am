@@ -1,4 +1,4 @@
-# Copyright (C) 2017, 2021-2024 Hans Åberg.
+# Copyright (C) 2017, 2021-2025 Hans Åberg.
 #
 # This file is part of MLI, MetaLogic Inference.
 #
@@ -35,7 +35,7 @@ dist_noinst_HEADERS = database-parser.yy database-lexer.ll directive-parser.yy d
 
 
 AM_CPPFLAGS = -DDATADIR='@mlidatadir@'
-AM_CXXFLAGS = -std=c++20
+AM_CXXFLAGS = -std=c++26
 
 LEXER = flex
 PARSER = bison
