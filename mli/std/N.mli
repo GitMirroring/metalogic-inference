@@ -1,4 +1,4 @@
-[— Copyright (C) 2017, 2021-2025 Hans Åberg.
+[— Copyright (C) 2017, 2021-2026 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -32,7 +32,7 @@ theory N.  — Natural numbers model.
   — and equality preserved in function application.
   axiom ER. 𝒙 = 𝒙. — Reflexive.
   axiom ES. 𝒙 = 𝒚 ⊢ 𝒚 = 𝒙. — Symmetric.
-  axiom ET. 𝒙 = 𝒚, 𝒚 + 𝒛 ⊢ 𝒙 = 𝒛. — Transitive.
+  axiom ET. 𝒙 = 𝒚, 𝒚 = 𝒛 ⊢ 𝒙 = 𝒛. — Transitive.
 
   axiom ES. 𝒙 = 𝒚 ⊢ succ(𝒙) = succ(𝒚). — Successor application.
   axiom EAL. 𝒙 = 𝒚 ⊢ 𝒛 + 𝒙 = 𝒛 + 𝒚. — Left addition.

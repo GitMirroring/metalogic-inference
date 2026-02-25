@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2025 Hans Åberg.
+/* Copyright (C) 2017, 2021-2026 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -653,8 +653,6 @@
 %nterm <ref6<unit>> optional_varied_in_reduction_variable_matrix
 %nterm <ref6<unit>> varied_in_reduction_variable_conclusions
 %nterm <ref6<unit>> varied_in_reduction_variable_conclusion
-%nterm <ref6<unit>> varied_in_reduction_variable_premises
-%nterm <ref6<unit>> varied_in_reduction_variable_premise
 %nterm <ref6<unit>> varied_in_reduction_variable_set
 %nterm <ref6<unit>> varied_in_reduction_variable
 /*
@@ -1871,7 +1869,6 @@ varied_variable:
 optional_varied_in_reduction_variable_matrix:
     %empty {}
   | "₍" varied_in_reduction_variable_conclusions[cs] "₎" { $$ = $cs; }
-  | "₍" varied_in_reduction_variable_premises[ps] "₎"    { $$ = $ps; }
   | "₍" varied_in_reduction_variable_set[vs] "₎"         { $$ = $vs; }
 ;
 
@@ -1882,15 +1879,14 @@ varied_in_reduction_variable_conclusions:
       inference& x = dyn_cast<inference&>($x);
 
       for (auto& i: x.varied_in_reduction_)
-        for (auto& j: i.second)
-          xs.varied_in_reduction_[i.first][j.first].insert(j.second.begin(), j.second.end());
+        xs.varied_in_reduction_[i.first].insert(i.second.begin(), i.second.end());
 
       $$ = $xs;
     }
 ;
 
 varied_in_reduction_variable_conclusion:
-    subscript_natural_number_value[k] varied_in_reduction_variable_premises[xs] {
+    subscript_natural_number_value[k] varied_in_reduction_variable_set[xs] {
       val<inference> i(make);
       inference& xs = dyn_cast<inference&>($xs);
       size_type k = (size_type)$k;
@@ -1901,38 +1897,13 @@ varied_in_reduction_variable_conclusion:
     }
 ;
 
-varied_in_reduction_variable_premises:
-    varied_in_reduction_variable_premise
-  | varied_in_reduction_variable_premises[xs] "," varied_in_reduction_variable_premise[x] {
-      inference& xs = dyn_cast<inference&>($xs);
-      inference& x = dyn_cast<inference&>($x);
-
-      for (auto& j: x.varied_in_reduction_[0])
-        xs.varied_in_reduction_[0][j.first].insert(j.second.begin(), j.second.end());
-
-      $$ = $xs;
-    }
-;
-
-varied_in_reduction_variable_premise:
-    subscript_natural_number_value[k] varied_in_reduction_variable_set[xs] {
-      val<inference> i(make);
-      inference& xs = dyn_cast<inference&>($xs);
-      size_type k = (size_type)$k;
-
-      i->varied_in_reduction_[0][k].insert(xs.varied_in_reduction_[0][0].begin(), xs.varied_in_reduction_[0][0].end());
-
-      $$ = i;
-    }
-;
-
 varied_in_reduction_variable_set:
     varied_in_reduction_variable
   | varied_in_reduction_variable_set[xs] varied_in_reduction_variable[x] {
       inference& xs = dyn_cast<inference&>($xs);
       inference& x = dyn_cast<inference&>($x);
 
-      xs.varied_in_reduction_[0][0].insert(x.varied_in_reduction_[0][0].begin(), x.varied_in_reduction_[0][0].end());
+      xs.varied_in_reduction_[0].insert(x.varied_in_reduction_[0].begin(), x.varied_in_reduction_[0].end());
 
       $$ = $xs;
     }
@@ -1941,12 +1912,12 @@ varied_in_reduction_variable_set:
 varied_in_reduction_variable:
     object_variable[x] {
       val<inference> i(make);
-      i->varied_in_reduction_[0][0].insert($x);
+      i->varied_in_reduction_[0].insert($x);
       $$ = i;
     }
   | metaformula_variable[x] {
       val<inference> i(make);
-      i->varied_in_reduction_[0][0].insert($x);
+      i->varied_in_reduction_[0].insert($x);
       $$ = i;
     }
 ;

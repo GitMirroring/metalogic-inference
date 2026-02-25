@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2025 Hans Åberg.
+/* Copyright (C) 2017, 2021-2026 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -441,25 +441,15 @@ namespace mli {
           if (i0) i0 = false;
           else os << ";";
 
-          if (varied_.size() != 1 || i.first != 0)
+          if (varied_in_reduction_.size() != 1 || i.first != 0)
             os << to_index(subscript, i.first) << " ";
-
-          bool j0 = true;
-
-          for (auto& j: i.second) {
-            if (j0) j0 = false;
-            else os << ",";
-
-            if (varied_.size() != 1 || !(i.second.size() == 1 && j.first == 0))
-              os << to_index(subscript, j.first) << " ";
 
             bool k0 = true;
 
-            for (auto& k: j.second) {
+            for (auto& k: i.second) {
               if (k0) k0 = false; else os << " ";
               os << k;
             }
-          }
         }
 
         os << "₎";
@@ -1638,7 +1628,7 @@ namespace mli {
   // to ml to allow for the head unification to produce a premise.
   val<formula> merge(const val<formula>& x, const val<formula>& y,
     const val<formula>& h, const val<formula>& b, metalevel_t ml,
-    const varied_type& vs, const varied_type& vrs) {
+    const varied_type& vs, const varied_in_reduction_type& vrs) {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
@@ -1731,7 +1721,7 @@ namespace mli {
 
   alternative merge(const alternative& x, const alternative& y,
     const val<formula>& h, const val<formula>& b, metalevel_t ml,
-    const varied_type& vs, const varied_type& vrs) {
+    const varied_type& vs, const varied_in_reduction_type& vrs) {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
@@ -1795,7 +1785,7 @@ namespace mli {
 
   alternatives merge(const alternatives& x, const alternatives& y,
     const val<formula>& h, const val<formula>& b, metalevel_t ml,
-    const varied_type& vs, const varied_type& vrs) {
+    const varied_type& vs, const varied_in_reduction_type& vrs) {
     alternatives as;
 
     for (auto& i: x)
@@ -1892,7 +1882,7 @@ namespace mli {
   // Add the premise x to the body of goal_, turning the latter
   // into an inference, if not alredy of that form.
   alternative alternative::add_premise(const val<formula>& x, metalevel_t ml,
-      const varied_type& vs, const varied_type& vrs) const {
+      const varied_type& vs, const varied_in_reduction_type& vrs) const {
     if (trace_value & trace_unify) {
       std::lock_guard<std::recursive_mutex> guard(write_mutex);
       std::clog
@@ -1982,7 +1972,7 @@ namespace mli {
 
 
   alternatives alternatives::add_premise(const val<formula>& x, metalevel_t ml,
-      const varied_type& vs, const varied_type& vrs) const {
+      const varied_type& vs, const varied_in_reduction_type& vrs) const {
 
     if (x->provable())  return *this;
 

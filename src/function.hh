@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2025 Hans Åberg.
+/* Copyright (C) 2017, 2021-2026 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -55,7 +55,7 @@ namespace mli {
     // Variables varied of a premise vs, variables varied in reduction vrs, associated
     // with the formulas set variable fsv, and offset m, the position in the substituted premise
     // at where the varied variables should be inserted.
-    virtual void get_varied(varied_type& vvs, varied_type& vrs, const variable& fsv, size_type m) const {}
+    virtual void get_varied(varied_type& vvs, varied_in_reduction_type& vrs, const variable& fsv, size_type m) const {}
 
 
     virtual kleenean free_for(const val<formula>&, const val<variable>&,

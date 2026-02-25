@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2025 Hans Åberg.
+/* Copyright (C) 2017, 2021-2026 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -73,7 +73,7 @@ namespace mli {
     // Variables varied of a premise vs, variables varied in reduction vrs, associated
     // with the formulas set variable fsv, and offset m, the position in the substituted premise
     // at where the varied variables should be inserted.
-    virtual void get_varied(varied_type& vvs, varied_type& vrs, const variable& fsv, size_type m) const {}
+    virtual void get_varied(varied_type& vvs, varied_in_reduction_type& vrs, const variable& fsv, size_type m) const {}
 
 
     virtual kleenean free_for(const val<formula>&, const val<variable>&, 
@@ -122,7 +122,8 @@ namespace mli {
     size_type premise_index_ = 0;
     size_type conclusion_index_ = 0;
 
-    varied_type varied_, varied_in_reduction_;
+    varied_type varied_;
+    varied_in_reduction_type varied_in_reduction_;
 
 
   public:
@@ -136,7 +137,7 @@ namespace mli {
      : variable_(i), formula_(t) {}
 
     variable_substitution(const val<variable>& i, const val<formula>& t,
-      const varied_type& vs, const varied_type& vrs)
+      const varied_type& vs, const varied_in_reduction_type& vrs)
      : variable_(i), formula_(t), varied_(vs), varied_in_reduction_(vrs) {}
 
     variable_substitution(const val<variable>& i, const val<formula>& t, size_type px, size_type cx, bool v)
@@ -169,21 +170,18 @@ namespace mli {
         vs.insert(variable_);
     }
 
-
-    void get_varied(varied_type& vvs, varied_type& vrs, const variable& fsv, size_type m) const override {
+    void get_varied(varied_type& vvs, varied_in_reduction_type& vrs, const variable& fsv, size_type m) const override {
       if (*variable_ == fsv) {
         for (auto& i: varied_)
           for (auto& j: i.second)
             for (auto& k: j.second)
               vvs[i.first][j.first + m].insert(k);
 
-        for (auto& i: varied_in_reduction_)
-          for (auto& j: i.second)
+          for (auto& j: varied_in_reduction_)
             for (auto& k: j.second)
-                vrs[i.first][j.first + m].insert(k);
+                vrs[j.first + m].insert(k);
       }
     }
-
 
     virtual kleenean free_for(const val<formula>& f, const val<variable>& x, 
       std::set<val<variable>>& s, std::list<val<variable>>& bs) const;
@@ -298,7 +296,7 @@ namespace mli {
     void get_varied(std::set<val<variable>>& vs, metalevel_t ml) const override
     { inner_->get_varied(vs, ml); outer_->get_varied(vs, ml); }
 
-    void get_varied(varied_type& vvs, varied_type& vrs, const variable& fsv, size_type m) const override
+    void get_varied(varied_type& vvs, varied_in_reduction_type& vrs, const variable& fsv, size_type m) const override
     { inner_->get_varied(vvs, vrs, fsv, m); outer_->get_varied(vvs, vrs, fsv, m); }
 
 
@@ -449,7 +447,7 @@ namespace mli {
     alternative add_goal(const val<formula>& x) const;
 
     alternative add_premise(const val<formula>& x, metalevel_t,
-      const varied_type& vs, const varied_type& vrs) const;
+      const varied_type& vs, const varied_in_reduction_type& vrs) const;
 
     virtual size_type metasize() const { return goal_->metasize(); }
 
@@ -551,7 +549,7 @@ namespace mli {
     alternatives add_goal(const val<formula>& x) const;
 
     alternatives add_premise(const val<formula>& x, metalevel_t,
-      const varied_type& vs, const varied_type& vrs) const;
+      const varied_type& vs, const varied_in_reduction_type& vrs) const;
 
 
     // For use in recursive computations of unify:
@@ -590,11 +588,11 @@ namespace mli {
 
   alternative merge(const alternative& x, const alternative& y,
     const val<formula>& h, const val<formula>& b, metalevel_t ml,
-    const varied_type& vs, const varied_type& vrs);
+    const varied_type& vs, const varied_in_reduction_type& vrs);
 
   alternatives merge(const alternatives& x, const alternatives& y,
     const val<formula>& h, const val<formula>& b, metalevel_t ml,
-    const varied_type& vs, const varied_type& vrs);
+    const varied_type& vs, const varied_in_reduction_type& vrs);
 
 
   class proof : public unit {

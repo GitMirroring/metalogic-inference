@@ -1,4 +1,4 @@
-/* Copyright (C) 2017, 2021-2025 Hans Åberg.
+/* Copyright (C) 2017, 2021-2026 Hans Åberg.
 
    This file is part of MLI, MetaLogic Inference.
 
@@ -302,14 +302,17 @@ namespace mli {
   enum expansion { no_expand, expand };
 
 
-  // Type for indicating the set of varied variables of an inference, one set
-  // for each conclusion formula.
-  using varied_type = std::map<size_type, std::map<size_type, std::set<val<variable>>>>;
-
   // Type for indicating the set of varied variables of an inference,
   // having only one conclusion formula.
   using varied_premise_type = std::map<size_type, std::set<val<variable>>>;
 
+  // Type for indicating the set of varied variables of an inference, one set
+  // for each conclusion formula.
+  using varied_type = std::map<size_type, varied_premise_type>;
+
+  // Type for indicating the set of inference variables that are varied in
+  // reduction, one set for each conclusion formula.
+  using varied_in_reduction_type = std::map<size_type, std::set<val<variable>>>;
 
   // The root class of the dynamic polymorphic hierarchy.
   class unit {
@@ -543,7 +546,7 @@ namespace mli {
     // Add y as a premise to *this, creating inferences as necessary.
     // An empty formula is proved, so needs no premises:
     virtual val<formula> add_premise(const val<formula>& x, metalevel_t,
-      const varied_type& vs, const varied_type& vrs) const { return *this; }
+      const varied_type& vs, const varied_in_reduction_type& vrs) const { return *this; }
 
     // Metalevel:
     // 0  object formula 0
@@ -723,8 +726,7 @@ namespace mli {
     val<formula> add_goal(const val<formula>& x) const override;
 
     val<formula> add_premise(const val<formula>& x, metalevel_t,
-      const varied_type& vs, const varied_type& vrs) const override;
-
+      const varied_type& vs, const varied_in_reduction_type& vrs) const override;
 
     bool provable() const override { return false; }
 
@@ -1610,8 +1612,7 @@ namespace mli {
     val<formula> add_goal(const val<formula>& x) const override;
 
     val<formula> add_premise(const val<formula>& x, metalevel_t,
-      const varied_type& vs, const varied_type& vrs) const override;
-
+      const varied_type& vs, const varied_in_reduction_type& vrs) const override;
 
     virtual metalevel_t metalevel() const override;
 
@@ -1723,8 +1724,7 @@ namespace mli {
     // in a later reduction that unifies with a premise.
     // They are the same for each premise, but may vary with the conclusion index, thus
     // one variable set for each conclusion, implemented as a sparse vector.
-    varied_type varied_in_reduction_;
-
+    varied_in_reduction_type varied_in_reduction_;
 
     inference() = default;
 
@@ -1746,7 +1746,7 @@ namespace mli {
      : head_(h), body_(b), metalevel_(ml), varied_(vs) {}
 
     inference(const val<formula>& h, const val<formula>& b, metalevel_t ml,
-      const varied_type& vs, const varied_type& vrs)
+      const varied_type& vs, const varied_in_reduction_type& vrs)
      : head_(h), body_(b), metalevel_(ml), varied_(vs), varied_in_reduction_(vrs) {}
 
 
@@ -1757,11 +1757,10 @@ namespace mli {
      : head_(h), body_(b), metalevel_(ml) { if(!vs.empty()) varied_[0] = vs; }
 
     inference(const val<formula>& h, const val<formula>& b, metalevel_t ml,
-      const varied_premise_type& vs, const varied_premise_type& vrs)
+      const varied_premise_type& vs, const varied_in_reduction_type& vrs)
      : head_(h), body_(b), metalevel_(ml) {
        if(!vs.empty()) varied_[0] = vs;
-       if(!vrs.empty()) varied_in_reduction_[0] = vrs; }
-
+       if(!vrs.empty()) varied_in_reduction_ = vrs; }
 
     inference(const val<formula>& h, const std::list<val<formula>>& bfs, metalevel_t ml)
      : head_(h), body_(val<formula_sequence>(make, bfs)), metalevel_(ml) {}
@@ -1782,7 +1781,7 @@ namespace mli {
     inference& append(const val<formula>& x);
 
     val<formula> add_premise(const val<formula>& x, metalevel_t,
-      const varied_type& vs, const varied_type& vrs) const override;
+      const varied_type& vs, const varied_in_reduction_type& vrs) const override;
 
     virtual metalevel_t metalevel() const override { return metalevel_; }
 
