@@ -1,6 +1,6 @@
-This is mli.info, produced by makeinfo version 7.1 from mli.texi.
+This is mli.info, produced by makeinfo version 7.2 from mli.texi.
 
-This manual (27 December 2024) is for GNU MLI (version 0.1), the GNU
+This manual (30 December 2025) is for GNU MLI (version 0.1), the GNU
 MetaLogic Inference program.
 
    Copyright © 2017 Hans Åberg
@@ -27,7 +27,7 @@ File: mli.info,  Node: Top,  Next: Introduction,  Up: (dir)
 MLI
 ***
 
-This manual (27 December 2024) is for GNU MLI (version 0.1), the GNU
+This manual (30 December 2025) is for GNU MLI (version 0.1), the GNU
 MetaLogic Inference program.
 
    Copyright © 2017 Hans Åberg
@@ -98,7 +98,6 @@ Debugging
 
 * MLI Options::       The options available described in detail.
 * Option Cross Key::  Alphabetical list of options.
-
 
 
 
@@ -1984,40 +1983,40 @@ Index of Terms
 * well-formed formula:                   Formal Theories and Formal Proofs.
                                                               (line   6)
 
-
 
 Tag Table:
 Node: Top983
-Node: Introduction3377
-Node: Conditions3899
-Node: Copying4199
-Node: Concepts41734
-Node: Metatheory and Object Theory42723
-Node: Formal Theories and Formal Proofs45497
-Node: Proof Trees and Unification52148
-Node: The Propositional Calculus53492
-Node: The Predicate Calculus (Quantification Theory)57854
-Node: Theory with Equality58109
-Node: Formal Number Theory58306
-Node: Axiomatic Set Theory58477
-Node: Examples58619
-Node: Simple Propositional Calculus59007
-Node: Nested proofs77097
-Node: Input File77811
-Node: Interface77930
-Node: Algorithm78050
-Node: Debugging78195
-Node: Invocation78373
-Node: MLI Options79354
-Node: Option Cross Key81036
-Node: Table of Symbols81190
-Node: Glossary81379
-Node: Bibliography81706
-Node: Index of Terms82196
+Node: Introduction3376
+Node: Conditions3898
+Node: Copying4198
+Node: Concepts41733
+Node: Metatheory and Object Theory42722
+Node: Formal Theories and Formal Proofs45496
+Node: Proof Trees and Unification52147
+Node: The Propositional Calculus53491
+Node: The Predicate Calculus (Quantification Theory)57853
+Node: Theory with Equality58108
+Node: Formal Number Theory58305
+Node: Axiomatic Set Theory58476
+Node: Examples58618
+Node: Simple Propositional Calculus59006
+Node: Nested proofs77096
+Node: Input File77810
+Node: Interface77929
+Node: Algorithm78049
+Node: Debugging78194
+Node: Invocation78372
+Node: MLI Options79353
+Node: Option Cross Key81035
+Node: Table of Symbols81189
+Node: Glossary81378
+Node: Bibliography81705
+Node: Index of Terms82195
 
 End Tag Table
 
 
 Local Variables:
 coding: utf-8
+Info-documentlanguage: en
 End:
