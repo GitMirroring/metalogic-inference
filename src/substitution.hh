@@ -177,9 +177,10 @@ namespace mli {
             for (auto& k: j.second)
               vvs[i.first][j.first + m].insert(k);
 
-          for (auto& j: varied_in_reduction_)
+        for (auto& i: varied_in_reduction_)
+          for (auto& j: i.second)
             for (auto& k: j.second)
-                vrs[j.first + m].insert(k);
+                vrs[i.first][j.first + m].insert(k);
       }
     }
 
