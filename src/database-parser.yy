@@ -650,16 +650,11 @@
 %nterm <ref6<unit>> varied_variable_premise
 %nterm <ref6<unit>> varied_variable_set
 %nterm <ref6<unit>> varied_variable
-%nterm <ref6<unit>> optional_varied_in_reduction_variable_matrix
+%nterm <ref6<unit>> optional_varied_in_reduction_variable_sequence
 %nterm <ref6<unit>> varied_in_reduction_variable_conclusions
 %nterm <ref6<unit>> varied_in_reduction_variable_conclusion
-%nterm <ref6<unit>> varied_in_reduction_variable_premises
-%nterm <ref6<unit>> varied_in_reduction_variable_premise
 %nterm <ref6<unit>> varied_in_reduction_variable_set
 %nterm <ref6<unit>> varied_in_reduction_variable
-/*
-%nterm <ref6<unit>> optional_varied_in_reduction_variable_sequence
-*/
 %nterm <ref6<unit>> simple_metaformula
 %nterm <ref6<unit>> atomic_metaformula
 %nterm <ref6<unit>> special_metaformula
@@ -1647,7 +1642,7 @@ pure_metaformula:
       $$ = concatenate(val<formula>($x), val<formula>($y));
     }
   | metaformula[x] "⊩" optional_superscript_natural_number_value[k]
-      optional_varied_variable_matrix[m] optional_varied_in_reduction_variable_matrix[mr]
+      optional_varied_variable_matrix[m] optional_varied_in_reduction_variable_sequence[mr]
       metaformula[y] {
       size_type k = (size_type)$k;
 
@@ -1715,7 +1710,7 @@ pure_metaformula:
     }
 */
   | metaformula[x] "⊢" optional_superscript_natural_number_value[k]
-      optional_varied_variable_matrix[m] optional_varied_in_reduction_variable_matrix[mr]
+      optional_varied_variable_matrix[m] optional_varied_in_reduction_variable_sequence[mr]
       metaformula[y] {
       size_type k = (size_type)$k;
 
@@ -1868,106 +1863,20 @@ varied_variable:
 
 
 
-optional_varied_in_reduction_variable_matrix:
+optional_varied_in_reduction_variable_sequence:
     %empty {}
   | "₍" varied_in_reduction_variable_conclusions[cs] "₎" { $$ = $cs; }
-  | "₍" varied_in_reduction_variable_premises[ps] "₎"    { $$ = $ps; }
   | "₍" varied_in_reduction_variable_set[vs] "₎"         { $$ = $vs; }
 ;
 
 varied_in_reduction_variable_conclusions:
     varied_in_reduction_variable_conclusion
-  | varied_in_reduction_variable_conclusions[xs] ";" varied_in_reduction_variable_premises[x] {
+  | varied_in_reduction_variable_conclusions[xs] ";" varied_in_reduction_variable_conclusion[x] {
       inference& xs = dyn_cast<inference&>($xs);
       inference& x = dyn_cast<inference&>($x);
 
       for (auto& i: x.varied_in_reduction_)
-        for (auto& j: i.second)
-          xs.varied_in_reduction_[i.first][j.first].insert(j.second.begin(), j.second.end());
-
-      $$ = $xs;
-    }
-;
-
-varied_in_reduction_variable_conclusion:
-    subscript_natural_number_value[k] varied_in_reduction_variable_premises[xs] {
-      val<inference> i(make);
-      inference& xs = dyn_cast<inference&>($xs);
-      size_type k = (size_type)$k;
-
-      i->varied_in_reduction_[k].insert(xs.varied_in_reduction_[0].begin(), xs.varied_in_reduction_[0].end());
-      $$ = i;
-
-    }
-;
-
-
-varied_in_reduction_variable_premises:
-    varied_in_reduction_variable_premise
-  | varied_in_reduction_variable_premises[xs] "," varied_in_reduction_variable_premise[x] {
-      inference& xs = dyn_cast<inference&>($xs);
-      inference& x = dyn_cast<inference&>($x);
-
-      for (auto& j: x.varied_in_reduction_[0])
-        xs.varied_in_reduction_[0][j.first].insert(j.second.begin(), j.second.end());
-
-      $$ = $xs;
-    }
-;
-
-varied_in_reduction_variable_premise:
-    subscript_natural_number_value[k] varied_in_reduction_variable_set[xs] {
-      val<inference> i(make);
-      inference& xs = dyn_cast<inference&>($xs);
-      size_type k = (size_type)$k;
-
-      i->varied_in_reduction_[0][k].insert(xs.varied_in_reduction_[0][0].begin(), xs.varied_in_reduction_[0][0].end());
-
-      $$ = i;
-    }
-;
-
-varied_in_reduction_variable_set:
-    varied_in_reduction_variable
-  | varied_in_reduction_variable_set[xs] varied_in_reduction_variable[x] {
-      inference& xs = dyn_cast<inference&>($xs);
-      inference& x = dyn_cast<inference&>($x);
-
-      xs.varied_in_reduction_[0][0].insert(x.varied_in_reduction_[0][0].begin(), x.varied_in_reduction_[0][0].end());
-
-      $$ = $xs;
-    }
-;
-
-varied_in_reduction_variable:
-    object_variable[x] {
-      val<inference> i(make);
-      i->varied_in_reduction_[0][0].insert($x);
-      $$ = i;
-    }
-  | metaformula_variable[x] {
-      val<inference> i(make);
-      i->varied_in_reduction_[0][0].insert($x);
-      $$ = i;
-    }
-;
-
-
-/*
-optional_varied_in_reduction_variable_sequence:
-    %empty
-  | "₍" varied_in_reduction_variable_conclusions[ps] "₎"    { $$ = $ps; }
-  | "₍" varied_in_reduction_variable_set[vs] "₎"         { $$ = $vs; }
-;
-
-varied_in_reduction_variable_conclusions:
-    varied_in_reduction_variable_conclusion
-  | varied_in_reduction_variable_conclusion[xs] "," varied_in_reduction_variable_conclusion[x] {
-      inference& xs = dyn_cast<inference&>($xs);
-      inference& x = dyn_cast<inference&>($x);
-
-      for (auto& j: x.varied_in_reduction_)
-        xs.varied_in_reduction_[j.first].insert(j.second.begin(), j.second.end());
+        xs.varied_in_reduction_[i.first].insert(i.second.begin(), i.second.end());
 
       $$ = $xs;
     }
@@ -1980,10 +1889,11 @@ varied_in_reduction_variable_conclusion:
       size_type k = (size_type)$k;
 
       i->varied_in_reduction_[k].insert(xs.varied_in_reduction_[0].begin(), xs.varied_in_reduction_[0].end());
-
       $$ = i;
+
     }
 ;
+
 
 varied_in_reduction_variable_set:
     varied_in_reduction_variable
@@ -2009,7 +1919,6 @@ varied_in_reduction_variable:
       $$ = i;
     }
 ;
-*/
 
 
 simple_metaformula:

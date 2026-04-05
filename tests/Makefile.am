@@ -35,7 +35,7 @@ AM_MLI_LOG_FLAGS = $(abs_top_builddir) $(top_srcdir)
 
 SUBDIRS = . 
 
-AM_CXXFLAGS = -std=c++20
+AM_CXXFLAGS = -std=c++26
 
 clean:
 	rm -f *.1.{mlo,log}

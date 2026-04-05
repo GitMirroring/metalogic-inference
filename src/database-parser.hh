@@ -480,11 +480,9 @@ namespace mli {
       // varied_variable_premise
       // varied_variable_set
       // varied_variable
-      // optional_varied_in_reduction_variable_matrix
+      // optional_varied_in_reduction_variable_sequence
       // varied_in_reduction_variable_conclusions
       // varied_in_reduction_variable_conclusion
-      // varied_in_reduction_variable_premises
-      // varied_in_reduction_variable_premise
       // varied_in_reduction_variable_set
       // varied_in_reduction_variable
       // simple_metaformula
@@ -1085,66 +1083,64 @@ namespace mli {
         S_varied_variable_premise = 240,         // varied_variable_premise
         S_varied_variable_set = 241,             // varied_variable_set
         S_varied_variable = 242,                 // varied_variable
-        S_optional_varied_in_reduction_variable_matrix = 243, // optional_varied_in_reduction_variable_matrix
+        S_optional_varied_in_reduction_variable_sequence = 243, // optional_varied_in_reduction_variable_sequence
         S_varied_in_reduction_variable_conclusions = 244, // varied_in_reduction_variable_conclusions
         S_varied_in_reduction_variable_conclusion = 245, // varied_in_reduction_variable_conclusion
-        S_varied_in_reduction_variable_premises = 246, // varied_in_reduction_variable_premises
-        S_varied_in_reduction_variable_premise = 247, // varied_in_reduction_variable_premise
-        S_varied_in_reduction_variable_set = 248, // varied_in_reduction_variable_set
-        S_varied_in_reduction_variable = 249,    // varied_in_reduction_variable
-        S_simple_metaformula = 250,              // simple_metaformula
-        S_atomic_metaformula = 251,              // atomic_metaformula
-        S_special_metaformula = 252,             // special_metaformula
-        S_meta_object_free = 253,                // meta_object_free
-        S_metapredicate = 254,                   // metapredicate
-        S_metapredicate_function = 255,          // metapredicate_function
-        S_metapredicate_argument = 256,          // metapredicate_argument
-        S_metapredicate_argument_body = 257,     // metapredicate_argument_body
-        S_object_formula = 258,                  // object_formula
-        S_hoare_triple = 259,                    // hoare_triple
-        S_code_statement = 260,                  // code_statement
-        S_code_sequence = 261,                   // code_sequence
-        S_code_term = 262,                       // code_term
-        S_very_simple_formula = 263,             // very_simple_formula
-        S_quantized_formula = 264,               // quantized_formula
-        S_simple_formula = 265,                  // simple_formula
-        S_quantized_body = 266,                  // quantized_body
-        S_atomic_formula = 267,                  // atomic_formula
-        S_predicate = 268,                       // predicate
-        S_269_17 = 269,                          // $@17
-        S_270_18 = 270,                          // $@18
-        S_predicate_expression = 271,            // predicate_expression
-        S_predicate_identifier = 272,            // predicate_identifier
-        S_optional_superscript_natural_number_value = 273, // optional_superscript_natural_number_value
-        S_logic_formula = 274,                   // logic_formula
-        S_prefix_logic_formula = 275,            // prefix_logic_formula
-        S_quantizer_declaration = 276,           // quantizer_declaration
-        S_quantized_variable_list = 277,         // quantized_variable_list
-        S_all_variable_list = 278,               // all_variable_list
-        S_exist_variable_list = 279,             // exist_variable_list
-        S_exclusion_set = 280,                   // exclusion_set
-        S_281_19 = 281,                          // $@19
-        S_exclusion_list = 282,                  // exclusion_list
-        S_all_identifier_list = 283,             // all_identifier_list
-        S_284_20 = 284,                          // $@20
-        S_exist_identifier_list = 285,           // exist_identifier_list
-        S_286_21 = 286,                          // $@21
-        S_optional_in_term = 287,                // optional_in_term
-        S_tuple = 288,                           // tuple
-        S_tuple_body = 289,                      // tuple_body
-        S_term = 290,                            // term
-        S_simple_term = 291,                     // simple_term
-        S_term_identifier = 292,                 // term_identifier
-        S_variable_exclusion_set = 293,          // variable_exclusion_set
-        S_variable_exclusion_list = 294,         // variable_exclusion_list
-        S_bound_variable = 295,                  // bound_variable
-        S_function_term = 296,                   // function_term
-        S_set_term = 297,                        // set_term
-        S_implicit_set_identifier_list = 298,    // implicit_set_identifier_list
-        S_299_22 = 299,                          // $@22
-        S_300_23 = 300,                          // $@23
-        S_set_member_list = 301,                 // set_member_list
-        S_function_term_identifier = 302         // function_term_identifier
+        S_varied_in_reduction_variable_set = 246, // varied_in_reduction_variable_set
+        S_varied_in_reduction_variable = 247,    // varied_in_reduction_variable
+        S_simple_metaformula = 248,              // simple_metaformula
+        S_atomic_metaformula = 249,              // atomic_metaformula
+        S_special_metaformula = 250,             // special_metaformula
+        S_meta_object_free = 251,                // meta_object_free
+        S_metapredicate = 252,                   // metapredicate
+        S_metapredicate_function = 253,          // metapredicate_function
+        S_metapredicate_argument = 254,          // metapredicate_argument
+        S_metapredicate_argument_body = 255,     // metapredicate_argument_body
+        S_object_formula = 256,                  // object_formula
+        S_hoare_triple = 257,                    // hoare_triple
+        S_code_statement = 258,                  // code_statement
+        S_code_sequence = 259,                   // code_sequence
+        S_code_term = 260,                       // code_term
+        S_very_simple_formula = 261,             // very_simple_formula
+        S_quantized_formula = 262,               // quantized_formula
+        S_simple_formula = 263,                  // simple_formula
+        S_quantized_body = 264,                  // quantized_body
+        S_atomic_formula = 265,                  // atomic_formula
+        S_predicate = 266,                       // predicate
+        S_267_17 = 267,                          // $@17
+        S_268_18 = 268,                          // $@18
+        S_predicate_expression = 269,            // predicate_expression
+        S_predicate_identifier = 270,            // predicate_identifier
+        S_optional_superscript_natural_number_value = 271, // optional_superscript_natural_number_value
+        S_logic_formula = 272,                   // logic_formula
+        S_prefix_logic_formula = 273,            // prefix_logic_formula
+        S_quantizer_declaration = 274,           // quantizer_declaration
+        S_quantized_variable_list = 275,         // quantized_variable_list
+        S_all_variable_list = 276,               // all_variable_list
+        S_exist_variable_list = 277,             // exist_variable_list
+        S_exclusion_set = 278,                   // exclusion_set
+        S_279_19 = 279,                          // $@19
+        S_exclusion_list = 280,                  // exclusion_list
+        S_all_identifier_list = 281,             // all_identifier_list
+        S_282_20 = 282,                          // $@20
+        S_exist_identifier_list = 283,           // exist_identifier_list
+        S_284_21 = 284,                          // $@21
+        S_optional_in_term = 285,                // optional_in_term
+        S_tuple = 286,                           // tuple
+        S_tuple_body = 287,                      // tuple_body
+        S_term = 288,                            // term
+        S_simple_term = 289,                     // simple_term
+        S_term_identifier = 290,                 // term_identifier
+        S_variable_exclusion_set = 291,          // variable_exclusion_set
+        S_variable_exclusion_list = 292,         // variable_exclusion_list
+        S_bound_variable = 293,                  // bound_variable
+        S_function_term = 294,                   // function_term
+        S_set_term = 295,                        // set_term
+        S_implicit_set_identifier_list = 296,    // implicit_set_identifier_list
+        S_297_22 = 297,                          // $@22
+        S_298_23 = 298,                          // $@23
+        S_set_member_list = 299,                 // set_member_list
+        S_function_term_identifier = 300         // function_term_identifier
       };
     };
 
@@ -1251,11 +1247,9 @@ namespace mli {
       case symbol_kind::S_varied_variable_premise: // varied_variable_premise
       case symbol_kind::S_varied_variable_set: // varied_variable_set
       case symbol_kind::S_varied_variable: // varied_variable
-      case symbol_kind::S_optional_varied_in_reduction_variable_matrix: // optional_varied_in_reduction_variable_matrix
+      case symbol_kind::S_optional_varied_in_reduction_variable_sequence: // optional_varied_in_reduction_variable_sequence
       case symbol_kind::S_varied_in_reduction_variable_conclusions: // varied_in_reduction_variable_conclusions
       case symbol_kind::S_varied_in_reduction_variable_conclusion: // varied_in_reduction_variable_conclusion
-      case symbol_kind::S_varied_in_reduction_variable_premises: // varied_in_reduction_variable_premises
-      case symbol_kind::S_varied_in_reduction_variable_premise: // varied_in_reduction_variable_premise
       case symbol_kind::S_varied_in_reduction_variable_set: // varied_in_reduction_variable_set
       case symbol_kind::S_varied_in_reduction_variable: // varied_in_reduction_variable
       case symbol_kind::S_simple_metaformula: // simple_metaformula
@@ -1646,11 +1640,9 @@ switch (yykind)
       case symbol_kind::S_varied_variable_premise: // varied_variable_premise
       case symbol_kind::S_varied_variable_set: // varied_variable_set
       case symbol_kind::S_varied_variable: // varied_variable
-      case symbol_kind::S_optional_varied_in_reduction_variable_matrix: // optional_varied_in_reduction_variable_matrix
+      case symbol_kind::S_optional_varied_in_reduction_variable_sequence: // optional_varied_in_reduction_variable_sequence
       case symbol_kind::S_varied_in_reduction_variable_conclusions: // varied_in_reduction_variable_conclusions
       case symbol_kind::S_varied_in_reduction_variable_conclusion: // varied_in_reduction_variable_conclusion
-      case symbol_kind::S_varied_in_reduction_variable_premises: // varied_in_reduction_variable_premises
-      case symbol_kind::S_varied_in_reduction_variable_premise: // varied_in_reduction_variable_premise
       case symbol_kind::S_varied_in_reduction_variable_set: // varied_in_reduction_variable_set
       case symbol_kind::S_varied_in_reduction_variable: // varied_in_reduction_variable
       case symbol_kind::S_simple_metaformula: // simple_metaformula
@@ -4657,7 +4649,7 @@ switch (yykind)
     enum
     {
       yylast_ = 1822,     ///< Last index in yytable_.
-      yynnts_ = 147,  ///< Number of nonterminal symbols.
+      yynnts_ = 145,  ///< Number of nonterminal symbols.
       yyfinal_ = 6 ///< Termination state number.
     };
 
@@ -4671,7 +4663,7 @@ switch (yykind)
 
 #line 25 "../../mli-root/src/database-parser.yy"
 } // mli
-#line 4675 "../../mli-root/src/database-parser.hh"
+#line 4667 "../../mli-root/src/database-parser.hh"
 
 
 // "%code provides" blocks.
@@ -4724,7 +4716,7 @@ switch (yykind)
   } // namespace mli
 
 
-#line 4728 "../../mli-root/src/database-parser.hh"
+#line 4720 "../../mli-root/src/database-parser.hh"
 
 
 #endif // !YY_MLI_MLI_ROOT_SRC_DATABASE_PARSER_HH_INCLUDED

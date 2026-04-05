@@ -436,11 +436,9 @@ namespace mli {
       case symbol_kind::S_varied_variable_premise: // varied_variable_premise
       case symbol_kind::S_varied_variable_set: // varied_variable_set
       case symbol_kind::S_varied_variable: // varied_variable
-      case symbol_kind::S_optional_varied_in_reduction_variable_matrix: // optional_varied_in_reduction_variable_matrix
+      case symbol_kind::S_optional_varied_in_reduction_variable_sequence: // optional_varied_in_reduction_variable_sequence
       case symbol_kind::S_varied_in_reduction_variable_conclusions: // varied_in_reduction_variable_conclusions
       case symbol_kind::S_varied_in_reduction_variable_conclusion: // varied_in_reduction_variable_conclusion
-      case symbol_kind::S_varied_in_reduction_variable_premises: // varied_in_reduction_variable_premises
-      case symbol_kind::S_varied_in_reduction_variable_premise: // varied_in_reduction_variable_premise
       case symbol_kind::S_varied_in_reduction_variable_set: // varied_in_reduction_variable_set
       case symbol_kind::S_varied_in_reduction_variable: // varied_in_reduction_variable
       case symbol_kind::S_simple_metaformula: // simple_metaformula
@@ -689,11 +687,9 @@ namespace mli {
       case symbol_kind::S_varied_variable_premise: // varied_variable_premise
       case symbol_kind::S_varied_variable_set: // varied_variable_set
       case symbol_kind::S_varied_variable: // varied_variable
-      case symbol_kind::S_optional_varied_in_reduction_variable_matrix: // optional_varied_in_reduction_variable_matrix
+      case symbol_kind::S_optional_varied_in_reduction_variable_sequence: // optional_varied_in_reduction_variable_sequence
       case symbol_kind::S_varied_in_reduction_variable_conclusions: // varied_in_reduction_variable_conclusions
       case symbol_kind::S_varied_in_reduction_variable_conclusion: // varied_in_reduction_variable_conclusion
-      case symbol_kind::S_varied_in_reduction_variable_premises: // varied_in_reduction_variable_premises
-      case symbol_kind::S_varied_in_reduction_variable_premise: // varied_in_reduction_variable_premise
       case symbol_kind::S_varied_in_reduction_variable_set: // varied_in_reduction_variable_set
       case symbol_kind::S_varied_in_reduction_variable: // varied_in_reduction_variable
       case symbol_kind::S_simple_metaformula: // simple_metaformula
@@ -1012,11 +1008,9 @@ namespace mli {
       case symbol_kind::S_varied_variable_premise: // varied_variable_premise
       case symbol_kind::S_varied_variable_set: // varied_variable_set
       case symbol_kind::S_varied_variable: // varied_variable
-      case symbol_kind::S_optional_varied_in_reduction_variable_matrix: // optional_varied_in_reduction_variable_matrix
+      case symbol_kind::S_optional_varied_in_reduction_variable_sequence: // optional_varied_in_reduction_variable_sequence
       case symbol_kind::S_varied_in_reduction_variable_conclusions: // varied_in_reduction_variable_conclusions
       case symbol_kind::S_varied_in_reduction_variable_conclusion: // varied_in_reduction_variable_conclusion
-      case symbol_kind::S_varied_in_reduction_variable_premises: // varied_in_reduction_variable_premises
-      case symbol_kind::S_varied_in_reduction_variable_premise: // varied_in_reduction_variable_premise
       case symbol_kind::S_varied_in_reduction_variable_set: // varied_in_reduction_variable_set
       case symbol_kind::S_varied_in_reduction_variable: // varied_in_reduction_variable
       case symbol_kind::S_simple_metaformula: // simple_metaformula
@@ -1249,11 +1243,9 @@ namespace mli {
       case symbol_kind::S_varied_variable_premise: // varied_variable_premise
       case symbol_kind::S_varied_variable_set: // varied_variable_set
       case symbol_kind::S_varied_variable: // varied_variable
-      case symbol_kind::S_optional_varied_in_reduction_variable_matrix: // optional_varied_in_reduction_variable_matrix
+      case symbol_kind::S_optional_varied_in_reduction_variable_sequence: // optional_varied_in_reduction_variable_sequence
       case symbol_kind::S_varied_in_reduction_variable_conclusions: // varied_in_reduction_variable_conclusions
       case symbol_kind::S_varied_in_reduction_variable_conclusion: // varied_in_reduction_variable_conclusion
-      case symbol_kind::S_varied_in_reduction_variable_premises: // varied_in_reduction_variable_premises
-      case symbol_kind::S_varied_in_reduction_variable_premise: // varied_in_reduction_variable_premise
       case symbol_kind::S_varied_in_reduction_variable_set: // varied_in_reduction_variable_set
       case symbol_kind::S_varied_in_reduction_variable: // varied_in_reduction_variable
       case symbol_kind::S_simple_metaformula: // simple_metaformula
@@ -1486,11 +1478,9 @@ namespace mli {
       case symbol_kind::S_varied_variable_premise: // varied_variable_premise
       case symbol_kind::S_varied_variable_set: // varied_variable_set
       case symbol_kind::S_varied_variable: // varied_variable
-      case symbol_kind::S_optional_varied_in_reduction_variable_matrix: // optional_varied_in_reduction_variable_matrix
+      case symbol_kind::S_optional_varied_in_reduction_variable_sequence: // optional_varied_in_reduction_variable_sequence
       case symbol_kind::S_varied_in_reduction_variable_conclusions: // varied_in_reduction_variable_conclusions
       case symbol_kind::S_varied_in_reduction_variable_conclusion: // varied_in_reduction_variable_conclusion
-      case symbol_kind::S_varied_in_reduction_variable_premises: // varied_in_reduction_variable_premises
-      case symbol_kind::S_varied_in_reduction_variable_premise: // varied_in_reduction_variable_premise
       case symbol_kind::S_varied_in_reduction_variable_set: // varied_in_reduction_variable_set
       case symbol_kind::S_varied_in_reduction_variable: // varied_in_reduction_variable
       case symbol_kind::S_simple_metaformula: // simple_metaformula
@@ -1722,11 +1712,9 @@ namespace mli {
       case symbol_kind::S_varied_variable_premise: // varied_variable_premise
       case symbol_kind::S_varied_variable_set: // varied_variable_set
       case symbol_kind::S_varied_variable: // varied_variable
-      case symbol_kind::S_optional_varied_in_reduction_variable_matrix: // optional_varied_in_reduction_variable_matrix
+      case symbol_kind::S_optional_varied_in_reduction_variable_sequence: // optional_varied_in_reduction_variable_sequence
       case symbol_kind::S_varied_in_reduction_variable_conclusions: // varied_in_reduction_variable_conclusions
       case symbol_kind::S_varied_in_reduction_variable_conclusion: // varied_in_reduction_variable_conclusion
-      case symbol_kind::S_varied_in_reduction_variable_premises: // varied_in_reduction_variable_premises
-      case symbol_kind::S_varied_in_reduction_variable_premise: // varied_in_reduction_variable_premise
       case symbol_kind::S_varied_in_reduction_variable_set: // varied_in_reduction_variable_set
       case symbol_kind::S_varied_in_reduction_variable: // varied_in_reduction_variable
       case symbol_kind::S_simple_metaformula: // simple_metaformula
@@ -2031,7 +2019,7 @@ namespace mli {
   yyla.location.initialize(&infile_name); // Initialize the initial location.
 }
 
-#line 2035 "../../mli-root/src/database-parser.cc"
+#line 2023 "../../mli-root/src/database-parser.cc"
 
 
     /* Initialize the stack.  The initial state will be set in
@@ -2221,11 +2209,9 @@ namespace mli {
       case symbol_kind::S_varied_variable_premise: // varied_variable_premise
       case symbol_kind::S_varied_variable_set: // varied_variable_set
       case symbol_kind::S_varied_variable: // varied_variable
-      case symbol_kind::S_optional_varied_in_reduction_variable_matrix: // optional_varied_in_reduction_variable_matrix
+      case symbol_kind::S_optional_varied_in_reduction_variable_sequence: // optional_varied_in_reduction_variable_sequence
       case symbol_kind::S_varied_in_reduction_variable_conclusions: // varied_in_reduction_variable_conclusions
       case symbol_kind::S_varied_in_reduction_variable_conclusion: // varied_in_reduction_variable_conclusion
-      case symbol_kind::S_varied_in_reduction_variable_premises: // varied_in_reduction_variable_premises
-      case symbol_kind::S_varied_in_reduction_variable_premise: // varied_in_reduction_variable_premise
       case symbol_kind::S_varied_in_reduction_variable_set: // varied_in_reduction_variable_set
       case symbol_kind::S_varied_in_reduction_variable: // varied_in_reduction_variable
       case symbol_kind::S_simple_metaformula: // simple_metaformula
@@ -2394,240 +2380,240 @@ namespace mli {
           switch (yyn)
             {
   case 2: // file: %empty
-#line 787 "../../mli-root/src/database-parser.yy"
+#line 782 "../../mli-root/src/database-parser.yy"
            {}
-#line 2400 "../../mli-root/src/database-parser.cc"
+#line 2386 "../../mli-root/src/database-parser.cc"
     break;
 
   case 3: // file: file_contents
-#line 788 "../../mli-root/src/database-parser.yy"
+#line 783 "../../mli-root/src/database-parser.yy"
                   {}
-#line 2406 "../../mli-root/src/database-parser.cc"
+#line 2392 "../../mli-root/src/database-parser.cc"
     break;
 
   case 4: // file: error
-#line 789 "../../mli-root/src/database-parser.yy"
+#line 784 "../../mli-root/src/database-parser.yy"
           {
       declaration_context = false;
       bound_variable_type = free_variable_context;
       YYABORT;
     }
-#line 2416 "../../mli-root/src/database-parser.cc"
+#line 2402 "../../mli-root/src/database-parser.cc"
     break;
 
   case 5: // file_contents: file_contents command
-#line 798 "../../mli-root/src/database-parser.yy"
+#line 793 "../../mli-root/src/database-parser.yy"
                           {}
-#line 2422 "../../mli-root/src/database-parser.cc"
+#line 2408 "../../mli-root/src/database-parser.cc"
     break;
 
   case 6: // file_contents: command
-#line 799 "../../mli-root/src/database-parser.yy"
+#line 794 "../../mli-root/src/database-parser.yy"
                           {}
-#line 2428 "../../mli-root/src/database-parser.cc"
+#line 2414 "../../mli-root/src/database-parser.cc"
     break;
 
   case 7: // $@1: %empty
-#line 804 "../../mli-root/src/database-parser.yy"
+#line 799 "../../mli-root/src/database-parser.yy"
     { symbol_table.clear(); }
-#line 2434 "../../mli-root/src/database-parser.cc"
+#line 2420 "../../mli-root/src/database-parser.cc"
     break;
 
   case 8: // command: $@1 theory
-#line 804 "../../mli-root/src/database-parser.yy"
+#line 799 "../../mli-root/src/database-parser.yy"
                                      {}
-#line 2440 "../../mli-root/src/database-parser.cc"
+#line 2426 "../../mli-root/src/database-parser.cc"
     break;
 
   case 9: // metaformula_substitution_sequence: substitution_for_metaformula
-#line 809 "../../mli-root/src/database-parser.yy"
+#line 804 "../../mli-root/src/database-parser.yy"
                                     { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 2446 "../../mli-root/src/database-parser.cc"
+#line 2432 "../../mli-root/src/database-parser.cc"
     break;
 
   case 10: // metaformula_substitution_sequence: metaformula_substitution_sequence substitution_for_metaformula
-#line 810 "../../mli-root/src/database-parser.yy"
+#line 805 "../../mli-root/src/database-parser.yy"
                                                                          {
       yylhs.value.as < ref6<unit> > () =  val<substitution>(yystack_[1].value.as < ref6<unit> > ()) * val<substitution>(yystack_[0].value.as < ref6<unit> > ());
     }
-#line 2454 "../../mli-root/src/database-parser.cc"
+#line 2440 "../../mli-root/src/database-parser.cc"
     break;
 
   case 11: // substitution_for_metaformula: metaformula_substitution
-#line 817 "../../mli-root/src/database-parser.yy"
+#line 812 "../../mli-root/src/database-parser.yy"
                                 { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 2460 "../../mli-root/src/database-parser.cc"
+#line 2446 "../../mli-root/src/database-parser.cc"
     break;
 
   case 12: // substitution_for_metaformula: formula_substitution
-#line 818 "../../mli-root/src/database-parser.yy"
+#line 813 "../../mli-root/src/database-parser.yy"
                             { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 2466 "../../mli-root/src/database-parser.cc"
+#line 2452 "../../mli-root/src/database-parser.cc"
     break;
 
   case 13: // substitution_for_metaformula: term_substitution
-#line 819 "../../mli-root/src/database-parser.yy"
+#line 814 "../../mli-root/src/database-parser.yy"
                          { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 2472 "../../mli-root/src/database-parser.cc"
+#line 2458 "../../mli-root/src/database-parser.cc"
     break;
 
   case 14: // metaformula_substitution: "[" "metaformula variable" "⤇" metaformula "]"
-#line 824 "../../mli-root/src/database-parser.yy"
+#line 819 "../../mli-root/src/database-parser.yy"
                                                        {
       val<variable> v(yystack_[3].value.as < val<unit> > ());
       val<formula> f(yystack_[1].value.as < ref6<unit> > ());
       yylhs.value.as < ref6<unit> > () = val<explicit_substitution>(make, v, f);
     }
-#line 2482 "../../mli-root/src/database-parser.cc"
+#line 2468 "../../mli-root/src/database-parser.cc"
     break;
 
   case 15: // formula_substitution_sequence: substitution_for_formula
-#line 833 "../../mli-root/src/database-parser.yy"
+#line 828 "../../mli-root/src/database-parser.yy"
                                 { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 2488 "../../mli-root/src/database-parser.cc"
+#line 2474 "../../mli-root/src/database-parser.cc"
     break;
 
   case 16: // formula_substitution_sequence: formula_substitution_sequence substitution_for_formula
-#line 834 "../../mli-root/src/database-parser.yy"
+#line 829 "../../mli-root/src/database-parser.yy"
                                                                  {
       yylhs.value.as < ref6<unit> > () = val<substitution>(yystack_[1].value.as < ref6<unit> > ()) * val<substitution>(yystack_[0].value.as < ref6<unit> > ());
     }
-#line 2496 "../../mli-root/src/database-parser.cc"
+#line 2482 "../../mli-root/src/database-parser.cc"
     break;
 
   case 17: // substitution_for_formula: formula_substitution
-#line 841 "../../mli-root/src/database-parser.yy"
+#line 836 "../../mli-root/src/database-parser.yy"
                             { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 2502 "../../mli-root/src/database-parser.cc"
+#line 2488 "../../mli-root/src/database-parser.cc"
     break;
 
   case 18: // substitution_for_formula: term_substitution
-#line 842 "../../mli-root/src/database-parser.yy"
+#line 837 "../../mli-root/src/database-parser.yy"
                          { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 2508 "../../mli-root/src/database-parser.cc"
+#line 2494 "../../mli-root/src/database-parser.cc"
     break;
 
   case 19: // formula_substitution: "[" "object formula variable" "⤇" object_formula "]"
-#line 847 "../../mli-root/src/database-parser.yy"
+#line 842 "../../mli-root/src/database-parser.yy"
                                                              {
       val<variable> v(yystack_[3].value.as < val<unit> > ());
       val<formula> f(yystack_[1].value.as < ref6<unit> > ());
       yylhs.value.as < ref6<unit> > () = val<explicit_substitution>(make, v, f);
     }
-#line 2518 "../../mli-root/src/database-parser.cc"
+#line 2504 "../../mli-root/src/database-parser.cc"
     break;
 
   case 20: // formula_substitution: "[" "predicate variable" "⤇" predicate "]"
-#line 852 "../../mli-root/src/database-parser.yy"
+#line 847 "../../mli-root/src/database-parser.yy"
                                                    {
       val<variable> v(yystack_[3].value.as < val<unit> > ());
       val<formula> f(yystack_[1].value.as < ref6<unit> > ());
       yylhs.value.as < ref6<unit> > () = val<explicit_substitution>(make, v, f);
     }
-#line 2528 "../../mli-root/src/database-parser.cc"
+#line 2514 "../../mli-root/src/database-parser.cc"
     break;
 
   case 21: // formula_substitution: "[" "atom variable" "⤇" "atom constant" "]"
-#line 857 "../../mli-root/src/database-parser.yy"
+#line 852 "../../mli-root/src/database-parser.yy"
                                                   {
       val<variable> v(yystack_[3].value.as < val<unit> > ());
       val<formula> f(yystack_[1].value.as < val<unit> > ());
       yylhs.value.as < ref6<unit> > () = val<explicit_substitution>(make, v, f);
     }
-#line 2538 "../../mli-root/src/database-parser.cc"
+#line 2524 "../../mli-root/src/database-parser.cc"
     break;
 
   case 22: // term_substitution_sequence: term_substitution
-#line 866 "../../mli-root/src/database-parser.yy"
+#line 861 "../../mli-root/src/database-parser.yy"
                          { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 2544 "../../mli-root/src/database-parser.cc"
+#line 2530 "../../mli-root/src/database-parser.cc"
     break;
 
   case 23: // term_substitution_sequence: term_substitution_sequence term_substitution
-#line 867 "../../mli-root/src/database-parser.yy"
+#line 862 "../../mli-root/src/database-parser.yy"
                                                        {
       yylhs.value.as < ref6<unit> > () = val<substitution>(yystack_[1].value.as < ref6<unit> > ()) * val<substitution>(yystack_[0].value.as < ref6<unit> > ());
     }
-#line 2552 "../../mli-root/src/database-parser.cc"
+#line 2538 "../../mli-root/src/database-parser.cc"
     break;
 
   case 24: // term_substitution: "[" term_identifier "⤇" term "]"
-#line 874 "../../mli-root/src/database-parser.yy"
+#line 869 "../../mli-root/src/database-parser.yy"
                                            {
       val<variable> v(yystack_[3].value.as < ref6<unit> > ());
       val<formula> f(yystack_[1].value.as < ref6<unit> > ());
       yylhs.value.as < ref6<unit> > () = val<explicit_substitution>(make, v, f);
     }
-#line 2562 "../../mli-root/src/database-parser.cc"
+#line 2548 "../../mli-root/src/database-parser.cc"
     break;
 
   case 25: // predicate_function_application: "(" "object variable" "↦" object_formula ")" tuple
-#line 883 "../../mli-root/src/database-parser.yy"
+#line 878 "../../mli-root/src/database-parser.yy"
                                                               {
       yylhs.value.as < ref6<unit> > () = val<function_application>(make, val<function_map>(make, yystack_[4].value.as < val<unit> > (), yystack_[2].value.as < ref6<unit> > ()), yystack_[0].value.as < ref6<unit> > ());
+    }
+#line 2556 "../../mli-root/src/database-parser.cc"
+    break;
+
+  case 26: // $@2: %empty
+#line 881 "../../mli-root/src/database-parser.yy"
+                                                           { symbol_table.pop_level(); }
+#line 2562 "../../mli-root/src/database-parser.cc"
+    break;
+
+  case 27: // predicate_function_application: "(" "𝛌" "function map variable" "↦" object_formula $@2 ")" tuple
+#line 881 "../../mli-root/src/database-parser.yy"
+                                                                                                      {
+      yylhs.value.as < ref6<unit> > () = val<function_application>(make, val<function_map>(make, yystack_[5].value.as < val<unit> > (), yystack_[3].value.as < ref6<unit> > ()), yystack_[0].value.as < ref6<unit> > ());
     }
 #line 2570 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 26: // $@2: %empty
-#line 886 "../../mli-root/src/database-parser.yy"
-                                                           { symbol_table.pop_level(); }
+  case 28: // predicate_function_application: "predicate" tuple
+#line 884 "../../mli-root/src/database-parser.yy"
+                              { yylhs.value.as < ref6<unit> > () = val<function_application>(make, yystack_[1].value.as < val<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
 #line 2576 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 27: // predicate_function_application: "(" "𝛌" "function map variable" "↦" object_formula $@2 ")" tuple
-#line 886 "../../mli-root/src/database-parser.yy"
-                                                                                                      {
-      yylhs.value.as < ref6<unit> > () = val<function_application>(make, val<function_map>(make, yystack_[5].value.as < val<unit> > (), yystack_[3].value.as < ref6<unit> > ()), yystack_[0].value.as < ref6<unit> > ());
+  case 29: // term_function_application: "(" "object variable" "↦" term ")" tuple
+#line 889 "../../mli-root/src/database-parser.yy"
+                                                    {
+      yylhs.value.as < ref6<unit> > () = val<function_application>(make, val<function_map>(make, yystack_[4].value.as < val<unit> > (), yystack_[2].value.as < ref6<unit> > ()), yystack_[0].value.as < ref6<unit> > ());
     }
 #line 2584 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 28: // predicate_function_application: "predicate" tuple
-#line 889 "../../mli-root/src/database-parser.yy"
-                              { yylhs.value.as < ref6<unit> > () = val<function_application>(make, yystack_[1].value.as < val<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
+  case 30: // $@3: %empty
+#line 892 "../../mli-root/src/database-parser.yy"
+                                                 { symbol_table.pop_level(); }
 #line 2590 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 29: // term_function_application: "(" "object variable" "↦" term ")" tuple
-#line 894 "../../mli-root/src/database-parser.yy"
-                                                    {
-      yylhs.value.as < ref6<unit> > () = val<function_application>(make, val<function_map>(make, yystack_[4].value.as < val<unit> > (), yystack_[2].value.as < ref6<unit> > ()), yystack_[0].value.as < ref6<unit> > ());
+  case 31: // term_function_application: "(" "𝛌" "function map variable" "↦" term $@3 ")" tuple
+#line 892 "../../mli-root/src/database-parser.yy"
+                                                                                            {
+      yylhs.value.as < ref6<unit> > () = val<function_application>(make, val<function_map>(make, yystack_[5].value.as < val<unit> > (), yystack_[3].value.as < ref6<unit> > ()), yystack_[0].value.as < ref6<unit> > ());
     }
 #line 2598 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 30: // $@3: %empty
-#line 897 "../../mli-root/src/database-parser.yy"
-                                                 { symbol_table.pop_level(); }
+  case 32: // term_function_application: "function" tuple
+#line 895 "../../mli-root/src/database-parser.yy"
+                             { yylhs.value.as < ref6<unit> > () = val<function_application>(make, yystack_[1].value.as < val<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
 #line 2604 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 31: // term_function_application: "(" "𝛌" "function map variable" "↦" term $@3 ")" tuple
-#line 897 "../../mli-root/src/database-parser.yy"
-                                                                                            {
-      yylhs.value.as < ref6<unit> > () = val<function_application>(make, val<function_map>(make, yystack_[5].value.as < val<unit> > (), yystack_[3].value.as < ref6<unit> > ()), yystack_[0].value.as < ref6<unit> > ());
-    }
-#line 2612 "../../mli-root/src/database-parser.cc"
-    break;
-
-  case 32: // term_function_application: "function" tuple
-#line 900 "../../mli-root/src/database-parser.yy"
-                             { yylhs.value.as < ref6<unit> > () = val<function_application>(make, yystack_[1].value.as < val<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 2618 "../../mli-root/src/database-parser.cc"
-    break;
-
   case 33: // $@4: %empty
-#line 906 "../../mli-root/src/database-parser.yy"
+#line 901 "../../mli-root/src/database-parser.yy"
         { theory_ = ref1<theory>(make, yystack_[1].value.as < std::string > ());
           yypval.insert(theory_);
           symbol_table.push_level();
     }
-#line 2627 "../../mli-root/src/database-parser.cc"
+#line 2613 "../../mli-root/src/database-parser.cc"
     break;
 
   case 34: // theory: "theory" statement_name "." $@4 include_theories theory_body "end" "theory" end_theory_name "."
-#line 912 "../../mli-root/src/database-parser.yy"
+#line 907 "../../mli-root/src/database-parser.yy"
                                           {
       if (yystack_[1].value.as < std::pair<std::string, bool> > ().second && yystack_[8].value.as < std::string > () != yystack_[1].value.as < std::pair<std::string, bool> > ().first) {
         database_parser::error(yystack_[1].location, "warning: Name mismatch, theory " + yystack_[8].value.as < std::string > ()
@@ -2636,35 +2622,35 @@ namespace mli {
 
       symbol_table.pop_level();
     }
-#line 2640 "../../mli-root/src/database-parser.cc"
+#line 2626 "../../mli-root/src/database-parser.cc"
     break;
 
   case 35: // end_theory_name: %empty
-#line 924 "../../mli-root/src/database-parser.yy"
+#line 919 "../../mli-root/src/database-parser.yy"
                        { yylhs.value.as < std::pair<std::string, bool> > () = std::make_pair(std::string{}, false); }
-#line 2646 "../../mli-root/src/database-parser.cc"
+#line 2632 "../../mli-root/src/database-parser.cc"
     break;
 
   case 36: // end_theory_name: statement_name
-#line 925 "../../mli-root/src/database-parser.yy"
+#line 920 "../../mli-root/src/database-parser.yy"
                        { yylhs.value.as < std::pair<std::string, bool> > () = std::make_pair(yystack_[0].value.as < std::string > (), true); }
-#line 2652 "../../mli-root/src/database-parser.cc"
+#line 2638 "../../mli-root/src/database-parser.cc"
     break;
 
   case 37: // include_theories: %empty
-#line 930 "../../mli-root/src/database-parser.yy"
+#line 925 "../../mli-root/src/database-parser.yy"
            {}
-#line 2658 "../../mli-root/src/database-parser.cc"
+#line 2644 "../../mli-root/src/database-parser.cc"
     break;
 
   case 38: // include_theories: include_theories include_theory
-#line 931 "../../mli-root/src/database-parser.yy"
+#line 926 "../../mli-root/src/database-parser.yy"
                                     {}
-#line 2664 "../../mli-root/src/database-parser.cc"
+#line 2650 "../../mli-root/src/database-parser.cc"
     break;
 
   case 39: // include_theory: "include" "theory" theory_name "."
-#line 935 "../../mli-root/src/database-parser.yy"
+#line 930 "../../mli-root/src/database-parser.yy"
                                          {
       std::optional<ref1<theory>> th = yypval.find(yystack_[1].value.as < std::string > ());
 
@@ -2673,152 +2659,152 @@ namespace mli {
 
       theory_->insert(*th);
     }
-#line 2677 "../../mli-root/src/database-parser.cc"
+#line 2663 "../../mli-root/src/database-parser.cc"
     break;
 
   case 40: // theory_name: "name"
-#line 947 "../../mli-root/src/database-parser.yy"
+#line 942 "../../mli-root/src/database-parser.yy"
                 { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
-#line 2683 "../../mli-root/src/database-parser.cc"
+#line 2669 "../../mli-root/src/database-parser.cc"
     break;
 
   case 41: // theory_name: "label"
-#line 948 "../../mli-root/src/database-parser.yy"
+#line 943 "../../mli-root/src/database-parser.yy"
                 { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
-#line 2689 "../../mli-root/src/database-parser.cc"
+#line 2675 "../../mli-root/src/database-parser.cc"
     break;
 
   case 42: // theory_body: theory_body_list
-#line 953 "../../mli-root/src/database-parser.yy"
+#line 948 "../../mli-root/src/database-parser.yy"
                      {}
-#line 2695 "../../mli-root/src/database-parser.cc"
+#line 2681 "../../mli-root/src/database-parser.cc"
     break;
 
   case 43: // theory_body: formal_system theory_body_list
-#line 954 "../../mli-root/src/database-parser.yy"
+#line 949 "../../mli-root/src/database-parser.yy"
                                    {}
-#line 2701 "../../mli-root/src/database-parser.cc"
+#line 2687 "../../mli-root/src/database-parser.cc"
     break;
 
   case 44: // $@5: %empty
-#line 960 "../../mli-root/src/database-parser.yy"
+#line 955 "../../mli-root/src/database-parser.yy"
     { symbol_table.push_level(); }
-#line 2707 "../../mli-root/src/database-parser.cc"
+#line 2693 "../../mli-root/src/database-parser.cc"
     break;
 
   case 45: // formal_system: "system" "name" "{" $@5 formal_system_body "}"
-#line 962 "../../mli-root/src/database-parser.yy"
+#line 957 "../../mli-root/src/database-parser.yy"
         { symbol_table.pop_level(); }
-#line 2713 "../../mli-root/src/database-parser.cc"
+#line 2699 "../../mli-root/src/database-parser.cc"
     break;
 
   case 46: // $@6: %empty
-#line 964 "../../mli-root/src/database-parser.yy"
+#line 959 "../../mli-root/src/database-parser.yy"
     { symbol_table.push_level(); }
-#line 2719 "../../mli-root/src/database-parser.cc"
+#line 2705 "../../mli-root/src/database-parser.cc"
     break;
 
   case 47: // formal_system: "formal system" "." $@6 formal_system_body "end" "formal system" "."
-#line 966 "../../mli-root/src/database-parser.yy"
+#line 961 "../../mli-root/src/database-parser.yy"
                               { symbol_table.pop_level(); }
-#line 2725 "../../mli-root/src/database-parser.cc"
+#line 2711 "../../mli-root/src/database-parser.cc"
     break;
 
   case 48: // formal_system_body: %empty
-#line 971 "../../mli-root/src/database-parser.yy"
+#line 966 "../../mli-root/src/database-parser.yy"
            {}
-#line 2731 "../../mli-root/src/database-parser.cc"
+#line 2717 "../../mli-root/src/database-parser.cc"
     break;
 
   case 49: // formal_system_body: formal_system_body formal_system_body_item
-#line 972 "../../mli-root/src/database-parser.yy"
+#line 967 "../../mli-root/src/database-parser.yy"
                                                {}
-#line 2737 "../../mli-root/src/database-parser.cc"
+#line 2723 "../../mli-root/src/database-parser.cc"
     break;
 
   case 50: // formal_system_body_item: identifier_declaration
-#line 977 "../../mli-root/src/database-parser.yy"
+#line 972 "../../mli-root/src/database-parser.yy"
                            {}
-#line 2743 "../../mli-root/src/database-parser.cc"
+#line 2729 "../../mli-root/src/database-parser.cc"
     break;
 
   case 51: // formal_system_body_item: postulate
-#line 978 "../../mli-root/src/database-parser.yy"
+#line 973 "../../mli-root/src/database-parser.yy"
                  { theory_->insert(ref4<statement>(yystack_[0].value.as < ref6<unit> > ())); }
-#line 2749 "../../mli-root/src/database-parser.cc"
+#line 2735 "../../mli-root/src/database-parser.cc"
     break;
 
   case 52: // formal_system_body_item: definition_labelstatement
-#line 979 "../../mli-root/src/database-parser.yy"
+#line 974 "../../mli-root/src/database-parser.yy"
                                  { theory_->insert(ref4<statement>(yystack_[0].value.as < val<definition> > ())); }
-#line 2755 "../../mli-root/src/database-parser.cc"
+#line 2741 "../../mli-root/src/database-parser.cc"
     break;
 
   case 53: // theory_body_list: %empty
-#line 984 "../../mli-root/src/database-parser.yy"
+#line 979 "../../mli-root/src/database-parser.yy"
            {}
-#line 2761 "../../mli-root/src/database-parser.cc"
+#line 2747 "../../mli-root/src/database-parser.cc"
     break;
 
   case 54: // theory_body_list: theory_body_list theory_body_item
-#line 985 "../../mli-root/src/database-parser.yy"
+#line 980 "../../mli-root/src/database-parser.yy"
                                       {}
-#line 2767 "../../mli-root/src/database-parser.cc"
+#line 2753 "../../mli-root/src/database-parser.cc"
     break;
 
   case 55: // theory_body_item: theorem
-#line 995 "../../mli-root/src/database-parser.yy"
+#line 990 "../../mli-root/src/database-parser.yy"
                { theory_->insert(ref4<statement>(yystack_[0].value.as < ref6<unit> > ())); }
-#line 2773 "../../mli-root/src/database-parser.cc"
+#line 2759 "../../mli-root/src/database-parser.cc"
     break;
 
   case 56: // theory_body_item: identifier_declaration
-#line 996 "../../mli-root/src/database-parser.yy"
+#line 991 "../../mli-root/src/database-parser.yy"
                            {}
-#line 2779 "../../mli-root/src/database-parser.cc"
+#line 2765 "../../mli-root/src/database-parser.cc"
     break;
 
   case 57: // theory_body_item: conjecture
-#line 997 "../../mli-root/src/database-parser.yy"
+#line 992 "../../mli-root/src/database-parser.yy"
                   { theory_->insert(ref4<statement>(yystack_[0].value.as < ref6<unit> > ())); }
-#line 2785 "../../mli-root/src/database-parser.cc"
+#line 2771 "../../mli-root/src/database-parser.cc"
     break;
 
   case 58: // theory_body_item: definition_labelstatement
-#line 999 "../../mli-root/src/database-parser.yy"
+#line 994 "../../mli-root/src/database-parser.yy"
                                  { theory_->insert(ref4<statement>(yystack_[0].value.as < val<definition> > ())); }
-#line 2791 "../../mli-root/src/database-parser.cc"
+#line 2777 "../../mli-root/src/database-parser.cc"
     break;
 
   case 59: // $@7: %empty
-#line 1005 "../../mli-root/src/database-parser.yy"
+#line 1000 "../../mli-root/src/database-parser.yy"
         { symbol_table.push_level(); }
-#line 2797 "../../mli-root/src/database-parser.cc"
+#line 2783 "../../mli-root/src/database-parser.cc"
     break;
 
   case 60: // postulate: "postulate" statement_name "." $@7 statement "."
-#line 1006 "../../mli-root/src/database-parser.yy"
+#line 1001 "../../mli-root/src/database-parser.yy"
                      {
       symbol_table.pop_level();
       yylhs.value.as < ref6<unit> > () = val<supposition>(make, supposition::postulate_, yystack_[4].value.as < std::string > (), yystack_[1].value.as < ref6<unit> > (), true);
     }
-#line 2806 "../../mli-root/src/database-parser.cc"
+#line 2792 "../../mli-root/src/database-parser.cc"
     break;
 
   case 61: // postulate: conjecture
-#line 1010 "../../mli-root/src/database-parser.yy"
+#line 1005 "../../mli-root/src/database-parser.yy"
     { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 2812 "../../mli-root/src/database-parser.cc"
+#line 2798 "../../mli-root/src/database-parser.cc"
     break;
 
   case 62: // $@8: %empty
-#line 1012 "../../mli-root/src/database-parser.yy"
+#line 1007 "../../mli-root/src/database-parser.yy"
         { symbol_table.push_level(); }
-#line 2818 "../../mli-root/src/database-parser.cc"
+#line 2804 "../../mli-root/src/database-parser.cc"
     break;
 
   case 63: // postulate: "axiom" statement_name "." $@8 statement "."
-#line 1013 "../../mli-root/src/database-parser.yy"
+#line 1008 "../../mli-root/src/database-parser.yy"
                      {
       symbol_table.pop_level();
 
@@ -2829,17 +2815,17 @@ namespace mli {
 
       yylhs.value.as < ref6<unit> > () = val<supposition>(make, supposition::postulate_, yystack_[4].value.as < std::string > (), f);
     }
-#line 2833 "../../mli-root/src/database-parser.cc"
+#line 2819 "../../mli-root/src/database-parser.cc"
     break;
 
   case 64: // $@9: %empty
-#line 1024 "../../mli-root/src/database-parser.yy"
+#line 1019 "../../mli-root/src/database-parser.yy"
         { symbol_table.push_level(); }
-#line 2839 "../../mli-root/src/database-parser.cc"
+#line 2825 "../../mli-root/src/database-parser.cc"
     break;
 
   case 65: // postulate: "rule" statement_name "." $@9 statement "."
-#line 1025 "../../mli-root/src/database-parser.yy"
+#line 1020 "../../mli-root/src/database-parser.yy"
                      {
       symbol_table.pop_level();
 
@@ -2850,59 +2836,59 @@ namespace mli {
 
       yylhs.value.as < ref6<unit> > () = val<supposition>(make, supposition::postulate_, yystack_[4].value.as < std::string > (), f);
     }
-#line 2854 "../../mli-root/src/database-parser.cc"
+#line 2840 "../../mli-root/src/database-parser.cc"
     break;
 
   case 66: // $@10: %empty
-#line 1040 "../../mli-root/src/database-parser.yy"
+#line 1035 "../../mli-root/src/database-parser.yy"
         { symbol_table.push_level(); }
-#line 2860 "../../mli-root/src/database-parser.cc"
+#line 2846 "../../mli-root/src/database-parser.cc"
     break;
 
   case 67: // conjecture: "conjecture" statement_name "." $@10 statement "."
-#line 1041 "../../mli-root/src/database-parser.yy"
+#line 1036 "../../mli-root/src/database-parser.yy"
                      {
       symbol_table.pop_level();
       yylhs.value.as < ref6<unit> > () = val<supposition>(make, supposition::conjecture_, yystack_[4].value.as < std::string > (), yystack_[1].value.as < ref6<unit> > (), true);
     }
-#line 2869 "../../mli-root/src/database-parser.cc"
+#line 2855 "../../mli-root/src/database-parser.cc"
     break;
 
   case 68: // $@11: %empty
-#line 1049 "../../mli-root/src/database-parser.yy"
+#line 1044 "../../mli-root/src/database-parser.yy"
         { symbol_table.push_level(); }
-#line 2875 "../../mli-root/src/database-parser.cc"
+#line 2861 "../../mli-root/src/database-parser.cc"
     break;
 
   case 69: // definition_labelstatement: "definition" statement_name "." $@11 definition_statement "."
-#line 1050 "../../mli-root/src/database-parser.yy"
+#line 1045 "../../mli-root/src/database-parser.yy"
                                 {
       symbol_table.pop_level();
       yylhs.value.as < val<definition> > () = val<definition>(make, yystack_[4].value.as < std::string > (), yystack_[1].value.as < ref6<unit> > ());
     }
-#line 2884 "../../mli-root/src/database-parser.cc"
+#line 2870 "../../mli-root/src/database-parser.cc"
     break;
 
   case 70: // statement_name: "name"
-#line 1058 "../../mli-root/src/database-parser.yy"
+#line 1053 "../../mli-root/src/database-parser.yy"
               { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
-#line 2890 "../../mli-root/src/database-parser.cc"
+#line 2876 "../../mli-root/src/database-parser.cc"
     break;
 
   case 71: // statement_name: "label"
-#line 1059 "../../mli-root/src/database-parser.yy"
+#line 1054 "../../mli-root/src/database-parser.yy"
                { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
-#line 2896 "../../mli-root/src/database-parser.cc"
+#line 2882 "../../mli-root/src/database-parser.cc"
     break;
 
   case 72: // statement_name: "natural number value"
-#line 1060 "../../mli-root/src/database-parser.yy"
+#line 1055 "../../mli-root/src/database-parser.yy"
                               { yylhs.value.as < std::string > () = yystack_[0].value.as < std::pair<std::string, integer> > ().first; }
-#line 2902 "../../mli-root/src/database-parser.cc"
+#line 2888 "../../mli-root/src/database-parser.cc"
     break;
 
   case 73: // theorem: theorem_statement proof
-#line 1065 "../../mli-root/src/database-parser.yy"
+#line 1060 "../../mli-root/src/database-parser.yy"
                             {
       yylhs.value.as < ref6<unit> > () = statement_stack_.back();
       ref4<statement> t(yylhs.value.as < ref6<unit> > ()); // The theorem.
@@ -2910,106 +2896,106 @@ namespace mli {
       symbol_table.pop_level();
       statement_stack_.pop_back();
     }
-#line 2914 "../../mli-root/src/database-parser.cc"
+#line 2900 "../../mli-root/src/database-parser.cc"
     break;
 
   case 74: // theorem_statement: theorem_head statement
-#line 1076 "../../mli-root/src/database-parser.yy"
+#line 1071 "../../mli-root/src/database-parser.yy"
                                  {
       symbol_table_t::table& top = symbol_table.top();
       val<theorem> tr(make,  yystack_[1].value.as < std::pair<theorem::type, std::string> > ().first, yystack_[1].value.as < std::pair<theorem::type, std::string> > ().second, yystack_[0].value.as < ref6<unit> > (), theory_, proof_depth);
       statement_stack_.back() = tr;
       theorem_theory_ = tr->get_theory();
     }
-#line 2925 "../../mli-root/src/database-parser.cc"
+#line 2911 "../../mli-root/src/database-parser.cc"
     break;
 
   case 75: // theorem_head: "theorem" statement_name "."
-#line 1086 "../../mli-root/src/database-parser.yy"
+#line 1081 "../../mli-root/src/database-parser.yy"
                                        {
       yylhs.value.as < std::pair<theorem::type, std::string> > ().second = yystack_[1].value.as < std::string > ();
       yylhs.value.as < std::pair<theorem::type, std::string> > ().first = yystack_[2].value.as < theorem::type > ();
       symbol_table.push_level();
       statement_stack_.push_back(ref4<statement>());
     }
-#line 2936 "../../mli-root/src/database-parser.cc"
+#line 2922 "../../mli-root/src/database-parser.cc"
     break;
 
   case 76: // proof: compound-proof
-#line 1096 "../../mli-root/src/database-parser.yy"
+#line 1091 "../../mli-root/src/database-parser.yy"
     { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 2942 "../../mli-root/src/database-parser.cc"
+#line 2928 "../../mli-root/src/database-parser.cc"
     break;
 
   case 77: // $@12: %empty
-#line 1097 "../../mli-root/src/database-parser.yy"
+#line 1092 "../../mli-root/src/database-parser.yy"
                 {
       ++proof_depth;
       symbol_table.push_level();
       proofline_stack_.push_level();
     }
-#line 2952 "../../mli-root/src/database-parser.cc"
+#line 2938 "../../mli-root/src/database-parser.cc"
     break;
 
   case 78: // proof: $@12 proof_of_conclusion
-#line 1102 "../../mli-root/src/database-parser.yy"
+#line 1097 "../../mli-root/src/database-parser.yy"
                         {
       --proof_depth;
       symbol_table.pop_level();
       proofline_stack_.pop_level();
     }
-#line 2962 "../../mli-root/src/database-parser.cc"
+#line 2948 "../../mli-root/src/database-parser.cc"
     break;
 
   case 79: // compound-proof: proof_head proof_lines "∎"
-#line 1111 "../../mli-root/src/database-parser.yy"
+#line 1106 "../../mli-root/src/database-parser.yy"
                                {
       --proof_depth;
       symbol_table.pop_level();
       proofline_stack_.pop_level();
     }
-#line 2972 "../../mli-root/src/database-parser.cc"
+#line 2958 "../../mli-root/src/database-parser.cc"
     break;
 
   case 80: // compound-proof: "∎"
-#line 1116 "../../mli-root/src/database-parser.yy"
+#line 1111 "../../mli-root/src/database-parser.yy"
         {}
-#line 2978 "../../mli-root/src/database-parser.cc"
+#line 2964 "../../mli-root/src/database-parser.cc"
     break;
 
   case 81: // proof_head: "proof"
-#line 1121 "../../mli-root/src/database-parser.yy"
+#line 1116 "../../mli-root/src/database-parser.yy"
             {
       ++proof_depth;
       symbol_table.push_level();
       proofline_stack_.push_level();
     }
-#line 2988 "../../mli-root/src/database-parser.cc"
+#line 2974 "../../mli-root/src/database-parser.cc"
     break;
 
   case 82: // proof_lines: %empty
-#line 1130 "../../mli-root/src/database-parser.yy"
+#line 1125 "../../mli-root/src/database-parser.yy"
            {}
-#line 2994 "../../mli-root/src/database-parser.cc"
+#line 2980 "../../mli-root/src/database-parser.cc"
     break;
 
   case 83: // proof_lines: proof_lines proof_line
-#line 1131 "../../mli-root/src/database-parser.yy"
+#line 1126 "../../mli-root/src/database-parser.yy"
                            {}
-#line 3000 "../../mli-root/src/database-parser.cc"
+#line 2986 "../../mli-root/src/database-parser.cc"
     break;
 
   case 84: // statement_label: statement_name "."
-#line 1136 "../../mli-root/src/database-parser.yy"
+#line 1131 "../../mli-root/src/database-parser.yy"
                           {
       yylhs.value.as < std::string > () = yystack_[1].value.as < std::string > ();
       symbol_table.push_level();
     }
-#line 3009 "../../mli-root/src/database-parser.cc"
+#line 2995 "../../mli-root/src/database-parser.cc"
     break;
 
   case 85: // proof_line: statement_label statement "by" find_statement "."
-#line 1144 "../../mli-root/src/database-parser.yy"
+#line 1139 "../../mli-root/src/database-parser.yy"
                                                                {
       // Handles explicit find_statement substitutions A[x⤇e].
       proofline_database_context = false;
@@ -3040,11 +3026,11 @@ namespace mli {
           throw syntax_error(yystack_[4].location, "Proof line name " + yystack_[4].value.as < std::string > ()  + " already given to a proof line.");
       }
     }
-#line 3044 "../../mli-root/src/database-parser.cc"
+#line 3030 "../../mli-root/src/database-parser.cc"
     break;
 
   case 86: // proof_line: subproof_statement compound-proof
-#line 1175 "../../mli-root/src/database-parser.yy"
+#line 1170 "../../mli-root/src/database-parser.yy"
                                          {
     ref4<statement> top = statement_stack_.back();
     symbol_table.pop_level();
@@ -3059,23 +3045,23 @@ namespace mli {
           throw syntax_error(yystack_[1].location, "Proof line name " + yystack_[1].value.as < std::string > ()  + " already given to a proof line.");
       }
     }
-#line 3063 "../../mli-root/src/database-parser.cc"
+#line 3049 "../../mli-root/src/database-parser.cc"
     break;
 
   case 87: // $@13: %empty
-#line 1190 "../../mli-root/src/database-parser.yy"
+#line 1185 "../../mli-root/src/database-parser.yy"
     {}
-#line 3069 "../../mli-root/src/database-parser.cc"
+#line 3055 "../../mli-root/src/database-parser.cc"
     break;
 
   case 88: // proof_line: $@13 identifier_declaration
-#line 1190 "../../mli-root/src/database-parser.yy"
+#line 1185 "../../mli-root/src/database-parser.yy"
                               {}
-#line 3075 "../../mli-root/src/database-parser.cc"
+#line 3061 "../../mli-root/src/database-parser.cc"
     break;
 
   case 89: // proof_line: definition_labelstatement
-#line 1194 "../../mli-root/src/database-parser.yy"
+#line 1189 "../../mli-root/src/database-parser.yy"
                                  {
       theorem& t = dyn_cast<theorem&>(statement_stack_.back());
       ref4<statement> proof_line = t.push_back(ref4<statement>(yystack_[0].value.as < val<definition> > ()));
@@ -3087,28 +3073,28 @@ namespace mli {
           throw syntax_error(yystack_[0].location, "Proof line name " + proof_line->name_  + " already given to a proof line.");
       }
     }
-#line 3091 "../../mli-root/src/database-parser.cc"
+#line 3077 "../../mli-root/src/database-parser.cc"
     break;
 
   case 90: // proof_line: proof_of_conclusion
-#line 1205 "../../mli-root/src/database-parser.yy"
+#line 1200 "../../mli-root/src/database-parser.yy"
                         {}
-#line 3097 "../../mli-root/src/database-parser.cc"
+#line 3083 "../../mli-root/src/database-parser.cc"
     break;
 
   case 91: // subproof_statement: statement_label statement
-#line 1210 "../../mli-root/src/database-parser.yy"
+#line 1205 "../../mli-root/src/database-parser.yy"
                                     {
       yylhs.value.as < std::string > () = yystack_[1].value.as < std::string > ();
       symbol_table_t::table& top = symbol_table.top();
       val<theorem> tp(make, theorem::claim_, yystack_[1].value.as < std::string > (), yystack_[0].value.as < ref6<unit> > (), theory_, proof_depth);
       statement_stack_.push_back(tp);
     }
-#line 3108 "../../mli-root/src/database-parser.cc"
+#line 3094 "../../mli-root/src/database-parser.cc"
     break;
 
   case 92: // proof_of_conclusion: optional-result "by" find_statement "."
-#line 1220 "../../mli-root/src/database-parser.yy"
+#line 1215 "../../mli-root/src/database-parser.yy"
                                                   {
       proofline_database_context = false;
 
@@ -3116,128 +3102,128 @@ namespace mli {
       ref4<statement> proof_line =
         t.push_back(yystack_[3].value.as < std::string > (), t.get_formula(), val<database>(yystack_[1].value.as < ref6<unit> > ()), true, proof_depth);
     }
-#line 3120 "../../mli-root/src/database-parser.cc"
+#line 3106 "../../mli-root/src/database-parser.cc"
     break;
 
   case 93: // optional-result: %empty
-#line 1231 "../../mli-root/src/database-parser.yy"
+#line 1226 "../../mli-root/src/database-parser.yy"
                   { yylhs.value.as < std::string > () = "result"; }
-#line 3126 "../../mli-root/src/database-parser.cc"
+#line 3112 "../../mli-root/src/database-parser.cc"
     break;
 
   case 94: // optional-result: "result"
-#line 1232 "../../mli-root/src/database-parser.yy"
+#line 1227 "../../mli-root/src/database-parser.yy"
                   { yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > (); }
-#line 3132 "../../mli-root/src/database-parser.cc"
+#line 3118 "../../mli-root/src/database-parser.cc"
     break;
 
   case 95: // find_statement: find_statement_list
-#line 1237 "../../mli-root/src/database-parser.yy"
+#line 1232 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = ref5<level_database>(make, val<database>(yystack_[0].value.as < ref6<unit> > ())); }
-#line 3138 "../../mli-root/src/database-parser.cc"
+#line 3124 "../../mli-root/src/database-parser.cc"
     break;
 
   case 96: // find_statement: find_statement ":" find_statement_list
-#line 1238 "../../mli-root/src/database-parser.yy"
+#line 1233 "../../mli-root/src/database-parser.yy"
                                                  {
       ref5<level_database>(yystack_[2].value.as < ref6<unit> > ())->push_back(val<database>(yystack_[0].value.as < ref6<unit> > ()));
       yylhs.value.as < ref6<unit> > () = yystack_[2].value.as < ref6<unit> > ();
     }
-#line 3147 "../../mli-root/src/database-parser.cc"
+#line 3133 "../../mli-root/src/database-parser.cc"
     break;
 
   case 97: // find_statement_list: find_statement_sequence
-#line 1246 "../../mli-root/src/database-parser.yy"
+#line 1241 "../../mli-root/src/database-parser.yy"
                                {
       yylhs.value.as < ref6<unit> > () = ref3<sublevel_database>(make, ref2<sequence_database>(yystack_[0].value.as < ref6<unit> > ()));
     }
-#line 3155 "../../mli-root/src/database-parser.cc"
+#line 3141 "../../mli-root/src/database-parser.cc"
     break;
 
   case 98: // find_statement_list: find_statement_list ";" find_statement_sequence
-#line 1249 "../../mli-root/src/database-parser.yy"
+#line 1244 "../../mli-root/src/database-parser.yy"
                                                           {
       ref3<sublevel_database>(yystack_[2].value.as < ref6<unit> > ())->push_back(val<database>(yystack_[0].value.as < ref6<unit> > ()));
       yylhs.value.as < ref6<unit> > () = yystack_[2].value.as < ref6<unit> > ();
     }
-#line 3164 "../../mli-root/src/database-parser.cc"
+#line 3150 "../../mli-root/src/database-parser.cc"
     break;
 
   case 99: // find_statement_sequence: %empty
-#line 1257 "../../mli-root/src/database-parser.yy"
+#line 1252 "../../mli-root/src/database-parser.yy"
                   { yylhs.value.as < ref6<unit> > () = ref2<sequence_database>(make); }
-#line 3170 "../../mli-root/src/database-parser.cc"
+#line 3156 "../../mli-root/src/database-parser.cc"
     break;
 
   case 100: // find_statement_sequence: find_statement_item
-#line 1258 "../../mli-root/src/database-parser.yy"
+#line 1253 "../../mli-root/src/database-parser.yy"
                            {
       yylhs.value.as < ref6<unit> > () = ref2<sequence_database>(make, ref4<statement>(yystack_[0].value.as < ref6<unit> > ())); }
-#line 3177 "../../mli-root/src/database-parser.cc"
+#line 3163 "../../mli-root/src/database-parser.cc"
     break;
 
   case 101: // find_statement_sequence: find_statement_item "₍" find_definition_sequence "₎"
-#line 1260 "../../mli-root/src/database-parser.yy"
+#line 1255 "../../mli-root/src/database-parser.yy"
                                                                {
       yylhs.value.as < ref6<unit> > () = ref2<sequence_database>(make, ref4<statement>(yystack_[3].value.as < ref6<unit> > ()));
       ref2<sequence_database>(yylhs.value.as < ref6<unit> > ())->insert(ref2<sequence_database>(yystack_[1].value.as < ref6<unit> > ()));
     }
-#line 3186 "../../mli-root/src/database-parser.cc"
+#line 3172 "../../mli-root/src/database-parser.cc"
     break;
 
   case 102: // find_statement_sequence: find_statement_sequence "," find_statement_item
-#line 1264 "../../mli-root/src/database-parser.yy"
+#line 1259 "../../mli-root/src/database-parser.yy"
                                                           {
       ref2<sequence_database>(yystack_[2].value.as < ref6<unit> > ())->insert(ref4<statement>(yystack_[0].value.as < ref6<unit> > ()));
       yylhs.value.as < ref6<unit> > () = yystack_[2].value.as < ref6<unit> > ();
     }
-#line 3195 "../../mli-root/src/database-parser.cc"
+#line 3181 "../../mli-root/src/database-parser.cc"
     break;
 
   case 103: // find_statement_sequence: find_statement_sequence "," find_statement_item "₍" find_definition_sequence "₎"
-#line 1268 "../../mli-root/src/database-parser.yy"
+#line 1263 "../../mli-root/src/database-parser.yy"
                                                                                               {
       yylhs.value.as < ref6<unit> > () = yystack_[5].value.as < ref6<unit> > ();
       ref2<sequence_database>(yylhs.value.as < ref6<unit> > ())->insert(ref4<statement>(yystack_[3].value.as < ref6<unit> > ()));
       ref2<sequence_database>(yylhs.value.as < ref6<unit> > ())->insert(ref2<sequence_database>(yystack_[1].value.as < ref6<unit> > ()));
     }
-#line 3205 "../../mli-root/src/database-parser.cc"
+#line 3191 "../../mli-root/src/database-parser.cc"
     break;
 
   case 104: // find_definition_sequence: find_statement_item
-#line 1277 "../../mli-root/src/database-parser.yy"
+#line 1272 "../../mli-root/src/database-parser.yy"
                            {
       yylhs.value.as < ref6<unit> > () = ref2<sequence_database>(make, ref4<statement>(yystack_[0].value.as < ref6<unit> > ())); }
-#line 3212 "../../mli-root/src/database-parser.cc"
+#line 3198 "../../mli-root/src/database-parser.cc"
     break;
 
   case 105: // find_definition_sequence: find_definition_sequence "," find_statement_item
-#line 1279 "../../mli-root/src/database-parser.yy"
+#line 1274 "../../mli-root/src/database-parser.yy"
                                                            {
       ref2<sequence_database>(yystack_[2].value.as < ref6<unit> > ())->insert(ref4<statement>(yystack_[0].value.as < ref6<unit> > ()));
       yylhs.value.as < ref6<unit> > () = yystack_[2].value.as < ref6<unit> > ();
     }
-#line 3221 "../../mli-root/src/database-parser.cc"
+#line 3207 "../../mli-root/src/database-parser.cc"
     break;
 
   case 106: // find_statement_item: find_statement_name
-#line 1287 "../../mli-root/src/database-parser.yy"
+#line 1282 "../../mli-root/src/database-parser.yy"
                            {
       yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > ();
     }
-#line 3229 "../../mli-root/src/database-parser.cc"
+#line 3215 "../../mli-root/src/database-parser.cc"
     break;
 
   case 107: // find_statement_item: "premise"
-#line 1290 "../../mli-root/src/database-parser.yy"
+#line 1285 "../../mli-root/src/database-parser.yy"
               {
       yylhs.value.as < ref6<unit> > () = val<premise>(make, statement_stack_.back());
     }
-#line 3237 "../../mli-root/src/database-parser.cc"
+#line 3223 "../../mli-root/src/database-parser.cc"
     break;
 
   case 108: // find_statement_item: "premise" statement_name
-#line 1293 "../../mli-root/src/database-parser.yy"
+#line 1288 "../../mli-root/src/database-parser.yy"
                                 {
       auto i = statement_stack_.rbegin();
 
@@ -3251,11 +3237,11 @@ namespace mli {
       if (i == statement_stack_.rend())
         throw syntax_error(yystack_[0].location, "Proof line premise " + yystack_[0].value.as < std::string > ()  + " not found.");
     }
-#line 3255 "../../mli-root/src/database-parser.cc"
+#line 3241 "../../mli-root/src/database-parser.cc"
     break;
 
   case 109: // find_statement_item: "premise" statement_name "subscript natural number value"
-#line 1306 "../../mli-root/src/database-parser.yy"
+#line 1301 "../../mli-root/src/database-parser.yy"
                                                                   {
       auto i = statement_stack_.rbegin();
 
@@ -3270,32 +3256,32 @@ namespace mli {
       if (i == statement_stack_.rend())
         throw syntax_error(yystack_[1].location, "Proof line premise " + yystack_[1].value.as < std::string > ()  + " not found.");
     }
-#line 3274 "../../mli-root/src/database-parser.cc"
+#line 3260 "../../mli-root/src/database-parser.cc"
     break;
 
   case 110: // find_statement_item: "premise" "⊢"
-#line 1320 "../../mli-root/src/database-parser.yy"
+#line 1315 "../../mli-root/src/database-parser.yy"
                   {
       // As the implicit premise is automatically resolved in inference::unify, any
       // formula that does not produce illegal alternatives will suffice:
       yylhs.value.as < ref6<unit> > () = val<premise>(make);
     }
-#line 3284 "../../mli-root/src/database-parser.cc"
+#line 3270 "../../mli-root/src/database-parser.cc"
     break;
 
   case 111: // find_statement_item: "premise" "⊢" "subscript natural number value"
-#line 1325 "../../mli-root/src/database-parser.yy"
+#line 1320 "../../mli-root/src/database-parser.yy"
                                                     {
       // As the implicit premise is automatically resolved in inference::unify, any
       // formula that does not produce illegal alternatives will suffice:
       size_type k = (size_type)yystack_[0].value.as < integer > ();
       yylhs.value.as < ref6<unit> > () = val<premise>(make, k);
     }
-#line 3295 "../../mli-root/src/database-parser.cc"
+#line 3281 "../../mli-root/src/database-parser.cc"
     break;
 
   case 112: // find_statement_name: statement_name
-#line 1335 "../../mli-root/src/database-parser.yy"
+#line 1330 "../../mli-root/src/database-parser.yy"
                       {
       // Accept also non-proved statements (as actual proving will come later):
       std::optional<ref4<statement>> st;
@@ -3310,11 +3296,11 @@ namespace mli {
 
       yylhs.value.as < ref6<unit> > () = *st;
     }
-#line 3314 "../../mli-root/src/database-parser.cc"
+#line 3300 "../../mli-root/src/database-parser.cc"
     break;
 
   case 113: // @14: %empty
-#line 1349 "../../mli-root/src/database-parser.yy"
+#line 1344 "../../mli-root/src/database-parser.yy"
                                   {
       // Accept also non-proved statements (as actual proving will come later):
       std::optional<ref4<statement>> st;
@@ -3337,11 +3323,11 @@ namespace mli {
       for (auto& i: statement_variables_)
         symbol_table.insert(i->name, {to_token(i->type_), i});
     }
-#line 3341 "../../mli-root/src/database-parser.cc"
+#line 3327 "../../mli-root/src/database-parser.cc"
     break;
 
   case 114: // find_statement_name: statement_name @14 metaformula_substitution_sequence
-#line 1372 "../../mli-root/src/database-parser.yy"
+#line 1367 "../../mli-root/src/database-parser.yy"
                                          {
       // The try-catch checks whether the statement-substitution is legal:
       ref4<statement> p(yystack_[1].value.as < ref6<unit> > ());
@@ -3357,17 +3343,17 @@ namespace mli {
       }
       symbol_table.pop_level();
     }
-#line 3361 "../../mli-root/src/database-parser.cc"
+#line 3347 "../../mli-root/src/database-parser.cc"
     break;
 
   case 115: // statement: metaformula
-#line 1391 "../../mli-root/src/database-parser.yy"
+#line 1386 "../../mli-root/src/database-parser.yy"
                    { yylhs.value.as < ref6<unit> > () = dyn_cast<formula&>(yystack_[0].value.as < ref6<unit> > ()).set_bind(); }
-#line 3367 "../../mli-root/src/database-parser.cc"
+#line 3353 "../../mli-root/src/database-parser.cc"
     break;
 
   case 116: // statement: identifier_declaration metaformula
-#line 1392 "../../mli-root/src/database-parser.yy"
+#line 1387 "../../mli-root/src/database-parser.yy"
                                           {
       val<formula> f(yystack_[0].value.as < ref6<unit> > ());
       yylhs.value.as < ref6<unit> > () = f->set_bind();
@@ -3408,85 +3394,85 @@ namespace mli {
         }
       }
     }
-#line 3412 "../../mli-root/src/database-parser.cc"
+#line 3398 "../../mli-root/src/database-parser.cc"
     break;
 
   case 117: // definition_statement: definition
-#line 1436 "../../mli-root/src/database-parser.yy"
+#line 1431 "../../mli-root/src/database-parser.yy"
                   { yylhs.value.as < ref6<unit> > () = dyn_cast<formula&>(yystack_[0].value.as < ref6<unit> > ()).set_bind(); }
-#line 3418 "../../mli-root/src/database-parser.cc"
+#line 3404 "../../mli-root/src/database-parser.cc"
     break;
 
   case 118: // definition_statement: identifier_declaration definition
-#line 1437 "../../mli-root/src/database-parser.yy"
+#line 1432 "../../mli-root/src/database-parser.yy"
                                          {
       yylhs.value.as < ref6<unit> > () = dyn_cast<formula&>(yystack_[0].value.as < ref6<unit> > ()).set_bind();
     }
-#line 3426 "../../mli-root/src/database-parser.cc"
+#line 3412 "../../mli-root/src/database-parser.cc"
     break;
 
   case 119: // identifier_declaration: declarator_list "."
-#line 1444 "../../mli-root/src/database-parser.yy"
+#line 1439 "../../mli-root/src/database-parser.yy"
                         {}
-#line 3432 "../../mli-root/src/database-parser.cc"
+#line 3418 "../../mli-root/src/database-parser.cc"
     break;
 
   case 120: // declarator_list: declarator_identifier_list
-#line 1449 "../../mli-root/src/database-parser.yy"
+#line 1444 "../../mli-root/src/database-parser.yy"
                                {}
-#line 3438 "../../mli-root/src/database-parser.cc"
+#line 3424 "../../mli-root/src/database-parser.cc"
     break;
 
   case 121: // declarator_list: declarator_list declarator_identifier_list
-#line 1450 "../../mli-root/src/database-parser.yy"
+#line 1445 "../../mli-root/src/database-parser.yy"
                                                {}
-#line 3444 "../../mli-root/src/database-parser.cc"
+#line 3430 "../../mli-root/src/database-parser.cc"
     break;
 
   case 122: // declarator_identifier_list: "identifier constant" identifier_constant_list
-#line 1455 "../../mli-root/src/database-parser.yy"
+#line 1450 "../../mli-root/src/database-parser.yy"
                                                      {}
-#line 3450 "../../mli-root/src/database-parser.cc"
+#line 3436 "../../mli-root/src/database-parser.cc"
     break;
 
   case 123: // declarator_identifier_list: "identifier variable" identifier_variable_list
-#line 1456 "../../mli-root/src/database-parser.yy"
+#line 1451 "../../mli-root/src/database-parser.yy"
                                                      {}
-#line 3456 "../../mli-root/src/database-parser.cc"
+#line 3442 "../../mli-root/src/database-parser.cc"
     break;
 
   case 124: // declarator_identifier_list: "identifier function" identifier_function_list
-#line 1457 "../../mli-root/src/database-parser.yy"
+#line 1452 "../../mli-root/src/database-parser.yy"
                                                      {}
-#line 3462 "../../mli-root/src/database-parser.cc"
+#line 3448 "../../mli-root/src/database-parser.cc"
     break;
 
   case 125: // identifier_function_list: identifier_function_name
-#line 1462 "../../mli-root/src/database-parser.yy"
+#line 1457 "../../mli-root/src/database-parser.yy"
                              {}
-#line 3468 "../../mli-root/src/database-parser.cc"
+#line 3454 "../../mli-root/src/database-parser.cc"
     break;
 
   case 126: // identifier_function_list: identifier_function_list "," identifier_function_name
-#line 1463 "../../mli-root/src/database-parser.yy"
+#line 1458 "../../mli-root/src/database-parser.yy"
                                                           {}
-#line 3474 "../../mli-root/src/database-parser.cc"
+#line 3460 "../../mli-root/src/database-parser.cc"
     break;
 
   case 127: // $@15: %empty
-#line 1474 "../../mli-root/src/database-parser.yy"
+#line 1469 "../../mli-root/src/database-parser.yy"
               { current_declared_token = declared_token; }
-#line 3480 "../../mli-root/src/database-parser.cc"
+#line 3466 "../../mli-root/src/database-parser.cc"
     break;
 
   case 128: // $@16: %empty
-#line 1475 "../../mli-root/src/database-parser.yy"
+#line 1470 "../../mli-root/src/database-parser.yy"
         { bound_variable_type = database_parser::token::function_map_variable; }
-#line 3486 "../../mli-root/src/database-parser.cc"
+#line 3472 "../../mli-root/src/database-parser.cc"
     break;
 
   case 129: // identifier_function_name: "name" $@15 ":" $@16 "function map variable" "↦" object_formula
-#line 1476 "../../mli-root/src/database-parser.yy"
+#line 1471 "../../mli-root/src/database-parser.yy"
                                                    {
       // Check if name already has top level definition:
       std::optional<symbol_table_value> x0 = symbol_table.find_top(yystack_[6].value.as < std::string > ());
@@ -3498,23 +3484,23 @@ namespace mli {
       symbol_table.insert(yystack_[6].value.as < std::string > (), {current_declared_token,
         val<function_map>(make, yystack_[2].value.as < val<unit> > (), yystack_[0].value.as < ref6<unit> > ())});
     }
-#line 3502 "../../mli-root/src/database-parser.cc"
+#line 3488 "../../mli-root/src/database-parser.cc"
     break;
 
   case 130: // identifier_constant_list: identifier_constant_name
-#line 1509 "../../mli-root/src/database-parser.yy"
+#line 1504 "../../mli-root/src/database-parser.yy"
                              {}
-#line 3508 "../../mli-root/src/database-parser.cc"
+#line 3494 "../../mli-root/src/database-parser.cc"
     break;
 
   case 131: // identifier_constant_list: identifier_constant_list "," identifier_constant_name
-#line 1510 "../../mli-root/src/database-parser.yy"
+#line 1505 "../../mli-root/src/database-parser.yy"
                                                           {}
-#line 3514 "../../mli-root/src/database-parser.cc"
+#line 3500 "../../mli-root/src/database-parser.cc"
     break;
 
   case 132: // identifier_constant_name: "name"
-#line 1515 "../../mli-root/src/database-parser.yy"
+#line 1510 "../../mli-root/src/database-parser.yy"
               {
       // Check if name already has top level definition:
       std::optional<symbol_table_value> x0 = symbol_table.find_top(yystack_[0].value.as < std::string > ());
@@ -3526,23 +3512,23 @@ namespace mli {
       symbol_table.insert(yystack_[0].value.as < std::string > (), {declared_token,
         val<constant>(make, yystack_[0].value.as < std::string > (), constant::type(declared_type))});
     }
-#line 3530 "../../mli-root/src/database-parser.cc"
+#line 3516 "../../mli-root/src/database-parser.cc"
     break;
 
   case 133: // identifier_variable_list: identifier_variable_name
-#line 1530 "../../mli-root/src/database-parser.yy"
+#line 1525 "../../mli-root/src/database-parser.yy"
                              {}
-#line 3536 "../../mli-root/src/database-parser.cc"
+#line 3522 "../../mli-root/src/database-parser.cc"
     break;
 
   case 134: // identifier_variable_list: identifier_variable_list "," identifier_variable_name
-#line 1531 "../../mli-root/src/database-parser.yy"
+#line 1526 "../../mli-root/src/database-parser.yy"
                                                           {}
-#line 3542 "../../mli-root/src/database-parser.cc"
+#line 3528 "../../mli-root/src/database-parser.cc"
     break;
 
   case 135: // identifier_variable_name: "name"
-#line 1536 "../../mli-root/src/database-parser.yy"
+#line 1531 "../../mli-root/src/database-parser.yy"
               {
       // Check if name already has top level definition:
       std::optional<symbol_table_value> x0 = symbol_table.find_top(yystack_[0].value.as < std::string > ());
@@ -3554,11 +3540,11 @@ namespace mli {
       symbol_table.insert(yystack_[0].value.as < std::string > (), {declared_token,
        val<variable>(make, yystack_[0].value.as < std::string > (), variable::ordinary_, variable::type(declared_type), -1)});
     }
-#line 3558 "../../mli-root/src/database-parser.cc"
+#line 3544 "../../mli-root/src/database-parser.cc"
     break;
 
   case 136: // identifier_variable_name: "°" "name"
-#line 1547 "../../mli-root/src/database-parser.yy"
+#line 1542 "../../mli-root/src/database-parser.yy"
                   {
       // Check if name already has top level definition:
       std::optional<symbol_table_value> x0 = symbol_table.find_top(yystack_[0].value.as < std::string > ());
@@ -3570,11 +3556,11 @@ namespace mli {
       symbol_table.insert(yystack_[0].value.as < std::string > (), {declared_token,
         val<variable>(make, yystack_[0].value.as < std::string > (), variable::limited_, variable::type(declared_type), -1)});
     }
-#line 3574 "../../mli-root/src/database-parser.cc"
+#line 3560 "../../mli-root/src/database-parser.cc"
     break;
 
   case 137: // identifier_variable_name: "•" "name"
-#line 1558 "../../mli-root/src/database-parser.yy"
+#line 1553 "../../mli-root/src/database-parser.yy"
                   {
       // Check if name already has top level definition:
       std::optional<symbol_table_value> x0 = symbol_table.find_top(yystack_[0].value.as < std::string > ());
@@ -3586,131 +3572,131 @@ namespace mli {
       symbol_table.insert(yystack_[0].value.as < std::string > (), {declared_token,
         val<variable>(make, yystack_[0].value.as < std::string > (), variable::term_, variable::type(declared_type), -1)});
     }
-#line 3590 "../../mli-root/src/database-parser.cc"
+#line 3576 "../../mli-root/src/database-parser.cc"
     break;
 
   case 138: // definition: metaformula_definition
-#line 1573 "../../mli-root/src/database-parser.yy"
+#line 1568 "../../mli-root/src/database-parser.yy"
                               { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 3596 "../../mli-root/src/database-parser.cc"
+#line 3582 "../../mli-root/src/database-parser.cc"
     break;
 
   case 139: // definition: object_formula_definition
-#line 1574 "../../mli-root/src/database-parser.yy"
+#line 1569 "../../mli-root/src/database-parser.yy"
                                  { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 3602 "../../mli-root/src/database-parser.cc"
+#line 3588 "../../mli-root/src/database-parser.cc"
     break;
 
   case 140: // definition: term_definition
-#line 1575 "../../mli-root/src/database-parser.yy"
+#line 1570 "../../mli-root/src/database-parser.yy"
                        { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 3608 "../../mli-root/src/database-parser.cc"
+#line 3594 "../../mli-root/src/database-parser.cc"
     break;
 
   case 141: // metaformula_definition: pure_metaformula "≔" pure_metaformula
-#line 1580 "../../mli-root/src/database-parser.yy"
+#line 1575 "../../mli-root/src/database-parser.yy"
                                                 {
       yylhs.value.as < ref6<unit> > () = val<abbreviation>(make, val<formula>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()), val<formula>(),
         formula::logic, formula_definition_oprec);
     }
-#line 3617 "../../mli-root/src/database-parser.cc"
+#line 3603 "../../mli-root/src/database-parser.cc"
     break;
 
   case 142: // metaformula_definition: pure_metaformula "≕" pure_metaformula
-#line 1584 "../../mli-root/src/database-parser.yy"
+#line 1579 "../../mli-root/src/database-parser.yy"
                                                 {
       yylhs.value.as < ref6<unit> > () = val<abbreviation>(make, val<formula>(yystack_[0].value.as < ref6<unit> > ()), val<formula>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(),
        formula::logic, formula_definition_oprec);
   }
-#line 3626 "../../mli-root/src/database-parser.cc"
+#line 3612 "../../mli-root/src/database-parser.cc"
     break;
 
   case 143: // object_formula_definition: object_formula "≔" object_formula
-#line 1597 "../../mli-root/src/database-parser.yy"
+#line 1592 "../../mli-root/src/database-parser.yy"
                                             {
       yylhs.value.as < ref6<unit> > () = val<abbreviation>(make, val<formula>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()), val<formula>(),
         formula::logic, formula_definition_oprec);
     }
-#line 3635 "../../mli-root/src/database-parser.cc"
+#line 3621 "../../mli-root/src/database-parser.cc"
     break;
 
   case 144: // object_formula_definition: object_formula "≕" object_formula
-#line 1601 "../../mli-root/src/database-parser.yy"
+#line 1596 "../../mli-root/src/database-parser.yy"
                                             {
       yylhs.value.as < ref6<unit> > () = val<abbreviation>(make, val<formula>(yystack_[0].value.as < ref6<unit> > ()), val<formula>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(),
         formula::logic, formula_definition_oprec);
   }
-#line 3644 "../../mli-root/src/database-parser.cc"
+#line 3630 "../../mli-root/src/database-parser.cc"
     break;
 
   case 145: // term_definition: term "≔" term
-#line 1614 "../../mli-root/src/database-parser.yy"
+#line 1609 "../../mli-root/src/database-parser.yy"
                         {
       yylhs.value.as < ref6<unit> > () = val<abbreviation>(make, val<formula>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()), val<formula>(),
         formula::object, term_definition_oprec);
     }
-#line 3653 "../../mli-root/src/database-parser.cc"
+#line 3639 "../../mli-root/src/database-parser.cc"
     break;
 
   case 146: // term_definition: term "≕" term
-#line 1624 "../../mli-root/src/database-parser.yy"
+#line 1619 "../../mli-root/src/database-parser.yy"
                         {
       yylhs.value.as < ref6<unit> > () = val<abbreviation>(make, val<formula>(yystack_[0].value.as < ref6<unit> > ()), val<formula>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(),
         formula::object, term_definition_oprec);
   }
-#line 3662 "../../mli-root/src/database-parser.cc"
+#line 3648 "../../mli-root/src/database-parser.cc"
     break;
 
   case 147: // metaformula: pure_metaformula
-#line 1632 "../../mli-root/src/database-parser.yy"
+#line 1627 "../../mli-root/src/database-parser.yy"
                         { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 3668 "../../mli-root/src/database-parser.cc"
+#line 3654 "../../mli-root/src/database-parser.cc"
     break;
 
   case 148: // metaformula: object_formula
-#line 1633 "../../mli-root/src/database-parser.yy"
+#line 1628 "../../mli-root/src/database-parser.yy"
                       { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 3674 "../../mli-root/src/database-parser.cc"
+#line 3660 "../../mli-root/src/database-parser.cc"
     break;
 
   case 149: // pure_metaformula: atomic_metaformula
-#line 1638 "../../mli-root/src/database-parser.yy"
+#line 1633 "../../mli-root/src/database-parser.yy"
                           { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 3680 "../../mli-root/src/database-parser.cc"
+#line 3666 "../../mli-root/src/database-parser.cc"
     break;
 
   case 150: // pure_metaformula: special_metaformula
-#line 1639 "../../mli-root/src/database-parser.yy"
+#line 1634 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 3686 "../../mli-root/src/database-parser.cc"
+#line 3672 "../../mli-root/src/database-parser.cc"
     break;
 
   case 151: // pure_metaformula: "~" metaformula
-#line 1640 "../../mli-root/src/database-parser.yy"
+#line 1635 "../../mli-root/src/database-parser.yy"
                        {
       yylhs.value.as < ref6<unit> > () = val<metanot>(make, val<formula>(yystack_[0].value.as < ref6<unit> > ()));
     }
-#line 3694 "../../mli-root/src/database-parser.cc"
+#line 3680 "../../mli-root/src/database-parser.cc"
     break;
 
   case 152: // pure_metaformula: metaformula ";" metaformula
-#line 1643 "../../mli-root/src/database-parser.yy"
+#line 1638 "../../mli-root/src/database-parser.yy"
                                       {
       yylhs.value.as < ref6<unit> > () = concatenate(val<formula>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()));
     }
-#line 3702 "../../mli-root/src/database-parser.cc"
+#line 3688 "../../mli-root/src/database-parser.cc"
     break;
 
   case 153: // pure_metaformula: metaformula "," metaformula
-#line 1646 "../../mli-root/src/database-parser.yy"
+#line 1641 "../../mli-root/src/database-parser.yy"
                                       {
       yylhs.value.as < ref6<unit> > () = concatenate(val<formula>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()));
     }
-#line 3710 "../../mli-root/src/database-parser.cc"
+#line 3696 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 154: // pure_metaformula: metaformula "⊩" optional_superscript_natural_number_value optional_varied_variable_matrix optional_varied_in_reduction_variable_matrix metaformula
-#line 1651 "../../mli-root/src/database-parser.yy"
+  case 154: // pure_metaformula: metaformula "⊩" optional_superscript_natural_number_value optional_varied_variable_matrix optional_varied_in_reduction_variable_sequence metaformula
+#line 1646 "../../mli-root/src/database-parser.yy"
                      {
       size_type k = (size_type)yystack_[3].value.as < integer > ();
 
@@ -3765,11 +3751,11 @@ namespace mli {
 
       yylhs.value.as < ref6<unit> > () = i;
     }
-#line 3769 "../../mli-root/src/database-parser.cc"
+#line 3755 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 155: // pure_metaformula: metaformula "⊢" optional_superscript_natural_number_value optional_varied_variable_matrix optional_varied_in_reduction_variable_matrix metaformula
-#line 1719 "../../mli-root/src/database-parser.yy"
+  case 155: // pure_metaformula: metaformula "⊢" optional_superscript_natural_number_value optional_varied_variable_matrix optional_varied_in_reduction_variable_sequence metaformula
+#line 1714 "../../mli-root/src/database-parser.yy"
                      {
       size_type k = (size_type)yystack_[3].value.as < integer > ();
 
@@ -3822,60 +3808,60 @@ namespace mli {
 
       yylhs.value.as < ref6<unit> > () = i;
     }
-#line 3826 "../../mli-root/src/database-parser.cc"
+#line 3812 "../../mli-root/src/database-parser.cc"
     break;
 
   case 156: // pure_metaformula: "⊢" metaformula
-#line 1778 "../../mli-root/src/database-parser.yy"
+#line 1773 "../../mli-root/src/database-parser.yy"
                        { yylhs.value.as < ref6<unit> > () = val<inference>(make, val<formula>(yystack_[0].value.as < ref6<unit> > ())); }
-#line 3832 "../../mli-root/src/database-parser.cc"
+#line 3818 "../../mli-root/src/database-parser.cc"
     break;
 
   case 157: // pure_metaformula: "(" pure_metaformula ")"
-#line 1780 "../../mli-root/src/database-parser.yy"
+#line 1775 "../../mli-root/src/database-parser.yy"
                                 { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 3838 "../../mli-root/src/database-parser.cc"
+#line 3824 "../../mli-root/src/database-parser.cc"
     break;
 
   case 158: // pure_metaformula: simple_metaformula metaformula_substitution_sequence
-#line 1781 "../../mli-root/src/database-parser.yy"
+#line 1776 "../../mli-root/src/database-parser.yy"
                                                                {
       yylhs.value.as < ref6<unit> > () = val<substitution_formula>(make, val<substitution>(yystack_[0].value.as < ref6<unit> > ()), val<formula>(yystack_[1].value.as < ref6<unit> > ())); }
-#line 3845 "../../mli-root/src/database-parser.cc"
+#line 3831 "../../mli-root/src/database-parser.cc"
     break;
 
   case 159: // optional_varied_variable_matrix: %empty
-#line 1787 "../../mli-root/src/database-parser.yy"
+#line 1782 "../../mli-root/src/database-parser.yy"
            {}
-#line 3851 "../../mli-root/src/database-parser.cc"
+#line 3837 "../../mli-root/src/database-parser.cc"
     break;
 
   case 160: // optional_varied_variable_matrix: "⁽" varied_variable_conclusions "⁾"
-#line 1788 "../../mli-root/src/database-parser.yy"
+#line 1783 "../../mli-root/src/database-parser.yy"
                                             { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 3857 "../../mli-root/src/database-parser.cc"
+#line 3843 "../../mli-root/src/database-parser.cc"
     break;
 
   case 161: // optional_varied_variable_matrix: "⁽" varied_variable_premises "⁾"
-#line 1789 "../../mli-root/src/database-parser.yy"
+#line 1784 "../../mli-root/src/database-parser.yy"
                                             { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 3863 "../../mli-root/src/database-parser.cc"
+#line 3849 "../../mli-root/src/database-parser.cc"
     break;
 
   case 162: // optional_varied_variable_matrix: "⁽" varied_variable_set "⁾"
-#line 1790 "../../mli-root/src/database-parser.yy"
+#line 1785 "../../mli-root/src/database-parser.yy"
                                             { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 3869 "../../mli-root/src/database-parser.cc"
+#line 3855 "../../mli-root/src/database-parser.cc"
     break;
 
   case 163: // varied_variable_conclusions: varied_variable_conclusion
-#line 1794 "../../mli-root/src/database-parser.yy"
+#line 1789 "../../mli-root/src/database-parser.yy"
     { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 3875 "../../mli-root/src/database-parser.cc"
+#line 3861 "../../mli-root/src/database-parser.cc"
     break;
 
   case 164: // varied_variable_conclusions: varied_variable_conclusions ";" varied_variable_conclusion
-#line 1795 "../../mli-root/src/database-parser.yy"
+#line 1790 "../../mli-root/src/database-parser.yy"
                                                                       {
       inference& xs = dyn_cast<inference&>(yystack_[2].value.as < ref6<unit> > ());
       inference& x = dyn_cast<inference&>(yystack_[0].value.as < ref6<unit> > ());
@@ -3886,11 +3872,11 @@ namespace mli {
 
       yylhs.value.as < ref6<unit> > () = yystack_[2].value.as < ref6<unit> > ();
     }
-#line 3890 "../../mli-root/src/database-parser.cc"
+#line 3876 "../../mli-root/src/database-parser.cc"
     break;
 
   case 165: // varied_variable_conclusion: "superscript natural number value" varied_variable_premises
-#line 1808 "../../mli-root/src/database-parser.yy"
+#line 1803 "../../mli-root/src/database-parser.yy"
                                                                      {
       val<inference> i(make);
       inference& xs = dyn_cast<inference&>(yystack_[0].value.as < ref6<unit> > ());
@@ -3900,17 +3886,17 @@ namespace mli {
       yylhs.value.as < ref6<unit> > () = i;
 
     }
-#line 3904 "../../mli-root/src/database-parser.cc"
+#line 3890 "../../mli-root/src/database-parser.cc"
     break;
 
   case 166: // varied_variable_premises: varied_variable_premise
-#line 1820 "../../mli-root/src/database-parser.yy"
+#line 1815 "../../mli-root/src/database-parser.yy"
     { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 3910 "../../mli-root/src/database-parser.cc"
+#line 3896 "../../mli-root/src/database-parser.cc"
     break;
 
   case 167: // varied_variable_premises: varied_variable_premises "," varied_variable_premise
-#line 1821 "../../mli-root/src/database-parser.yy"
+#line 1816 "../../mli-root/src/database-parser.yy"
                                                                 {
       inference& xs = dyn_cast<inference&>(yystack_[2].value.as < ref6<unit> > ());
       inference& x = dyn_cast<inference&>(yystack_[0].value.as < ref6<unit> > ());
@@ -3920,11 +3906,11 @@ namespace mli {
 
       yylhs.value.as < ref6<unit> > () = yystack_[2].value.as < ref6<unit> > ();
     }
-#line 3924 "../../mli-root/src/database-parser.cc"
+#line 3910 "../../mli-root/src/database-parser.cc"
     break;
 
   case 168: // varied_variable_premise: "superscript natural number value" varied_variable_set
-#line 1833 "../../mli-root/src/database-parser.yy"
+#line 1828 "../../mli-root/src/database-parser.yy"
                                                                 {
       val<inference> i(make);
       inference& xs = dyn_cast<inference&>(yystack_[0].value.as < ref6<unit> > ());
@@ -3934,17 +3920,17 @@ namespace mli {
 
       yylhs.value.as < ref6<unit> > () = i;
     }
-#line 3938 "../../mli-root/src/database-parser.cc"
+#line 3924 "../../mli-root/src/database-parser.cc"
     break;
 
   case 169: // varied_variable_set: varied_variable
-#line 1845 "../../mli-root/src/database-parser.yy"
+#line 1840 "../../mli-root/src/database-parser.yy"
     { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 3944 "../../mli-root/src/database-parser.cc"
+#line 3930 "../../mli-root/src/database-parser.cc"
     break;
 
   case 170: // varied_variable_set: varied_variable_set varied_variable
-#line 1846 "../../mli-root/src/database-parser.yy"
+#line 1841 "../../mli-root/src/database-parser.yy"
                                                {
       inference& xs = dyn_cast<inference&>(yystack_[1].value.as < ref6<unit> > ());
       inference& x = dyn_cast<inference&>(yystack_[0].value.as < ref6<unit> > ());
@@ -3953,77 +3939,70 @@ namespace mli {
 
       yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > ();
     }
-#line 3957 "../../mli-root/src/database-parser.cc"
+#line 3943 "../../mli-root/src/database-parser.cc"
     break;
 
   case 171: // varied_variable: "object variable"
-#line 1857 "../../mli-root/src/database-parser.yy"
+#line 1852 "../../mli-root/src/database-parser.yy"
                        {
       val<inference> i(make);
       i->varied_[0][0].insert(yystack_[0].value.as < val<unit> > ());
       yylhs.value.as < ref6<unit> > () = i;
     }
-#line 3967 "../../mli-root/src/database-parser.cc"
+#line 3953 "../../mli-root/src/database-parser.cc"
     break;
 
   case 172: // varied_variable: "metaformula variable"
-#line 1862 "../../mli-root/src/database-parser.yy"
+#line 1857 "../../mli-root/src/database-parser.yy"
                             {
       val<inference> i(make);
       i->varied_[0][0].insert(yystack_[0].value.as < val<unit> > ());
       yylhs.value.as < ref6<unit> > () = i;
     }
-#line 3977 "../../mli-root/src/database-parser.cc"
+#line 3963 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 173: // optional_varied_in_reduction_variable_matrix: %empty
-#line 1872 "../../mli-root/src/database-parser.yy"
+  case 173: // optional_varied_in_reduction_variable_sequence: %empty
+#line 1867 "../../mli-root/src/database-parser.yy"
            {}
-#line 3983 "../../mli-root/src/database-parser.cc"
+#line 3969 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 174: // optional_varied_in_reduction_variable_matrix: "₍" varied_in_reduction_variable_conclusions "₎"
+  case 174: // optional_varied_in_reduction_variable_sequence: "₍" varied_in_reduction_variable_conclusions "₎"
+#line 1868 "../../mli-root/src/database-parser.yy"
+                                                         { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
+#line 3975 "../../mli-root/src/database-parser.cc"
+    break;
+
+  case 175: // optional_varied_in_reduction_variable_sequence: "₍" varied_in_reduction_variable_set "₎"
+#line 1869 "../../mli-root/src/database-parser.yy"
+                                                         { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
+#line 3981 "../../mli-root/src/database-parser.cc"
+    break;
+
+  case 176: // varied_in_reduction_variable_conclusions: varied_in_reduction_variable_conclusion
 #line 1873 "../../mli-root/src/database-parser.yy"
-                                                         { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 3989 "../../mli-root/src/database-parser.cc"
-    break;
-
-  case 175: // optional_varied_in_reduction_variable_matrix: "₍" varied_in_reduction_variable_premises "₎"
-#line 1874 "../../mli-root/src/database-parser.yy"
-                                                         { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 3995 "../../mli-root/src/database-parser.cc"
-    break;
-
-  case 176: // optional_varied_in_reduction_variable_matrix: "₍" varied_in_reduction_variable_set "₎"
-#line 1875 "../../mli-root/src/database-parser.yy"
-                                                         { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 4001 "../../mli-root/src/database-parser.cc"
-    break;
-
-  case 177: // varied_in_reduction_variable_conclusions: varied_in_reduction_variable_conclusion
-#line 1879 "../../mli-root/src/database-parser.yy"
     { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4007 "../../mli-root/src/database-parser.cc"
+#line 3987 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 178: // varied_in_reduction_variable_conclusions: varied_in_reduction_variable_conclusions ";" varied_in_reduction_variable_premises
-#line 1880 "../../mli-root/src/database-parser.yy"
-                                                                                              {
+  case 177: // varied_in_reduction_variable_conclusions: varied_in_reduction_variable_conclusions ";" varied_in_reduction_variable_conclusion
+#line 1874 "../../mli-root/src/database-parser.yy"
+                                                                                                {
       inference& xs = dyn_cast<inference&>(yystack_[2].value.as < ref6<unit> > ());
       inference& x = dyn_cast<inference&>(yystack_[0].value.as < ref6<unit> > ());
 
       for (auto& i: x.varied_in_reduction_)
-        for (auto& j: i.second)
-          xs.varied_in_reduction_[i.first][j.first].insert(j.second.begin(), j.second.end());
+        xs.varied_in_reduction_[i.first].insert(i.second.begin(), i.second.end());
 
       yylhs.value.as < ref6<unit> > () = yystack_[2].value.as < ref6<unit> > ();
     }
-#line 4022 "../../mli-root/src/database-parser.cc"
+#line 4001 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 179: // varied_in_reduction_variable_conclusion: "subscript natural number value" varied_in_reduction_variable_premises
-#line 1893 "../../mli-root/src/database-parser.yy"
-                                                                                {
+  case 178: // varied_in_reduction_variable_conclusion: "subscript natural number value" varied_in_reduction_variable_set
+#line 1886 "../../mli-root/src/database-parser.yy"
+                                                                           {
       val<inference> i(make);
       inference& xs = dyn_cast<inference&>(yystack_[0].value.as < ref6<unit> > ());
       size_type k = (size_type)yystack_[1].value.as < integer > ();
@@ -4032,380 +4011,346 @@ namespace mli {
       yylhs.value.as < ref6<unit> > () = i;
 
     }
-#line 4036 "../../mli-root/src/database-parser.cc"
+#line 4015 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 180: // varied_in_reduction_variable_premises: varied_in_reduction_variable_premise
-#line 1906 "../../mli-root/src/database-parser.yy"
+  case 179: // varied_in_reduction_variable_set: varied_in_reduction_variable
+#line 1899 "../../mli-root/src/database-parser.yy"
     { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4042 "../../mli-root/src/database-parser.cc"
+#line 4021 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 181: // varied_in_reduction_variable_premises: varied_in_reduction_variable_premises "," varied_in_reduction_variable_premise
-#line 1907 "../../mli-root/src/database-parser.yy"
-                                                                                          {
-      inference& xs = dyn_cast<inference&>(yystack_[2].value.as < ref6<unit> > ());
-      inference& x = dyn_cast<inference&>(yystack_[0].value.as < ref6<unit> > ());
-
-      for (auto& j: x.varied_in_reduction_[0])
-        xs.varied_in_reduction_[0][j.first].insert(j.second.begin(), j.second.end());
-
-      yylhs.value.as < ref6<unit> > () = yystack_[2].value.as < ref6<unit> > ();
-    }
-#line 4056 "../../mli-root/src/database-parser.cc"
-    break;
-
-  case 182: // varied_in_reduction_variable_premise: "subscript natural number value" varied_in_reduction_variable_set
-#line 1919 "../../mli-root/src/database-parser.yy"
-                                                                           {
-      val<inference> i(make);
-      inference& xs = dyn_cast<inference&>(yystack_[0].value.as < ref6<unit> > ());
-      size_type k = (size_type)yystack_[1].value.as < integer > ();
-
-      i->varied_in_reduction_[0][k].insert(xs.varied_in_reduction_[0][0].begin(), xs.varied_in_reduction_[0][0].end());
-
-      yylhs.value.as < ref6<unit> > () = i;
-    }
-#line 4070 "../../mli-root/src/database-parser.cc"
-    break;
-
-  case 183: // varied_in_reduction_variable_set: varied_in_reduction_variable
-#line 1931 "../../mli-root/src/database-parser.yy"
-    { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4076 "../../mli-root/src/database-parser.cc"
-    break;
-
-  case 184: // varied_in_reduction_variable_set: varied_in_reduction_variable_set varied_in_reduction_variable
-#line 1932 "../../mli-root/src/database-parser.yy"
+  case 180: // varied_in_reduction_variable_set: varied_in_reduction_variable_set varied_in_reduction_variable
+#line 1900 "../../mli-root/src/database-parser.yy"
                                                                          {
       inference& xs = dyn_cast<inference&>(yystack_[1].value.as < ref6<unit> > ());
       inference& x = dyn_cast<inference&>(yystack_[0].value.as < ref6<unit> > ());
 
-      xs.varied_in_reduction_[0][0].insert(x.varied_in_reduction_[0][0].begin(), x.varied_in_reduction_[0][0].end());
+      xs.varied_in_reduction_[0].insert(x.varied_in_reduction_[0].begin(), x.varied_in_reduction_[0].end());
 
       yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > ();
     }
-#line 4089 "../../mli-root/src/database-parser.cc"
+#line 4034 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 185: // varied_in_reduction_variable: "object variable"
-#line 1943 "../../mli-root/src/database-parser.yy"
+  case 181: // varied_in_reduction_variable: "object variable"
+#line 1911 "../../mli-root/src/database-parser.yy"
                        {
       val<inference> i(make);
-      i->varied_in_reduction_[0][0].insert(yystack_[0].value.as < val<unit> > ());
+      i->varied_in_reduction_[0].insert(yystack_[0].value.as < val<unit> > ());
       yylhs.value.as < ref6<unit> > () = i;
     }
-#line 4099 "../../mli-root/src/database-parser.cc"
+#line 4044 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 186: // varied_in_reduction_variable: "metaformula variable"
-#line 1948 "../../mli-root/src/database-parser.yy"
+  case 182: // varied_in_reduction_variable: "metaformula variable"
+#line 1916 "../../mli-root/src/database-parser.yy"
                             {
       val<inference> i(make);
-      i->varied_in_reduction_[0][0].insert(yystack_[0].value.as < val<unit> > ());
+      i->varied_in_reduction_[0].insert(yystack_[0].value.as < val<unit> > ());
       yylhs.value.as < ref6<unit> > () = i;
     }
-#line 4109 "../../mli-root/src/database-parser.cc"
+#line 4054 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 187: // simple_metaformula: "metaformula variable"
-#line 2016 "../../mli-root/src/database-parser.yy"
+  case 183: // simple_metaformula: "metaformula variable"
+#line 1925 "../../mli-root/src/database-parser.yy"
                             { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 4115 "../../mli-root/src/database-parser.cc"
+#line 4060 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 188: // simple_metaformula: "(" pure_metaformula ")"
-#line 2017 "../../mli-root/src/database-parser.yy"
+  case 184: // simple_metaformula: "(" pure_metaformula ")"
+#line 1926 "../../mli-root/src/database-parser.yy"
                                 { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 4121 "../../mli-root/src/database-parser.cc"
+#line 4066 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 189: // atomic_metaformula: "metaformula variable"
-#line 2022 "../../mli-root/src/database-parser.yy"
+  case 185: // atomic_metaformula: "metaformula variable"
+#line 1931 "../../mli-root/src/database-parser.yy"
                             { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 4127 "../../mli-root/src/database-parser.cc"
+#line 4072 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 190: // atomic_metaformula: metapredicate
-#line 2023 "../../mli-root/src/database-parser.yy"
+  case 186: // atomic_metaformula: metapredicate
+#line 1932 "../../mli-root/src/database-parser.yy"
                      { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4133 "../../mli-root/src/database-parser.cc"
+#line 4078 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 191: // special_metaformula: meta_object_free "≢" meta_object_free
-#line 2035 "../../mli-root/src/database-parser.yy"
+  case 187: // special_metaformula: meta_object_free "≢" meta_object_free
+#line 1944 "../../mli-root/src/database-parser.yy"
                                                 {
       yylhs.value.as < ref6<unit> > () = val<objectidentical>(make, val<variable>(yystack_[2].value.as < ref6<unit> > ()), val<variable>(yystack_[0].value.as < ref6<unit> > ()), false);
     }
-#line 4141 "../../mli-root/src/database-parser.cc"
+#line 4086 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 192: // special_metaformula: meta_object_free "free in" object_formula
-#line 2038 "../../mli-root/src/database-parser.yy"
+  case 188: // special_metaformula: meta_object_free "free in" object_formula
+#line 1947 "../../mli-root/src/database-parser.yy"
                                                     {
       yylhs.value.as < ref6<unit> > () = val<free_in_object>(make, val<variable>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()), true);
     }
-#line 4149 "../../mli-root/src/database-parser.cc"
+#line 4094 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 193: // special_metaformula: meta_object_free "free in" term
-#line 2041 "../../mli-root/src/database-parser.yy"
+  case 189: // special_metaformula: meta_object_free "free in" term
+#line 1950 "../../mli-root/src/database-parser.yy"
                                           {
       yylhs.value.as < ref6<unit> > () = val<free_in_object>(make, val<variable>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()), true);
     }
-#line 4157 "../../mli-root/src/database-parser.cc"
+#line 4102 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 194: // special_metaformula: meta_object_free "not" "free in" object_formula
-#line 2044 "../../mli-root/src/database-parser.yy"
+  case 190: // special_metaformula: meta_object_free "not" "free in" object_formula
+#line 1953 "../../mli-root/src/database-parser.yy"
                                                           {
       yylhs.value.as < ref6<unit> > () = val<free_in_object>(make, val<variable>(yystack_[3].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()), false);
     }
-#line 4165 "../../mli-root/src/database-parser.cc"
+#line 4110 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 195: // special_metaformula: meta_object_free "not" "free in" term
-#line 2047 "../../mli-root/src/database-parser.yy"
+  case 191: // special_metaformula: meta_object_free "not" "free in" term
+#line 1956 "../../mli-root/src/database-parser.yy"
                                                 {
       yylhs.value.as < ref6<unit> > () = val<free_in_object>(make, val<variable>(yystack_[3].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()), false);
     }
-#line 4173 "../../mli-root/src/database-parser.cc"
+#line 4118 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 196: // special_metaformula: term "free for" meta_object_free "in" object_formula
-#line 2050 "../../mli-root/src/database-parser.yy"
+  case 192: // special_metaformula: term "free for" meta_object_free "in" object_formula
+#line 1959 "../../mli-root/src/database-parser.yy"
                                                                   {
       yylhs.value.as < ref6<unit> > () = val<free_for_object>(make, 
         val<formula>(yystack_[4].value.as < ref6<unit> > ()), val<variable>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()), true);
     }
-#line 4182 "../../mli-root/src/database-parser.cc"
+#line 4127 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 197: // special_metaformula: term "free for" meta_object_free "in" term
-#line 2054 "../../mli-root/src/database-parser.yy"
+  case 193: // special_metaformula: term "free for" meta_object_free "in" term
+#line 1963 "../../mli-root/src/database-parser.yy"
                                                         {
       yylhs.value.as < ref6<unit> > () = val<free_for_object>(make, 
         val<formula>(yystack_[4].value.as < ref6<unit> > ()), val<variable>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()), true);
     }
-#line 4191 "../../mli-root/src/database-parser.cc"
+#line 4136 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 198: // meta_object_free: "object variable"
-#line 2062 "../../mli-root/src/database-parser.yy"
+  case 194: // meta_object_free: "object variable"
+#line 1971 "../../mli-root/src/database-parser.yy"
                        { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 4197 "../../mli-root/src/database-parser.cc"
+#line 4142 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 199: // metapredicate: metapredicate_function
-#line 2067 "../../mli-root/src/database-parser.yy"
+  case 195: // metapredicate: metapredicate_function
+#line 1976 "../../mli-root/src/database-parser.yy"
                               { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4203 "../../mli-root/src/database-parser.cc"
+#line 4148 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 200: // metapredicate: object_formula "≣" object_formula
-#line 2068 "../../mli-root/src/database-parser.yy"
+  case 196: // metapredicate: object_formula "≣" object_formula
+#line 1977 "../../mli-root/src/database-parser.yy"
                                             {
       yylhs.value.as < ref6<unit> > () = val<identical>(make, val<formula>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()), true);
     }
-#line 4211 "../../mli-root/src/database-parser.cc"
+#line 4156 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 201: // metapredicate: object_formula "≣̷" object_formula
-#line 2071 "../../mli-root/src/database-parser.yy"
+  case 197: // metapredicate: object_formula "≣̷" object_formula
+#line 1980 "../../mli-root/src/database-parser.yy"
                                             {
       yylhs.value.as < ref6<unit> > () = val<identical>(make, val<formula>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()), false);
     }
-#line 4219 "../../mli-root/src/database-parser.cc"
+#line 4164 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 202: // metapredicate: term "≣" term
-#line 2074 "../../mli-root/src/database-parser.yy"
+  case 198: // metapredicate: term "≣" term
+#line 1983 "../../mli-root/src/database-parser.yy"
                         {
       yylhs.value.as < ref6<unit> > () = val<identical>(make, val<formula>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()), true);
     }
-#line 4227 "../../mli-root/src/database-parser.cc"
+#line 4172 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 203: // metapredicate: term "≣̷" term
-#line 2077 "../../mli-root/src/database-parser.yy"
+  case 199: // metapredicate: term "≣̷" term
+#line 1986 "../../mli-root/src/database-parser.yy"
                         {
       yylhs.value.as < ref6<unit> > () = val<identical>(make, val<formula>(yystack_[2].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()), false);
     }
-#line 4235 "../../mli-root/src/database-parser.cc"
+#line 4180 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 204: // metapredicate_function: "metapredicate constant" metapredicate_argument
-#line 2084 "../../mli-root/src/database-parser.yy"
+  case 200: // metapredicate_function: "metapredicate constant" metapredicate_argument
+#line 1993 "../../mli-root/src/database-parser.yy"
                                                         {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, val<formula>(yystack_[1].value.as < val<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()),
         structure::predicate, 1_ml, structure::postargument, precedence_t());
     }
-#line 4244 "../../mli-root/src/database-parser.cc"
+#line 4189 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 205: // metapredicate_function: "metaformula variable" metapredicate_argument
-#line 2088 "../../mli-root/src/database-parser.yy"
+  case 201: // metapredicate_function: "metaformula variable" metapredicate_argument
+#line 1997 "../../mli-root/src/database-parser.yy"
                                                       {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, val<formula>(yystack_[1].value.as < val<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()),
         structure::predicate, 1_ml, structure::postargument, precedence_t());
     }
-#line 4253 "../../mli-root/src/database-parser.cc"
+#line 4198 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 206: // metapredicate_argument: "(" metapredicate_argument_body ")"
-#line 2096 "../../mli-root/src/database-parser.yy"
+  case 202: // metapredicate_argument: "(" metapredicate_argument_body ")"
+#line 2005 "../../mli-root/src/database-parser.yy"
                                            { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 4259 "../../mli-root/src/database-parser.cc"
+#line 4204 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 207: // metapredicate_argument_body: object_formula
-#line 2101 "../../mli-root/src/database-parser.yy"
+  case 203: // metapredicate_argument_body: object_formula
+#line 2010 "../../mli-root/src/database-parser.yy"
                       {
       ref0<sequence> vr(make, sequence::tuple);
       yylhs.value.as < ref6<unit> > () = vr;
       vr->push_back(val<formula>(yystack_[0].value.as < ref6<unit> > ())); }
-#line 4268 "../../mli-root/src/database-parser.cc"
+#line 4213 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 208: // metapredicate_argument_body: metapredicate_argument_body "," object_formula
-#line 2105 "../../mli-root/src/database-parser.yy"
+  case 204: // metapredicate_argument_body: metapredicate_argument_body "," object_formula
+#line 2014 "../../mli-root/src/database-parser.yy"
                                                          {
       yylhs.value.as < ref6<unit> > () = yystack_[2].value.as < ref6<unit> > ();
       sequence& vr = dyn_cast<sequence&>(yylhs.value.as < ref6<unit> > ());
       vr.push_back(val<formula>(yystack_[0].value.as < ref6<unit> > ())); }
-#line 4277 "../../mli-root/src/database-parser.cc"
+#line 4222 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 209: // object_formula: atomic_formula
-#line 2113 "../../mli-root/src/database-parser.yy"
+  case 205: // object_formula: atomic_formula
+#line 2022 "../../mli-root/src/database-parser.yy"
                       { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4283 "../../mli-root/src/database-parser.cc"
+#line 4228 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 210: // object_formula: very_simple_formula formula_substitution_sequence
-#line 2114 "../../mli-root/src/database-parser.yy"
+  case 206: // object_formula: very_simple_formula formula_substitution_sequence
+#line 2023 "../../mli-root/src/database-parser.yy"
                                                             {
       yylhs.value.as < ref6<unit> > () = val<substitution_formula>(make, val<substitution>(yystack_[0].value.as < ref6<unit> > ()), val<formula>(yystack_[1].value.as < ref6<unit> > ()));
     }
-#line 4291 "../../mli-root/src/database-parser.cc"
+#line 4236 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 211: // object_formula: predicate_function_application
-#line 2117 "../../mli-root/src/database-parser.yy"
+  case 207: // object_formula: predicate_function_application
+#line 2026 "../../mli-root/src/database-parser.yy"
                                       { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4297 "../../mli-root/src/database-parser.cc"
+#line 4242 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 212: // object_formula: logic_formula
-#line 2118 "../../mli-root/src/database-parser.yy"
+  case 208: // object_formula: logic_formula
+#line 2027 "../../mli-root/src/database-parser.yy"
                      { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4303 "../../mli-root/src/database-parser.cc"
+#line 4248 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 213: // object_formula: "(" object_formula ")"
-#line 2119 "../../mli-root/src/database-parser.yy"
+  case 209: // object_formula: "(" object_formula ")"
+#line 2028 "../../mli-root/src/database-parser.yy"
                               { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 4309 "../../mli-root/src/database-parser.cc"
+#line 4254 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 214: // object_formula: quantized_formula
-#line 2120 "../../mli-root/src/database-parser.yy"
+  case 210: // object_formula: quantized_formula
+#line 2029 "../../mli-root/src/database-parser.yy"
                          { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4315 "../../mli-root/src/database-parser.cc"
+#line 4260 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 215: // object_formula: hoare_triple
-#line 2121 "../../mli-root/src/database-parser.yy"
+  case 211: // object_formula: hoare_triple
+#line 2030 "../../mli-root/src/database-parser.yy"
                  {}
-#line 4321 "../../mli-root/src/database-parser.cc"
+#line 4266 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 216: // hoare_triple: "{" object_formula "}" code_sequence "{" object_formula "}"
-#line 2126 "../../mli-root/src/database-parser.yy"
+  case 212: // hoare_triple: "{" object_formula "}" code_sequence "{" object_formula "}"
+#line 2035 "../../mli-root/src/database-parser.yy"
                                                               { yylhs.value.as < ref6<unit> > () = val<formula>(); }
-#line 4327 "../../mli-root/src/database-parser.cc"
+#line 4272 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 217: // code_statement: code_term
-#line 2137 "../../mli-root/src/database-parser.yy"
+  case 213: // code_statement: code_term
+#line 2046 "../../mli-root/src/database-parser.yy"
               {}
-#line 4333 "../../mli-root/src/database-parser.cc"
+#line 4278 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 218: // code_statement: "{" code_sequence "}"
-#line 2138 "../../mli-root/src/database-parser.yy"
+  case 214: // code_statement: "{" code_sequence "}"
+#line 2047 "../../mli-root/src/database-parser.yy"
                           {}
-#line 4339 "../../mli-root/src/database-parser.cc"
+#line 4284 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 219: // code_sequence: %empty
-#line 2143 "../../mli-root/src/database-parser.yy"
+  case 215: // code_sequence: %empty
+#line 2052 "../../mli-root/src/database-parser.yy"
            {}
-#line 4345 "../../mli-root/src/database-parser.cc"
+#line 4290 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 220: // code_sequence: code_term
-#line 2144 "../../mli-root/src/database-parser.yy"
+  case 216: // code_sequence: code_term
+#line 2053 "../../mli-root/src/database-parser.yy"
               {}
-#line 4351 "../../mli-root/src/database-parser.cc"
+#line 4296 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 221: // code_sequence: code_sequence ";" code_term
-#line 2145 "../../mli-root/src/database-parser.yy"
+  case 217: // code_sequence: code_sequence ";" code_term
+#line 2054 "../../mli-root/src/database-parser.yy"
                                 {}
-#line 4357 "../../mli-root/src/database-parser.cc"
+#line 4302 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 222: // code_term: "code variable"
-#line 2150 "../../mli-root/src/database-parser.yy"
+  case 218: // code_term: "code variable"
+#line 2059 "../../mli-root/src/database-parser.yy"
                  {}
-#line 4363 "../../mli-root/src/database-parser.cc"
+#line 4308 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 223: // code_term: "∅"
-#line 2151 "../../mli-root/src/database-parser.yy"
+  case 219: // code_term: "∅"
+#line 2060 "../../mli-root/src/database-parser.yy"
        {}
-#line 4369 "../../mli-root/src/database-parser.cc"
+#line 4314 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 224: // code_term: "object variable" "≔" term
-#line 2152 "../../mli-root/src/database-parser.yy"
+  case 220: // code_term: "object variable" "≔" term
+#line 2061 "../../mli-root/src/database-parser.yy"
                             {}
-#line 4375 "../../mli-root/src/database-parser.cc"
+#line 4320 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 225: // code_term: "if" object_formula "then" code_statement "else" code_statement
-#line 2153 "../../mli-root/src/database-parser.yy"
+  case 221: // code_term: "if" object_formula "then" code_statement "else" code_statement
+#line 2062 "../../mli-root/src/database-parser.yy"
                                                                    {}
-#line 4381 "../../mli-root/src/database-parser.cc"
+#line 4326 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 226: // code_term: "while" object_formula "do" code_statement
-#line 2154 "../../mli-root/src/database-parser.yy"
+  case 222: // code_term: "while" object_formula "do" code_statement
+#line 2063 "../../mli-root/src/database-parser.yy"
                                               {}
-#line 4387 "../../mli-root/src/database-parser.cc"
+#line 4332 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 227: // very_simple_formula: "object formula variable"
-#line 2159 "../../mli-root/src/database-parser.yy"
+  case 223: // very_simple_formula: "object formula variable"
+#line 2068 "../../mli-root/src/database-parser.yy"
                                { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 4393 "../../mli-root/src/database-parser.cc"
+#line 4338 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 228: // very_simple_formula: "atom variable"
-#line 2160 "../../mli-root/src/database-parser.yy"
+  case 224: // very_simple_formula: "atom variable"
+#line 2069 "../../mli-root/src/database-parser.yy"
                      { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 4399 "../../mli-root/src/database-parser.cc"
+#line 4344 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 229: // very_simple_formula: "(" object_formula ")"
-#line 2161 "../../mli-root/src/database-parser.yy"
+  case 225: // very_simple_formula: "(" object_formula ")"
+#line 2070 "../../mli-root/src/database-parser.yy"
                               { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 4405 "../../mli-root/src/database-parser.cc"
+#line 4350 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 230: // quantized_formula: quantizer_declaration quantized_body
-#line 2166 "../../mli-root/src/database-parser.yy"
+  case 226: // quantized_formula: quantizer_declaration quantized_body
+#line 2075 "../../mli-root/src/database-parser.yy"
                                                {
       symbol_table.pop_level();
       variable_list& vsr = dyn_cast<variable_list&>(yystack_[1].value.as < ref6<unit> > ());
@@ -4413,11 +4358,11 @@ namespace mli {
       bf->excluded1_.insert(vsr.excluded1_.begin(), vsr.excluded1_.end());
       yylhs.value.as < ref6<unit> > () = bf;
     }
-#line 4417 "../../mli-root/src/database-parser.cc"
+#line 4362 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 231: // quantized_formula: quantizer_declaration optional_in_term ":" object_formula
-#line 2173 "../../mli-root/src/database-parser.yy"
+  case 227: // quantized_formula: quantizer_declaration optional_in_term ":" object_formula
+#line 2082 "../../mli-root/src/database-parser.yy"
                                                                        {
       symbol_table.pop_level();
       variable_list& vsr = dyn_cast<variable_list&>(yystack_[3].value.as < ref6<unit> > ());
@@ -4425,11 +4370,11 @@ namespace mli {
       bf->excluded1_.insert(vsr.excluded1_.begin(), vsr.excluded1_.end());
       yylhs.value.as < ref6<unit> > () = bf;
     }
-#line 4429 "../../mli-root/src/database-parser.cc"
+#line 4374 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 232: // quantized_formula: quantizer_declaration optional_in_term quantized_formula
-#line 2180 "../../mli-root/src/database-parser.yy"
+  case 228: // quantized_formula: quantizer_declaration optional_in_term quantized_formula
+#line 2089 "../../mli-root/src/database-parser.yy"
                                                                       {
       symbol_table.pop_level();
       variable_list& vsr = dyn_cast<variable_list&>(yystack_[2].value.as < ref6<unit> > ());
@@ -4437,387 +4382,387 @@ namespace mli {
       bf->excluded1_.insert(vsr.excluded1_.begin(), vsr.excluded1_.end());
       yylhs.value.as < ref6<unit> > () = bf;
     }
-#line 4441 "../../mli-root/src/database-parser.cc"
+#line 4386 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 233: // simple_formula: "object formula variable"
-#line 2191 "../../mli-root/src/database-parser.yy"
+  case 229: // simple_formula: "object formula variable"
+#line 2100 "../../mli-root/src/database-parser.yy"
                                { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 4447 "../../mli-root/src/database-parser.cc"
+#line 4392 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 234: // simple_formula: "atom variable"
-#line 2192 "../../mli-root/src/database-parser.yy"
+  case 230: // simple_formula: "atom variable"
+#line 2101 "../../mli-root/src/database-parser.yy"
                      { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 4453 "../../mli-root/src/database-parser.cc"
+#line 4398 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 235: // simple_formula: predicate_expression
-#line 2193 "../../mli-root/src/database-parser.yy"
+  case 231: // simple_formula: predicate_expression
+#line 2102 "../../mli-root/src/database-parser.yy"
                             { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4459 "../../mli-root/src/database-parser.cc"
+#line 4404 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 236: // simple_formula: "(" object_formula ")"
-#line 2194 "../../mli-root/src/database-parser.yy"
+  case 232: // simple_formula: "(" object_formula ")"
+#line 2103 "../../mli-root/src/database-parser.yy"
                               { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 4465 "../../mli-root/src/database-parser.cc"
+#line 4410 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 237: // simple_formula: quantized_formula
-#line 2195 "../../mli-root/src/database-parser.yy"
+  case 233: // simple_formula: quantized_formula
+#line 2104 "../../mli-root/src/database-parser.yy"
                          { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4471 "../../mli-root/src/database-parser.cc"
+#line 4416 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 238: // quantized_body: atomic_formula
-#line 2201 "../../mli-root/src/database-parser.yy"
+  case 234: // quantized_body: atomic_formula
+#line 2110 "../../mli-root/src/database-parser.yy"
                       { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4477 "../../mli-root/src/database-parser.cc"
+#line 4422 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 239: // quantized_body: "(" object_formula ")"
-#line 2202 "../../mli-root/src/database-parser.yy"
+  case 235: // quantized_body: "(" object_formula ")"
+#line 2111 "../../mli-root/src/database-parser.yy"
                               { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 4483 "../../mli-root/src/database-parser.cc"
+#line 4428 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 240: // atomic_formula: "atom constant"
-#line 2206 "../../mli-root/src/database-parser.yy"
+  case 236: // atomic_formula: "atom constant"
+#line 2115 "../../mli-root/src/database-parser.yy"
                      { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 4489 "../../mli-root/src/database-parser.cc"
+#line 4434 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 241: // atomic_formula: "object formula variable"
-#line 2207 "../../mli-root/src/database-parser.yy"
+  case 237: // atomic_formula: "object formula variable"
+#line 2116 "../../mli-root/src/database-parser.yy"
                                { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 4495 "../../mli-root/src/database-parser.cc"
+#line 4440 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 242: // atomic_formula: "atom variable"
-#line 2208 "../../mli-root/src/database-parser.yy"
+  case 238: // atomic_formula: "atom variable"
+#line 2117 "../../mli-root/src/database-parser.yy"
                      { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 4501 "../../mli-root/src/database-parser.cc"
+#line 4446 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 243: // atomic_formula: predicate
-#line 2209 "../../mli-root/src/database-parser.yy"
+  case 239: // atomic_formula: predicate
+#line 2118 "../../mli-root/src/database-parser.yy"
                  { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4507 "../../mli-root/src/database-parser.cc"
+#line 4452 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 244: // predicate: predicate_expression
-#line 2215 "../../mli-root/src/database-parser.yy"
+  case 240: // predicate: predicate_expression
+#line 2124 "../../mli-root/src/database-parser.yy"
                             { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4513 "../../mli-root/src/database-parser.cc"
+#line 4458 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 245: // predicate: term "=" term
-#line 2216 "../../mli-root/src/database-parser.yy"
+  case 241: // predicate: term "=" term
+#line 2125 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, equal_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4519 "../../mli-root/src/database-parser.cc"
+#line 4464 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 246: // predicate: term "≠" term
-#line 2217 "../../mli-root/src/database-parser.yy"
+  case 242: // predicate: term "≠" term
+#line 2126 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, not_equal_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4525 "../../mli-root/src/database-parser.cc"
+#line 4470 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 247: // predicate: term "∣" term
-#line 2220 "../../mli-root/src/database-parser.yy"
+  case 243: // predicate: term "∣" term
+#line 2129 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, equal_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4531 "../../mli-root/src/database-parser.cc"
+#line 4476 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 248: // predicate: term "∤" term
-#line 2221 "../../mli-root/src/database-parser.yy"
+  case 244: // predicate: term "∤" term
+#line 2130 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, not_equal_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4537 "../../mli-root/src/database-parser.cc"
+#line 4482 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 249: // predicate: term "<" term
-#line 2224 "../../mli-root/src/database-parser.yy"
+  case 245: // predicate: term "<" term
+#line 2133 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, less_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4543 "../../mli-root/src/database-parser.cc"
+#line 4488 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 250: // predicate: term ">" term
-#line 2225 "../../mli-root/src/database-parser.yy"
+  case 246: // predicate: term ">" term
+#line 2134 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, greater_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4549 "../../mli-root/src/database-parser.cc"
+#line 4494 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 251: // predicate: term "≤" term
-#line 2226 "../../mli-root/src/database-parser.yy"
+  case 247: // predicate: term "≤" term
+#line 2135 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, less_or_equal_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4555 "../../mli-root/src/database-parser.cc"
+#line 4500 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 252: // predicate: term "≥" term
-#line 2227 "../../mli-root/src/database-parser.yy"
+  case 248: // predicate: term "≥" term
+#line 2136 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, greater_or_equal_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4561 "../../mli-root/src/database-parser.cc"
+#line 4506 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 253: // predicate: term "≮" term
-#line 2228 "../../mli-root/src/database-parser.yy"
+  case 249: // predicate: term "≮" term
+#line 2137 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, not_less_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4567 "../../mli-root/src/database-parser.cc"
+#line 4512 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 254: // predicate: term "≯" term
-#line 2229 "../../mli-root/src/database-parser.yy"
+  case 250: // predicate: term "≯" term
+#line 2138 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, not_greater_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4573 "../../mli-root/src/database-parser.cc"
+#line 4518 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 255: // predicate: term "≰" term
-#line 2230 "../../mli-root/src/database-parser.yy"
+  case 251: // predicate: term "≰" term
+#line 2139 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, not_less_or_equal_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4579 "../../mli-root/src/database-parser.cc"
+#line 4524 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 256: // predicate: term "≱" term
-#line 2231 "../../mli-root/src/database-parser.yy"
+  case 252: // predicate: term "≱" term
+#line 2140 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, not_greater_or_equal_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4585 "../../mli-root/src/database-parser.cc"
+#line 4530 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 257: // predicate: term "∈" term
-#line 2233 "../../mli-root/src/database-parser.yy"
+  case 253: // predicate: term "∈" term
+#line 2142 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, in_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4591 "../../mli-root/src/database-parser.cc"
+#line 4536 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 258: // predicate: term "∉" term
-#line 2234 "../../mli-root/src/database-parser.yy"
+  case 254: // predicate: term "∉" term
+#line 2143 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, not_in_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4597 "../../mli-root/src/database-parser.cc"
+#line 4542 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 259: // predicate: term "⊆" term
-#line 2235 "../../mli-root/src/database-parser.yy"
+  case 255: // predicate: term "⊆" term
+#line 2144 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, subset_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4603 "../../mli-root/src/database-parser.cc"
+#line 4548 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 260: // predicate: term "⊊" term
-#line 2236 "../../mli-root/src/database-parser.yy"
+  case 256: // predicate: term "⊊" term
+#line 2145 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, proper_subset_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4609 "../../mli-root/src/database-parser.cc"
+#line 4554 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 261: // predicate: term "⊇" term
-#line 2237 "../../mli-root/src/database-parser.yy"
+  case 257: // predicate: term "⊇" term
+#line 2146 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, superset_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4615 "../../mli-root/src/database-parser.cc"
+#line 4560 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 262: // predicate: term "⊋" term
-#line 2238 "../../mli-root/src/database-parser.yy"
+  case 258: // predicate: term "⊋" term
+#line 2147 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::predicate, 0_ml, structure::infix, proper_superset_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ()); }
-#line 4621 "../../mli-root/src/database-parser.cc"
+#line 4566 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 263: // $@17: %empty
-#line 2239 "../../mli-root/src/database-parser.yy"
+  case 259: // $@17: %empty
+#line 2148 "../../mli-root/src/database-parser.yy"
           { symbol_table.push_level(false); bound_variable_type = database_parser::token::is_set_variable; }
-#line 4627 "../../mli-root/src/database-parser.cc"
+#line 4572 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 264: // $@18: %empty
-#line 2240 "../../mli-root/src/database-parser.yy"
+  case 260: // $@18: %empty
+#line 2149 "../../mli-root/src/database-parser.yy"
                                { bound_variable_type = free_variable_context; }
-#line 4633 "../../mli-root/src/database-parser.cc"
+#line 4578 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 265: // predicate: "Set" $@17 "₍" "Set variable" "₎" $@18 simple_formula
-#line 2241 "../../mli-root/src/database-parser.yy"
+  case 261: // predicate: "Set" $@17 "₍" "Set variable" "₎" $@18 simple_formula
+#line 2150 "../../mli-root/src/database-parser.yy"
                        {
       symbol_table.pop_level();
       yylhs.value.as < ref6<unit> > () = val<bound_formula>(make,
         val<variable>(yystack_[3].value.as < val<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()), bound_formula::is_set_);
     }
-#line 4643 "../../mli-root/src/database-parser.cc"
+#line 4588 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 266: // predicate_expression: predicate_identifier tuple
-#line 2250 "../../mli-root/src/database-parser.yy"
+  case 262: // predicate_expression: predicate_identifier tuple
+#line 2159 "../../mli-root/src/database-parser.yy"
                                      {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, val<formula>(yystack_[1].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()),
         structure::predicate, 0_ml, structure::postargument, precedence_t());
     }
-#line 4652 "../../mli-root/src/database-parser.cc"
+#line 4597 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 267: // predicate_identifier: "predicate constant"
-#line 2258 "../../mli-root/src/database-parser.yy"
+  case 263: // predicate_identifier: "predicate constant"
+#line 2167 "../../mli-root/src/database-parser.yy"
                           { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > ();  }
-#line 4658 "../../mli-root/src/database-parser.cc"
+#line 4603 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 268: // predicate_identifier: "predicate variable"
-#line 2259 "../../mli-root/src/database-parser.yy"
+  case 264: // predicate_identifier: "predicate variable"
+#line 2168 "../../mli-root/src/database-parser.yy"
                           { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > ();  }
-#line 4664 "../../mli-root/src/database-parser.cc"
+#line 4609 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 269: // optional_superscript_natural_number_value: %empty
-#line 2264 "../../mli-root/src/database-parser.yy"
+  case 265: // optional_superscript_natural_number_value: %empty
+#line 2173 "../../mli-root/src/database-parser.yy"
            {}
-#line 4670 "../../mli-root/src/database-parser.cc"
+#line 4615 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 270: // optional_superscript_natural_number_value: "superscript natural number value"
-#line 2265 "../../mli-root/src/database-parser.yy"
+  case 266: // optional_superscript_natural_number_value: "superscript natural number value"
+#line 2174 "../../mli-root/src/database-parser.yy"
     { yylhs.value.as < integer > () = yystack_[0].value.as < integer > (); }
-#line 4676 "../../mli-root/src/database-parser.cc"
+#line 4621 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 271: // logic_formula: "¬" optional_superscript_natural_number_value object_formula
-#line 2277 "../../mli-root/src/database-parser.yy"
+  case 267: // logic_formula: "¬" optional_superscript_natural_number_value object_formula
+#line 2186 "../../mli-root/src/database-parser.yy"
                                                                           {
       size_type k = (size_type)yystack_[1].value.as < integer > ();
 
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[2].value.as < std::string > (), structure::logic, metalevel_t(k),
         structure::prefix, logical_not_oprec, yystack_[0].value.as < ref6<unit> > ());
     }
-#line 4687 "../../mli-root/src/database-parser.cc"
+#line 4632 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 272: // logic_formula: object_formula "∨" optional_superscript_natural_number_value object_formula
-#line 2283 "../../mli-root/src/database-parser.yy"
+  case 268: // logic_formula: object_formula "∨" optional_superscript_natural_number_value object_formula
+#line 2192 "../../mli-root/src/database-parser.yy"
                                                                                             {
       size_type k = (size_type)yystack_[1].value.as < integer > ();
 
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[2].value.as < std::string > (), structure::logic, metalevel_t(k),
         structure::infix, logical_or_oprec, yystack_[3].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 4698 "../../mli-root/src/database-parser.cc"
+#line 4643 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 273: // logic_formula: object_formula "∧" optional_superscript_natural_number_value object_formula
-#line 2289 "../../mli-root/src/database-parser.yy"
+  case 269: // logic_formula: object_formula "∧" optional_superscript_natural_number_value object_formula
+#line 2198 "../../mli-root/src/database-parser.yy"
                                                                                             {
       size_type k = (size_type)yystack_[1].value.as < integer > ();
 
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[2].value.as < std::string > (), structure::logic, metalevel_t(k),
         structure::infix, logical_and_oprec, yystack_[3].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 4709 "../../mli-root/src/database-parser.cc"
+#line 4654 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 274: // logic_formula: object_formula "⇒" optional_superscript_natural_number_value object_formula
-#line 2295 "../../mli-root/src/database-parser.yy"
+  case 270: // logic_formula: object_formula "⇒" optional_superscript_natural_number_value object_formula
+#line 2204 "../../mli-root/src/database-parser.yy"
                                                                                             {
       size_type k = (size_type)yystack_[1].value.as < integer > ();
 
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[2].value.as < std::string > (), structure::logic, metalevel_t(k),
         structure::infix, implies_oprec, yystack_[3].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 4720 "../../mli-root/src/database-parser.cc"
+#line 4665 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 275: // logic_formula: object_formula "⇐" optional_superscript_natural_number_value object_formula
-#line 2301 "../../mli-root/src/database-parser.yy"
+  case 271: // logic_formula: object_formula "⇐" optional_superscript_natural_number_value object_formula
+#line 2210 "../../mli-root/src/database-parser.yy"
                                                                                             {
       size_type k = (size_type)yystack_[1].value.as < integer > ();
 
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[2].value.as < std::string > (), structure::logic, metalevel_t(k),
         structure::infix, impliedby_oprec, yystack_[3].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 4731 "../../mli-root/src/database-parser.cc"
+#line 4676 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 276: // logic_formula: object_formula "⇔" optional_superscript_natural_number_value object_formula
-#line 2307 "../../mli-root/src/database-parser.yy"
+  case 272: // logic_formula: object_formula "⇔" optional_superscript_natural_number_value object_formula
+#line 2216 "../../mli-root/src/database-parser.yy"
                                                                                             {
       size_type k = (size_type)yystack_[1].value.as < integer > ();
 
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[2].value.as < std::string > (), structure::logic, metalevel_t(k),
         structure::infix, equivalent_oprec, yystack_[3].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 4742 "../../mli-root/src/database-parser.cc"
+#line 4687 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 277: // logic_formula: prefix_logic_formula
-#line 2313 "../../mli-root/src/database-parser.yy"
+  case 273: // logic_formula: prefix_logic_formula
+#line 2222 "../../mli-root/src/database-parser.yy"
                             { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > ();  }
-#line 4748 "../../mli-root/src/database-parser.cc"
+#line 4693 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 278: // prefix_logic_formula: "prefix formula variable"
-#line 2318 "../../mli-root/src/database-parser.yy"
+  case 274: // prefix_logic_formula: "prefix formula variable"
+#line 2227 "../../mli-root/src/database-parser.yy"
                                { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 4754 "../../mli-root/src/database-parser.cc"
+#line 4699 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 279: // prefix_logic_formula: prefix_not_key prefix_logic_formula
-#line 2319 "../../mli-root/src/database-parser.yy"
+  case 275: // prefix_logic_formula: prefix_not_key prefix_logic_formula
+#line 2228 "../../mli-root/src/database-parser.yy"
                                               {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, "¬", structure::logic, 0_ml,
         structure::prefix, logical_not_oprec, yystack_[0].value.as < ref6<unit> > ());
     }
-#line 4763 "../../mli-root/src/database-parser.cc"
+#line 4708 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 280: // prefix_logic_formula: prefix_or_key prefix_logic_formula prefix_logic_formula
-#line 2323 "../../mli-root/src/database-parser.yy"
+  case 276: // prefix_logic_formula: prefix_or_key prefix_logic_formula prefix_logic_formula
+#line 2232 "../../mli-root/src/database-parser.yy"
                                                                      {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, "∨", structure::logic, 0_ml,
         structure::infix, logical_or_oprec, yystack_[1].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 4772 "../../mli-root/src/database-parser.cc"
+#line 4717 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 281: // prefix_logic_formula: prefix_and_key prefix_logic_formula prefix_logic_formula
-#line 2327 "../../mli-root/src/database-parser.yy"
+  case 277: // prefix_logic_formula: prefix_and_key prefix_logic_formula prefix_logic_formula
+#line 2236 "../../mli-root/src/database-parser.yy"
                                                                       {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, "∧", structure::logic, 0_ml,
         structure::infix, logical_and_oprec, yystack_[1].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 4781 "../../mli-root/src/database-parser.cc"
+#line 4726 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 282: // prefix_logic_formula: prefix_implies_key prefix_logic_formula prefix_logic_formula
-#line 2331 "../../mli-root/src/database-parser.yy"
+  case 278: // prefix_logic_formula: prefix_implies_key prefix_logic_formula prefix_logic_formula
+#line 2240 "../../mli-root/src/database-parser.yy"
                                                                           {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, "⇒", structure::logic, 0_ml,
         structure::infix, implies_oprec, yystack_[1].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 4790 "../../mli-root/src/database-parser.cc"
+#line 4735 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 283: // prefix_logic_formula: prefix_equivalent_key prefix_logic_formula prefix_logic_formula
-#line 2335 "../../mli-root/src/database-parser.yy"
+  case 279: // prefix_logic_formula: prefix_equivalent_key prefix_logic_formula prefix_logic_formula
+#line 2244 "../../mli-root/src/database-parser.yy"
                                                                              {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, "⇔", structure::logic, 0_ml,
         structure::infix, equivalent_oprec, yystack_[1].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
  }
-#line 4799 "../../mli-root/src/database-parser.cc"
+#line 4744 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 284: // quantizer_declaration: quantized_variable_list
-#line 2343 "../../mli-root/src/database-parser.yy"
+  case 280: // quantizer_declaration: quantized_variable_list
+#line 2252 "../../mli-root/src/database-parser.yy"
                                { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4805 "../../mli-root/src/database-parser.cc"
+#line 4750 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 285: // quantized_variable_list: all_variable_list
-#line 2347 "../../mli-root/src/database-parser.yy"
+  case 281: // quantized_variable_list: all_variable_list
+#line 2256 "../../mli-root/src/database-parser.yy"
                          { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4811 "../../mli-root/src/database-parser.cc"
+#line 4756 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 286: // quantized_variable_list: exist_variable_list
-#line 2348 "../../mli-root/src/database-parser.yy"
+  case 282: // quantized_variable_list: exist_variable_list
+#line 2257 "../../mli-root/src/database-parser.yy"
                            { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4817 "../../mli-root/src/database-parser.cc"
+#line 4762 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 287: // all_variable_list: "∀" exclusion_set all_identifier_list
-#line 2353 "../../mli-root/src/database-parser.yy"
+  case 283: // all_variable_list: "∀" exclusion_set all_identifier_list
+#line 2262 "../../mli-root/src/database-parser.yy"
                                                  {
       auto bfp = dyn_cast<bound_formula*>(yystack_[1].value.as < ref6<unit> > ());
       if (bfp != nullptr) {
@@ -4826,11 +4771,11 @@ namespace mli {
       }
       yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > ();
     }
-#line 4830 "../../mli-root/src/database-parser.cc"
+#line 4775 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 288: // exist_variable_list: "∃" exclusion_set exist_identifier_list
-#line 2365 "../../mli-root/src/database-parser.yy"
+  case 284: // exist_variable_list: "∃" exclusion_set exist_identifier_list
+#line 2274 "../../mli-root/src/database-parser.yy"
                                                    {
       auto bfp = dyn_cast<bound_formula*>(yystack_[1].value.as < ref6<unit> > ());
       if (bfp != nullptr) {
@@ -4839,398 +4784,398 @@ namespace mli {
       }
       yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > ();
     }
-#line 4843 "../../mli-root/src/database-parser.cc"
+#line 4788 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 289: // exclusion_set: %empty
-#line 2377 "../../mli-root/src/database-parser.yy"
+  case 285: // exclusion_set: %empty
+#line 2286 "../../mli-root/src/database-parser.yy"
            {}
-#line 4849 "../../mli-root/src/database-parser.cc"
+#line 4794 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 290: // $@19: %empty
-#line 2378 "../../mli-root/src/database-parser.yy"
+  case 286: // $@19: %empty
+#line 2287 "../../mli-root/src/database-parser.yy"
         { bound_variable_type = free_variable_context; }
-#line 4855 "../../mli-root/src/database-parser.cc"
+#line 4800 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 291: // exclusion_set: "ₓ" $@19 "₍" exclusion_list "₎"
-#line 2379 "../../mli-root/src/database-parser.yy"
+  case 287: // exclusion_set: "ₓ" $@19 "₍" exclusion_list "₎"
+#line 2288 "../../mli-root/src/database-parser.yy"
                                {
       bound_variable_type = database_parser::token::exist_variable;
       yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > ();
     }
-#line 4864 "../../mli-root/src/database-parser.cc"
+#line 4809 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 292: // exclusion_list: "object variable"
-#line 2386 "../../mli-root/src/database-parser.yy"
+  case 288: // exclusion_list: "object variable"
+#line 2295 "../../mli-root/src/database-parser.yy"
                        { val<bound_formula> vr(make); vr->excluded1_.insert(yystack_[0].value.as < val<unit> > ()); yylhs.value.as < ref6<unit> > () = vr; }
-#line 4870 "../../mli-root/src/database-parser.cc"
+#line 4815 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 293: // exclusion_list: exclusion_list "object variable"
-#line 2387 "../../mli-root/src/database-parser.yy"
+  case 289: // exclusion_list: exclusion_list "object variable"
+#line 2296 "../../mli-root/src/database-parser.yy"
                                            {
       val<bound_formula> vr = yystack_[1].value.as < ref6<unit> > ();
       vr->excluded1_.insert(yystack_[0].value.as < val<unit> > ());
       yylhs.value.as < ref6<unit> > () = vr;
     }
-#line 4880 "../../mli-root/src/database-parser.cc"
+#line 4825 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 294: // all_identifier_list: "all variable"
-#line 2397 "../../mli-root/src/database-parser.yy"
+  case 290: // all_identifier_list: "all variable"
+#line 2306 "../../mli-root/src/database-parser.yy"
                     {
       bound_variable_type = free_variable_context;
       yylhs.value.as < ref6<unit> > () = val<variable_list>(make, val<variable>(yystack_[0].value.as < val<unit> > ()), bound_formula::all_);
     }
-#line 4889 "../../mli-root/src/database-parser.cc"
+#line 4834 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 295: // $@20: %empty
-#line 2401 "../../mli-root/src/database-parser.yy"
+  case 291: // $@20: %empty
+#line 2310 "../../mli-root/src/database-parser.yy"
                            { bound_variable_type = token::all_variable; }
-#line 4895 "../../mli-root/src/database-parser.cc"
+#line 4840 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 296: // all_identifier_list: all_identifier_list $@20 "," "all variable"
-#line 2402 "../../mli-root/src/database-parser.yy"
+  case 292: // all_identifier_list: all_identifier_list $@20 "," "all variable"
+#line 2311 "../../mli-root/src/database-parser.yy"
                           {
       bound_variable_type = free_variable_context;
       yylhs.value.as < ref6<unit> > () = yystack_[3].value.as < ref6<unit> > ();
       dyn_cast<variable_list&>(yylhs.value.as < ref6<unit> > ()).push_back(val<variable>(yystack_[0].value.as < val<unit> > ()), bound_formula::all_);
     }
-#line 4905 "../../mli-root/src/database-parser.cc"
+#line 4850 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 297: // exist_identifier_list: "exist variable"
-#line 2411 "../../mli-root/src/database-parser.yy"
+  case 293: // exist_identifier_list: "exist variable"
+#line 2320 "../../mli-root/src/database-parser.yy"
                       {
       bound_variable_type = free_variable_context;
       yylhs.value.as < ref6<unit> > () = val<variable_list>(make, val<variable>(yystack_[0].value.as < val<unit> > ()), bound_formula::exist_);
     }
-#line 4914 "../../mli-root/src/database-parser.cc"
+#line 4859 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 298: // $@21: %empty
-#line 2415 "../../mli-root/src/database-parser.yy"
+  case 294: // $@21: %empty
+#line 2324 "../../mli-root/src/database-parser.yy"
                              { bound_variable_type = database_parser::token::exist_variable; }
-#line 4920 "../../mli-root/src/database-parser.cc"
+#line 4865 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 299: // exist_identifier_list: exist_identifier_list $@21 "," "exist variable"
-#line 2416 "../../mli-root/src/database-parser.yy"
+  case 295: // exist_identifier_list: exist_identifier_list $@21 "," "exist variable"
+#line 2325 "../../mli-root/src/database-parser.yy"
                             {
       bound_variable_type = free_variable_context;
       yylhs.value.as < ref6<unit> > () = yystack_[3].value.as < ref6<unit> > ();
       dyn_cast<variable_list&>(yylhs.value.as < ref6<unit> > ()).push_back(val<variable>(yystack_[0].value.as < val<unit> > ()), bound_formula::exist_);
     }
-#line 4930 "../../mli-root/src/database-parser.cc"
+#line 4875 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 300: // optional_in_term: %empty
-#line 2426 "../../mli-root/src/database-parser.yy"
+  case 296: // optional_in_term: %empty
+#line 2335 "../../mli-root/src/database-parser.yy"
            { yylhs.value.as < ref6<unit> > () = val<formula>(make); }
-#line 4936 "../../mli-root/src/database-parser.cc"
+#line 4881 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 301: // optional_in_term: "∈" term
-#line 2427 "../../mli-root/src/database-parser.yy"
+  case 297: // optional_in_term: "∈" term
+#line 2336 "../../mli-root/src/database-parser.yy"
                 { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4942 "../../mli-root/src/database-parser.cc"
+#line 4887 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 302: // tuple: "(" tuple_body ")"
-#line 2434 "../../mli-root/src/database-parser.yy"
+  case 298: // tuple: "(" tuple_body ")"
+#line 2343 "../../mli-root/src/database-parser.yy"
                           { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 4948 "../../mli-root/src/database-parser.cc"
+#line 4893 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 303: // tuple_body: term
-#line 2439 "../../mli-root/src/database-parser.yy"
+  case 299: // tuple_body: term
+#line 2348 "../../mli-root/src/database-parser.yy"
             {
       ref0<sequence> vr(make, sequence::tuple);
       yylhs.value.as < ref6<unit> > () = vr;
       vr->push_back(val<formula>(yystack_[0].value.as < ref6<unit> > ()));
     }
-#line 4958 "../../mli-root/src/database-parser.cc"
+#line 4903 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 304: // tuple_body: tuple_body "," term
-#line 2444 "../../mli-root/src/database-parser.yy"
+  case 300: // tuple_body: tuple_body "," term
+#line 2353 "../../mli-root/src/database-parser.yy"
                               {
       yylhs.value.as < ref6<unit> > () = yystack_[2].value.as < ref6<unit> > ();
       sequence& vr = dyn_cast<sequence&>(yylhs.value.as < ref6<unit> > ());
       vr.push_back(val<formula>(yystack_[0].value.as < ref6<unit> > ()));
     }
-#line 4968 "../../mli-root/src/database-parser.cc"
+#line 4913 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 305: // term: simple_term
-#line 2453 "../../mli-root/src/database-parser.yy"
+  case 301: // term: simple_term
+#line 2362 "../../mli-root/src/database-parser.yy"
                    { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4974 "../../mli-root/src/database-parser.cc"
+#line 4919 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 306: // term: function_term
-#line 2454 "../../mli-root/src/database-parser.yy"
+  case 302: // term: function_term
+#line 2363 "../../mli-root/src/database-parser.yy"
                      { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4980 "../../mli-root/src/database-parser.cc"
+#line 4925 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 307: // term: simple_term term_substitution_sequence
-#line 2455 "../../mli-root/src/database-parser.yy"
+  case 303: // term: simple_term term_substitution_sequence
+#line 2364 "../../mli-root/src/database-parser.yy"
                                                  {
       yylhs.value.as < ref6<unit> > () = val<substitution_formula>(make, val<substitution>(yystack_[0].value.as < ref6<unit> > ()), val<formula>(yystack_[1].value.as < ref6<unit> > ()));
     }
-#line 4988 "../../mli-root/src/database-parser.cc"
+#line 4933 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 308: // term: set_term
-#line 2458 "../../mli-root/src/database-parser.yy"
+  case 304: // term: set_term
+#line 2367 "../../mli-root/src/database-parser.yy"
                 { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 4994 "../../mli-root/src/database-parser.cc"
+#line 4939 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 309: // simple_term: "term constant"
-#line 2463 "../../mli-root/src/database-parser.yy"
+  case 305: // simple_term: "term constant"
+#line 2372 "../../mli-root/src/database-parser.yy"
                        { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5000 "../../mli-root/src/database-parser.cc"
+#line 4945 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 310: // simple_term: "natural number value"
-#line 2464 "../../mli-root/src/database-parser.yy"
+  case 306: // simple_term: "natural number value"
+#line 2373 "../../mli-root/src/database-parser.yy"
                               { yylhs.value.as < ref6<unit> > () = val<integer>(make, yystack_[0].value.as < std::pair<std::string, integer> > ().second); }
-#line 5006 "../../mli-root/src/database-parser.cc"
+#line 4951 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 311: // simple_term: "integer value"
-#line 2465 "../../mli-root/src/database-parser.yy"
+  case 307: // simple_term: "integer value"
+#line 2374 "../../mli-root/src/database-parser.yy"
                        { yylhs.value.as < ref6<unit> > () = val<integer>(make, yystack_[0].value.as < integer > ()); }
-#line 5012 "../../mli-root/src/database-parser.cc"
+#line 4957 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 312: // simple_term: term_identifier
-#line 2466 "../../mli-root/src/database-parser.yy"
+  case 308: // simple_term: term_identifier
+#line 2375 "../../mli-root/src/database-parser.yy"
                        { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 5018 "../../mli-root/src/database-parser.cc"
+#line 4963 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 313: // simple_term: "(" term ")"
-#line 2467 "../../mli-root/src/database-parser.yy"
+  case 309: // simple_term: "(" term ")"
+#line 2376 "../../mli-root/src/database-parser.yy"
                        { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 5024 "../../mli-root/src/database-parser.cc"
+#line 4969 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 314: // term_identifier: "object variable" variable_exclusion_set
-#line 2472 "../../mli-root/src/database-parser.yy"
+  case 310: // term_identifier: "object variable" variable_exclusion_set
+#line 2381 "../../mli-root/src/database-parser.yy"
                                                     {
       val<variable> xr = yystack_[1].value.as < val<unit> > ();
       val<variable> vr = yystack_[0].value.as < ref6<unit> > ();
       xr->excluded_.insert(vr->excluded_.begin(), vr->excluded_.end());
       yylhs.value.as < ref6<unit> > () = xr;
     }
-#line 5035 "../../mli-root/src/database-parser.cc"
+#line 4980 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 315: // term_identifier: "function variable"
-#line 2478 "../../mli-root/src/database-parser.yy"
+  case 311: // term_identifier: "function variable"
+#line 2387 "../../mli-root/src/database-parser.yy"
                           { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5041 "../../mli-root/src/database-parser.cc"
+#line 4986 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 316: // term_identifier: "function map variable"
-#line 2479 "../../mli-root/src/database-parser.yy"
+  case 312: // term_identifier: "function map variable"
+#line 2388 "../../mli-root/src/database-parser.yy"
                               { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5047 "../../mli-root/src/database-parser.cc"
+#line 4992 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 317: // term_identifier: "all variable"
-#line 2480 "../../mli-root/src/database-parser.yy"
+  case 313: // term_identifier: "all variable"
+#line 2389 "../../mli-root/src/database-parser.yy"
                           { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5053 "../../mli-root/src/database-parser.cc"
+#line 4998 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 318: // term_identifier: "exist variable"
-#line 2481 "../../mli-root/src/database-parser.yy"
+  case 314: // term_identifier: "exist variable"
+#line 2390 "../../mli-root/src/database-parser.yy"
                           { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5059 "../../mli-root/src/database-parser.cc"
+#line 5004 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 319: // term_identifier: "Set variable"
-#line 2482 "../../mli-root/src/database-parser.yy"
+  case 315: // term_identifier: "Set variable"
+#line 2391 "../../mli-root/src/database-parser.yy"
                           { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5065 "../../mli-root/src/database-parser.cc"
+#line 5010 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 320: // term_identifier: "set variable"
-#line 2483 "../../mli-root/src/database-parser.yy"
+  case 316: // term_identifier: "set variable"
+#line 2392 "../../mli-root/src/database-parser.yy"
                           { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5071 "../../mli-root/src/database-parser.cc"
+#line 5016 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 321: // term_identifier: "implicit set variable"
-#line 2484 "../../mli-root/src/database-parser.yy"
+  case 317: // term_identifier: "implicit set variable"
+#line 2393 "../../mli-root/src/database-parser.yy"
                              { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5077 "../../mli-root/src/database-parser.cc"
+#line 5022 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 322: // variable_exclusion_set: %empty
-#line 2489 "../../mli-root/src/database-parser.yy"
+  case 318: // variable_exclusion_set: %empty
+#line 2398 "../../mli-root/src/database-parser.yy"
            { yylhs.value.as < ref6<unit> > () = val<variable>(make);  }
-#line 5083 "../../mli-root/src/database-parser.cc"
+#line 5028 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 323: // variable_exclusion_set: "ₓ" "₍" variable_exclusion_list "₎"
-#line 2490 "../../mli-root/src/database-parser.yy"
+  case 319: // variable_exclusion_set: "ₓ" "₍" variable_exclusion_list "₎"
+#line 2399 "../../mli-root/src/database-parser.yy"
                                             { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 5089 "../../mli-root/src/database-parser.cc"
+#line 5034 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 324: // variable_exclusion_list: bound_variable
-#line 2495 "../../mli-root/src/database-parser.yy"
+  case 320: // variable_exclusion_list: bound_variable
+#line 2404 "../../mli-root/src/database-parser.yy"
                       { val<variable> vr(make); vr->excluded_.insert(yystack_[0].value.as < ref6<unit> > ()); yylhs.value.as < ref6<unit> > () = vr; }
-#line 5095 "../../mli-root/src/database-parser.cc"
+#line 5040 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 325: // variable_exclusion_list: variable_exclusion_list bound_variable
-#line 2496 "../../mli-root/src/database-parser.yy"
+  case 321: // variable_exclusion_list: variable_exclusion_list bound_variable
+#line 2405 "../../mli-root/src/database-parser.yy"
                                                    {
       val<variable> vr = yystack_[1].value.as < ref6<unit> > ();
       vr->excluded_.insert(yystack_[0].value.as < ref6<unit> > ());
       yylhs.value.as < ref6<unit> > () = vr;
     }
-#line 5105 "../../mli-root/src/database-parser.cc"
+#line 5050 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 326: // bound_variable: "all variable"
-#line 2505 "../../mli-root/src/database-parser.yy"
+  case 322: // bound_variable: "all variable"
+#line 2414 "../../mli-root/src/database-parser.yy"
                           { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5111 "../../mli-root/src/database-parser.cc"
+#line 5056 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 327: // bound_variable: "exist variable"
-#line 2506 "../../mli-root/src/database-parser.yy"
+  case 323: // bound_variable: "exist variable"
+#line 2415 "../../mli-root/src/database-parser.yy"
                           { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5117 "../../mli-root/src/database-parser.cc"
+#line 5062 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 328: // bound_variable: "Set variable"
-#line 2507 "../../mli-root/src/database-parser.yy"
+  case 324: // bound_variable: "Set variable"
+#line 2416 "../../mli-root/src/database-parser.yy"
                           { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5123 "../../mli-root/src/database-parser.cc"
+#line 5068 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 329: // bound_variable: "set variable"
-#line 2508 "../../mli-root/src/database-parser.yy"
+  case 325: // bound_variable: "set variable"
+#line 2417 "../../mli-root/src/database-parser.yy"
                           { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5129 "../../mli-root/src/database-parser.cc"
+#line 5074 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 330: // bound_variable: "implicit set variable"
-#line 2509 "../../mli-root/src/database-parser.yy"
+  case 326: // bound_variable: "implicit set variable"
+#line 2418 "../../mli-root/src/database-parser.yy"
                              { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5135 "../../mli-root/src/database-parser.cc"
+#line 5080 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 331: // function_term: function_term_identifier tuple
-#line 2514 "../../mli-root/src/database-parser.yy"
+  case 327: // function_term: function_term_identifier tuple
+#line 2423 "../../mli-root/src/database-parser.yy"
                                          {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, val<formula>(yystack_[1].value.as < ref6<unit> > ()), val<formula>(yystack_[0].value.as < ref6<unit> > ()),
         structure::function, 0_ml, structure::postargument, precedence_t()); }
-#line 5143 "../../mli-root/src/database-parser.cc"
+#line 5088 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 332: // function_term: term_function_application
-#line 2517 "../../mli-root/src/database-parser.yy"
+  case 328: // function_term: term_function_application
+#line 2426 "../../mli-root/src/database-parser.yy"
                                  { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < ref6<unit> > (); }
-#line 5149 "../../mli-root/src/database-parser.cc"
+#line 5094 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 333: // function_term: term "!"
-#line 2518 "../../mli-root/src/database-parser.yy"
+  case 329: // function_term: term "!"
+#line 2427 "../../mli-root/src/database-parser.yy"
                    {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[0].value.as < std::string > (), structure::function, 0_ml,
         structure::postfix, factorial_oprec, yystack_[1].value.as < ref6<unit> > ());
     }
-#line 5158 "../../mli-root/src/database-parser.cc"
+#line 5103 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 334: // function_term: term "+" term
-#line 2522 "../../mli-root/src/database-parser.yy"
+  case 330: // function_term: term "+" term
+#line 2431 "../../mli-root/src/database-parser.yy"
                            { // $$ = val<integer_addition>(make, val<formula>($x), val<formula>($y));
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::function, 0_ml,
         structure::infix, plus_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 5167 "../../mli-root/src/database-parser.cc"
+#line 5112 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 335: // function_term: term "-" term
-#line 2526 "../../mli-root/src/database-parser.yy"
+  case 331: // function_term: term "-" term
+#line 2435 "../../mli-root/src/database-parser.yy"
                            { // $$ = val<integer_addition>(make, val<formula>($x), val<integer_negative>(make, val<formula>($y)));
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::function, 0_ml,
         structure::infix, minus_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 5176 "../../mli-root/src/database-parser.cc"
+#line 5121 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 336: // function_term: "-" term
-#line 2530 "../../mli-root/src/database-parser.yy"
+  case 332: // function_term: "-" term
+#line 2439 "../../mli-root/src/database-parser.yy"
                                       { // $$ = val<integer_negative>(make, val<formula>($x)); }
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::function, 0_ml,
         structure::prefix, unary_minus_oprec, yystack_[0].value.as < ref6<unit> > ());
     }
-#line 5185 "../../mli-root/src/database-parser.cc"
+#line 5130 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 337: // function_term: term "⋅" term
-#line 2534 "../../mli-root/src/database-parser.yy"
+  case 333: // function_term: term "⋅" term
+#line 2443 "../../mli-root/src/database-parser.yy"
                            {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::function, 0_ml,
         structure::infix, mult_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 5194 "../../mli-root/src/database-parser.cc"
+#line 5139 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 338: // function_term: term "/" term
-#line 2538 "../../mli-root/src/database-parser.yy"
+  case 334: // function_term: term "/" term
+#line 2447 "../../mli-root/src/database-parser.yy"
                            {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::function, 0_ml,
         structure::infix, divide_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 5203 "../../mli-root/src/database-parser.cc"
+#line 5148 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 339: // set_term: "{" "}"
-#line 2546 "../../mli-root/src/database-parser.yy"
+  case 335: // set_term: "{" "}"
+#line 2455 "../../mli-root/src/database-parser.yy"
             { yylhs.value.as < ref6<unit> > () = ref0<sequence>(make, sequence::member_list_set); }
-#line 5209 "../../mli-root/src/database-parser.cc"
+#line 5154 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 340: // set_term: "∅"
-#line 2547 "../../mli-root/src/database-parser.yy"
+  case 336: // set_term: "∅"
+#line 2456 "../../mli-root/src/database-parser.yy"
         { yylhs.value.as < ref6<unit> > () = val<constant>(make, "∅", constant::object); }
-#line 5215 "../../mli-root/src/database-parser.cc"
+#line 5160 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 341: // set_term: "{" set_member_list "}"
-#line 2548 "../../mli-root/src/database-parser.yy"
+  case 337: // set_term: "{" set_member_list "}"
+#line 2457 "../../mli-root/src/database-parser.yy"
                                { yylhs.value.as < ref6<unit> > () = yystack_[1].value.as < ref6<unit> > (); }
-#line 5221 "../../mli-root/src/database-parser.cc"
+#line 5166 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 342: // set_term: "{" "set variable definition" optional_in_term "|" object_formula "}"
-#line 2549 "../../mli-root/src/database-parser.yy"
+  case 338: // set_term: "{" "set variable definition" optional_in_term "|" object_formula "}"
+#line 2458 "../../mli-root/src/database-parser.yy"
                                                                                  {
       symbol_table.pop_level();
       yylhs.value.as < ref6<unit> > () = val<bound_formula>(make, yystack_[4].value.as < val<unit> > (), yystack_[3].value.as < ref6<unit> > (), yystack_[1].value.as < ref6<unit> > (), bound_formula::set_);
     }
-#line 5230 "../../mli-root/src/database-parser.cc"
+#line 5175 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 343: // set_term: "{" "₍" implicit_set_identifier_list optional_in_term "₎" term "|" object_formula "}"
-#line 2553 "../../mli-root/src/database-parser.yy"
+  case 339: // set_term: "{" "₍" implicit_set_identifier_list optional_in_term "₎" term "|" object_formula "}"
+#line 2462 "../../mli-root/src/database-parser.yy"
                                                                                                       {
       symbol_table.pop_level();
       variable_list& vs = dyn_cast<variable_list&>(yystack_[6].value.as < ref6<unit> > ());
@@ -5239,127 +5184,127 @@ namespace mli {
       yylhs.value.as < ref6<unit> > () =
         val<bound_formula>(make, vs, yystack_[5].value.as < ref6<unit> > (), val<formula>(sp));
     }
-#line 5243 "../../mli-root/src/database-parser.cc"
+#line 5188 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 344: // set_term: term "∪" term
-#line 2561 "../../mli-root/src/database-parser.yy"
+  case 340: // set_term: term "∪" term
+#line 2470 "../../mli-root/src/database-parser.yy"
                            {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::function, 0_ml,
         structure::infix, set_union_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 5252 "../../mli-root/src/database-parser.cc"
+#line 5197 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 345: // set_term: term "∩" term
-#line 2565 "../../mli-root/src/database-parser.yy"
+  case 341: // set_term: term "∩" term
+#line 2474 "../../mli-root/src/database-parser.yy"
                            {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::function, 0_ml,
         structure::infix, set_intersection_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 5261 "../../mli-root/src/database-parser.cc"
+#line 5206 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 346: // set_term: term "∖" term
-#line 2569 "../../mli-root/src/database-parser.yy"
+  case 342: // set_term: term "∖" term
+#line 2478 "../../mli-root/src/database-parser.yy"
                            {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::function, 0_ml,
         structure::infix, set_difference_oprec, yystack_[2].value.as < ref6<unit> > (), yystack_[0].value.as < ref6<unit> > ());
     }
-#line 5270 "../../mli-root/src/database-parser.cc"
+#line 5215 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 347: // set_term: "∁" term
-#line 2573 "../../mli-root/src/database-parser.yy"
+  case 343: // set_term: "∁" term
+#line 2482 "../../mli-root/src/database-parser.yy"
                    {
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::function, 0_ml,
         structure::prefix, set_complement_oprec, yystack_[0].value.as < ref6<unit> > ());
     }
-#line 5279 "../../mli-root/src/database-parser.cc"
+#line 5224 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 348: // set_term: "⋃" term
-#line 2577 "../../mli-root/src/database-parser.yy"
+  case 344: // set_term: "⋃" term
+#line 2486 "../../mli-root/src/database-parser.yy"
                    { /* prefix union operator  */
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::function, 0_ml,
         structure::prefix, set_union_operator_oprec, yystack_[0].value.as < ref6<unit> > ());
     }
-#line 5288 "../../mli-root/src/database-parser.cc"
+#line 5233 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 349: // set_term: "∩" term
-#line 2581 "../../mli-root/src/database-parser.yy"
+  case 345: // set_term: "∩" term
+#line 2490 "../../mli-root/src/database-parser.yy"
                    { /* prefix intersection operator  */
       yylhs.value.as < ref6<unit> > () = val<structure>(make, yystack_[1].value.as < std::string > (), structure::function, 0_ml,
         structure::prefix, set_intersection_operator_oprec, yystack_[0].value.as < ref6<unit> > ());
     }
-#line 5297 "../../mli-root/src/database-parser.cc"
+#line 5242 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 350: // $@22: %empty
-#line 2589 "../../mli-root/src/database-parser.yy"
+  case 346: // $@22: %empty
+#line 2498 "../../mli-root/src/database-parser.yy"
     { symbol_table.push_level(false); bound_variable_type = database_parser::token::is_set_variable; }
-#line 5303 "../../mli-root/src/database-parser.cc"
+#line 5248 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 351: // implicit_set_identifier_list: $@22 "Set variable"
-#line 2590 "../../mli-root/src/database-parser.yy"
+  case 347: // implicit_set_identifier_list: $@22 "Set variable"
+#line 2499 "../../mli-root/src/database-parser.yy"
                        {
       bound_variable_type = free_variable_context;
       yylhs.value.as < ref6<unit> > () = val<variable_list>(make, val<variable>(yystack_[0].value.as < val<unit> > ()), bound_formula::implicit_set);
     }
-#line 5312 "../../mli-root/src/database-parser.cc"
+#line 5257 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 352: // $@23: %empty
-#line 2594 "../../mli-root/src/database-parser.yy"
+  case 348: // $@23: %empty
+#line 2503 "../../mli-root/src/database-parser.yy"
                                     { bound_variable_type = database_parser::token::is_set_variable; }
-#line 5318 "../../mli-root/src/database-parser.cc"
+#line 5263 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 353: // implicit_set_identifier_list: implicit_set_identifier_list $@23 "," "Set variable"
-#line 2595 "../../mli-root/src/database-parser.yy"
+  case 349: // implicit_set_identifier_list: implicit_set_identifier_list $@23 "," "Set variable"
+#line 2504 "../../mli-root/src/database-parser.yy"
                              {
       bound_variable_type = free_variable_context;
       yylhs.value.as < ref6<unit> > () = yystack_[3].value.as < ref6<unit> > ();
       dyn_cast<variable_list&>(yylhs.value.as < ref6<unit> > ()).push_back(val<variable>(yystack_[0].value.as < val<unit> > ()), bound_formula::implicit_set);
     }
-#line 5328 "../../mli-root/src/database-parser.cc"
+#line 5273 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 354: // set_member_list: term
-#line 2604 "../../mli-root/src/database-parser.yy"
+  case 350: // set_member_list: term
+#line 2513 "../../mli-root/src/database-parser.yy"
             {
       ref0<sequence> vr(make, sequence::member_list_set);
       yylhs.value.as < ref6<unit> > () = vr;
       vr->push_back(val<formula>(yystack_[0].value.as < ref6<unit> > ())); }
-#line 5337 "../../mli-root/src/database-parser.cc"
+#line 5282 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 355: // set_member_list: set_member_list "," term
-#line 2608 "../../mli-root/src/database-parser.yy"
+  case 351: // set_member_list: set_member_list "," term
+#line 2517 "../../mli-root/src/database-parser.yy"
                                    {
       yylhs.value.as < ref6<unit> > () = yystack_[2].value.as < ref6<unit> > ();
       sequence& vr = dyn_cast<sequence&>(yylhs.value.as < ref6<unit> > ());
       vr.push_back(val<formula>(yystack_[0].value.as < ref6<unit> > ()));
     }
-#line 5347 "../../mli-root/src/database-parser.cc"
+#line 5292 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 356: // function_term_identifier: "function constant"
-#line 2617 "../../mli-root/src/database-parser.yy"
+  case 352: // function_term_identifier: "function constant"
+#line 2526 "../../mli-root/src/database-parser.yy"
                          { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5353 "../../mli-root/src/database-parser.cc"
+#line 5298 "../../mli-root/src/database-parser.cc"
     break;
 
-  case 357: // function_term_identifier: "function variable"
-#line 2618 "../../mli-root/src/database-parser.yy"
+  case 353: // function_term_identifier: "function variable"
+#line 2527 "../../mli-root/src/database-parser.yy"
                          { yylhs.value.as < ref6<unit> > () = yystack_[0].value.as < val<unit> > (); }
-#line 5359 "../../mli-root/src/database-parser.cc"
+#line 5304 "../../mli-root/src/database-parser.cc"
     break;
 
 
-#line 5363 "../../mli-root/src/database-parser.cc"
+#line 5308 "../../mli-root/src/database-parser.cc"
 
             default:
               break;
@@ -5848,78 +5793,77 @@ namespace mli {
   }
 
 
-  const short database_parser::yypact_ninf_ = -503;
+  const short database_parser::yypact_ninf_ = -523;
 
-  const short database_parser::yytable_ninf_ = -358;
+  const short database_parser::yytable_ninf_ = -354;
 
   const short
   database_parser::yypact_[] =
   {
-     330,  -503,    63,    27,  -503,    93,  -503,  -503,    44,  -503,
-    -503,  -503,  -503,    31,  -503,  -503,   386,   203,   104,    56,
-    -503,   231,  -503,   460,   272,  -503,   131,   249,   460,    44,
-      44,    44,   212,    71,   260,  -503,  -503,  -503,  -503,   345,
-     503,  -503,   115,  -503,  -503,  -503,   162,  -503,  -503,    44,
-     240,   264,   276,  -503,   267,  -503,  -503,   365,   387,   300,
-    -503,  -503,   304,  -503,  -503,  -503,  -503,   410,  -503,  -503,
-     792,   326,   344,   344,  -503,  -503,  -503,  -503,   148,   343,
-    -503,   347,  -503,   346,    28,  -503,  -503,  -503,  -503,  -503,
-    -503,   380,   380,   376,   444,   444,   444,   444,   444,  -503,
-    -503,  1526,  -503,  -503,  1526,  1526,  1526,   692,   992,   792,
-    -503,  -503,  -503,   792,    14,  -503,   360,  -503,  -503,   333,
-    -503,  -503,   316,  -503,   361,  -503,  -503,  -503,  -503,   344,
-    -503,  -503,  1429,  -503,  -503,  -503,   112,   362,  -503,  -503,
-    -503,   344,  -503,  -503,  -503,   474,  -503,   354,  -503,  -503,
-    -503,  -503,   212,  -503,  -503,    71,   370,   260,  -503,  -503,
-     476,    61,   373,  1340,  -503,  1526,  -503,  -503,  -503,   377,
-    -503,  -503,   439,   451,  -503,  1340,  -503,   444,   444,   444,
-     444,   416,  1454,  1064,  -503,   391,   294,   294,   294,   186,
-     469,    14,   403,    17,   899,   421,  1162,  -503,  -503,   225,
-    1682,   -57,  -503,    14,   376,   376,   792,   792,   723,   360,
-    -503,  -503,  -503,  -503,   506,   489,  1340,  1340,  1340,   376,
-     376,   376,   376,   376,   864,   361,  -503,  -503,  -503,  -503,
-    -503,  -503,  1526,  1251,  -503,  -503,   169,  1682,  1526,  1526,
-     489,  1526,  1526,  1526,  1526,  1526,  1526,  1526,  1526,  1526,
-    1526,  1526,  1526,  -503,  1526,  1526,  1526,  1526,  1526,  1526,
-    1526,  1526,  1526,  1526,  1526,  1526,  1526,   768,   362,  -503,
-    -503,   550,    44,    44,    44,  -503,  -503,  -503,  -503,  -503,
-      10,  -503,   503,   503,  -503,  -503,  -503,  -503,    57,  -503,
-    -503,   438,   503,  -503,   120,   345,  -503,   114,   534,   175,
-     551,   634,   437,  -503,   459,  -503,   464,  -503,  -503,  -503,
-    -503,  -503,   242,   535,   481,   551,   533,  1340,   507,   471,
-     479,  -503,   477,   266,   303,  1584,    -9,   539,   -12,  1526,
-    -503,   486,   486,    -7,  -503,   519,   521,   528,   538,  -503,
-     540,  -503,  1340,  -503,  -503,   534,  1682,   534,   534,  1340,
-    1340,  1340,  1340,  1340,  -503,   551,   308,  1340,  -503,   551,
-     551,   595,   551,   551,   551,   551,   551,   551,   551,   551,
-     551,   551,   551,   551,  -503,   -69,   -69,   551,   551,   573,
-     294,   294,   551,   551,   551,   551,  -503,  -503,   509,   515,
-     516,   518,  -503,   523,   792,  -503,  -503,  -503,  -503,   378,
-     554,   856,   525,   574,    84,   524,   217,   537,   520,   517,
-    -503,  -503,   641,  -503,  -503,  1340,  -503,  1526,  -503,  -503,
-    -503,  -503,  -503,  -503,   113,  -503,   608,   545,   549,  1526,
-     571,   546,   339,  1633,  1340,  1340,   559,   556,  -503,   662,
-    -503,  -503,  1340,  1340,    37,  -503,   551,   167,   564,   564,
-     792,  1340,  1136,   655,  1526,   534,  1682,  -503,   632,   250,
-     250,   504,  -503,   534,  1340,  -503,  -503,  -503,  -503,  -503,
-    -503,   792,   792,  1340,  1340,  1526,  1526,  -503,   610,   603,
-     605,   360,    57,  -503,    57,    57,    57,    57,   534,   551,
-    -503,  -503,  -503,   -22,   651,   652,   532,  1526,  -503,   344,
-     344,   534,  1682,   245,  1526,   649,  1526,   191,   135,   -12,
-    1340,  -503,  -503,   226,   142,  -503,   -31,  -503,    -1,  -503,
-     202,   792,   792,    38,   283,   580,   581,   400,   534,  1682,
-     503,   503,   503,   586,   587,   534,   534,   551,   551,  1340,
-    -503,  -503,   360,   537,   520,   583,    86,  -503,   314,  -503,
-    -503,  -503,  -503,   551,     0,  -503,  -503,   588,   591,  -503,
-     395,  -503,   551,   -17,   -17,  -503,   254,   236,   590,   236,
-     618,  -503,   621,  -503,  -503,  -503,  -503,  -503,   233,    11,
-    -503,    89,  -503,   -14,  -503,    40,   373,  -503,  -503,  -503,
-    -503,  -503,   598,   599,   600,   534,    57,    57,  -503,  -503,
-    -503,  -503,  1340,  -503,  -503,  -503,   344,   344,  1340,   -12,
-     582,  -503,  -503,  -503,   621,  -503,  -503,   237,   604,   237,
-     628,  -503,   628,  -503,  -503,  -503,  -503,  -503,  -503,   118,
-    -503,   351,  -503,  -503,   278,    32,   -17,   604,  -503,  -503,
-    -503,  -503,  -503,  -503
+     279,  -523,    63,    65,  -523,    89,  -523,  -523,    58,  -523,
+    -523,  -523,  -523,   -23,  -523,  -523,   405,   153,    22,   176,
+    -523,   184,  -523,   335,   248,  -523,   119,   306,   335,    58,
+      58,    58,   289,    87,   297,  -523,  -523,  -523,  -523,   286,
+     503,  -523,   142,  -523,  -523,  -523,   221,  -523,  -523,    58,
+     232,   241,   282,  -523,   290,  -523,  -523,   370,   372,   292,
+    -523,  -523,   300,  -523,  -523,  -523,  -523,   409,  -523,  -523,
+     792,   326,   348,   348,  -523,  -523,  -523,  -523,   275,   301,
+    -523,   347,  -523,   353,   141,  -523,  -523,  -523,  -523,  -523,
+    -523,   338,   338,   379,   592,   592,   592,   592,   592,  -523,
+    -523,  1526,  -523,  -523,  1526,  1526,  1526,   692,   992,   792,
+    -523,  -523,  -523,   792,    14,  -523,   355,  -523,  -523,   215,
+    -523,  -523,   291,  -523,   360,  -523,  -523,  -523,  -523,   348,
+    -523,  -523,  1429,  -523,  -523,  -523,   112,   365,  -523,  -523,
+    -523,   348,  -523,  -523,  -523,   460,  -523,   380,  -523,  -523,
+    -523,  -523,   289,  -523,  -523,    87,   373,   297,  -523,  -523,
+     492,    82,   386,  1340,  -523,  1526,  -523,  -523,  -523,   381,
+    -523,  -523,   459,   470,  -523,  1340,  -523,   592,   592,   592,
+     592,   433,  1454,  1064,  -523,   403,   285,   285,   285,   186,
+     482,    14,   413,    17,   899,   432,  1162,  -523,  -523,   227,
+    1682,    83,  -523,    14,   379,   379,   792,   792,   634,   355,
+    -523,  -523,  -523,  -523,   524,   510,  1340,  1340,  1340,   379,
+     379,   379,   379,   379,   722,   360,  -523,  -523,  -523,  -523,
+    -523,  -523,  1526,  1251,  -523,  -523,   188,  1682,  1526,  1526,
+     510,  1526,  1526,  1526,  1526,  1526,  1526,  1526,  1526,  1526,
+    1526,  1526,  1526,  -523,  1526,  1526,  1526,  1526,  1526,  1526,
+    1526,  1526,  1526,  1526,  1526,  1526,  1526,   654,   365,  -523,
+    -523,   568,    58,    58,    58,  -523,  -523,  -523,  -523,  -523,
+      10,  -523,   503,   503,  -523,  -523,  -523,  -523,   145,  -523,
+    -523,   466,   503,  -523,   472,   286,  -523,    -9,   534,   223,
+     517,   431,   458,  -523,   483,  -523,   487,  -523,  -523,  -523,
+    -523,  -523,   198,   537,   398,   517,   538,  1340,   523,   490,
+     497,  -523,   489,   247,   284,  1584,   100,   569,    23,  1526,
+    -523,   502,   502,    -7,  -523,   548,   549,   552,   553,  -523,
+     556,  -523,  1340,  -523,  -523,   534,  1682,   534,   534,  1340,
+    1340,  1340,  1340,  1340,  -523,   517,   303,  1340,  -523,   517,
+     517,   618,   517,   517,   517,   517,   517,   517,   517,   517,
+     517,   517,   517,   517,  -523,   -40,   -40,   517,   517,   532,
+     285,   285,   517,   517,   517,   517,  -523,  -523,   526,   527,
+     529,   530,  -523,   531,   792,  -523,  -523,  -523,  -523,   358,
+     449,   856,   533,   602,    54,   536,   217,   550,   561,   554,
+    -523,  -523,   643,  -523,  -523,  1340,  -523,  1526,  -523,  -523,
+    -523,  -523,  -523,  -523,   114,  -523,   641,   573,   574,  1526,
+     608,   565,   308,  1633,  1340,  1340,   566,   578,  -523,   669,
+    -523,  -523,  1340,  1340,   -69,  -523,   517,    18,   580,   580,
+     792,  1340,  1136,   664,  1526,   534,  1682,  -523,   649,   516,
+     516,   316,  -523,   534,  1340,  -523,  -523,  -523,  -523,  -523,
+    -523,   792,   792,  1340,  1340,  1526,  1526,  -523,   627,   620,
+     623,   355,   145,  -523,   145,   145,   145,   145,   534,   517,
+    -523,  -523,  -523,   -22,   668,   670,   468,  1526,  -523,   348,
+     348,   534,  1682,   245,  1526,   666,  1526,    11,   -20,    23,
+    1340,  -523,  -523,    77,    80,  -523,   152,  -523,    13,  -523,
+     182,   792,   792,    12,   191,   596,   598,   484,   534,  1682,
+     503,   503,   503,   603,   621,   534,   534,   517,   517,  1340,
+    -523,  -523,   355,   550,   561,   622,    36,  -523,   314,  -523,
+    -523,  -523,  -523,   517,   225,  -523,  -523,   625,   628,  -523,
+     393,  -523,   517,   -14,   -14,  -523,   254,   -10,   630,   -10,
+     659,  -523,   660,  -523,  -523,  -523,  -523,  -523,   103,    85,
+    -523,   -12,  -523,    38,   386,  -523,  -523,  -523,  -523,  -523,
+     637,   638,   639,   534,   145,   145,  -523,  -523,  -523,  -523,
+    1340,  -523,  -523,  -523,   348,   348,  1340,    23,   629,  -523,
+    -523,  -523,   660,  -523,  -523,   103,   677,  -523,  -523,  -523,
+    -523,  -523,  -523,    42,  -523,   351,  -523,  -523,   262,   -77,
+     -14,  -523,  -523,  -523,  -523,  -523,  -523
   };
 
   const short
@@ -5932,84 +5876,83 @@ namespace mli {
        0,    56,     0,   120,    40,    41,     0,    48,    44,    35,
        0,     0,     0,   132,   122,   130,   135,     0,     0,   123,
      133,   127,   124,   125,    81,    80,    73,    93,    76,    82,
-       0,     0,     0,     0,   267,   240,   356,   309,   189,   241,
-     268,   242,   278,   315,   322,   317,   318,   316,   319,   320,
-     321,   289,   289,   269,     0,     0,     0,     0,     0,   310,
-     311,     0,   263,   340,     0,     0,     0,     0,     0,     0,
-     211,   332,    74,     0,   115,   147,     0,   149,   150,     0,
-     190,   199,   148,   215,     0,   214,   209,   243,   244,     0,
-     212,   277,   300,   284,   285,   286,     0,   305,   312,   306,
-     308,     0,   119,   121,    39,     0,    48,     0,    36,    68,
+       0,     0,     0,     0,   263,   236,   352,   305,   185,   237,
+     264,   238,   274,   311,   318,   313,   314,   312,   315,   316,
+     317,   285,   285,   265,     0,     0,     0,     0,     0,   306,
+     307,     0,   259,   336,     0,     0,     0,     0,     0,     0,
+     207,   328,    74,     0,   115,   147,     0,   149,   150,     0,
+     186,   195,   148,   211,     0,   210,   205,   239,   240,     0,
+     208,   273,   296,   280,   281,   282,     0,   301,   308,   302,
+     304,     0,   119,   121,    39,     0,    48,     0,    36,    68,
       66,    75,     0,   136,   137,     0,     0,     0,    94,    78,
-       0,    87,   156,     0,   204,     0,    32,    28,   205,     0,
-     314,   290,     0,     0,   270,     0,   279,     0,     0,     0,
-       0,   322,     0,     0,   336,     0,   347,   349,   348,   322,
-       0,     0,   147,   148,     0,   300,     0,   350,   339,     0,
-     354,     0,   151,   116,   269,   269,     0,     0,     0,   158,
-       9,    11,    12,    13,     0,     0,     0,     0,     0,   269,
-     269,   269,   269,   269,     0,   210,    15,    17,    18,   266,
-     241,   242,     0,     0,   230,   238,     0,     0,     0,     0,
+       0,    87,   156,     0,   200,     0,    32,    28,   201,     0,
+     310,   286,     0,     0,   266,     0,   275,     0,     0,     0,
+       0,   318,     0,     0,   332,     0,   343,   345,   344,   318,
+       0,     0,   147,   148,     0,   296,     0,   346,   335,     0,
+     350,     0,   151,   116,   265,   265,     0,     0,     0,   158,
+       9,    11,    12,    13,     0,     0,     0,     0,     0,   265,
+     265,   265,   265,   265,     0,   206,    15,    17,    18,   262,
+     237,   238,     0,     0,   226,   234,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,   333,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,   307,    22,
-     331,     0,     0,     0,     0,    49,    51,    61,    52,    50,
+       0,     0,     0,   329,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,   303,    22,
+     327,     0,     0,     0,     0,    49,    51,    61,    52,    50,
        0,    34,     0,     0,   131,   134,   128,   126,    99,    79,
-      89,     0,     0,    83,     0,     0,    90,     0,   207,     0,
-     303,     0,     0,   294,   287,   297,   288,   271,   281,   280,
-     282,   283,   322,     0,     0,   354,     0,     0,     0,   157,
-     213,   313,     0,   322,     0,     0,   300,     0,   219,     0,
-     341,   159,   159,   152,   153,     0,     0,     0,     0,   315,
-       0,    10,     0,   198,   191,   192,   193,   200,   201,     0,
-       0,     0,     0,     0,    16,   301,     0,     0,   232,   202,
-     203,     0,   249,   250,   251,   252,   253,   254,   255,   256,
-     245,   246,   247,   248,   337,   334,   335,   257,   258,   344,
-     345,   346,   259,   260,   261,   262,   338,    23,     0,     0,
+      89,     0,     0,    83,     0,     0,    90,     0,   203,     0,
+     299,     0,     0,   290,   283,   293,   284,   267,   277,   276,
+     278,   279,   318,     0,     0,   350,     0,     0,     0,   157,
+     209,   309,     0,   318,     0,     0,   296,     0,   215,     0,
+     337,   159,   159,   152,   153,     0,     0,     0,     0,   311,
+       0,    10,     0,   194,   187,   188,   189,   196,   197,     0,
+       0,     0,     0,     0,    16,   297,     0,     0,   228,   198,
+     199,     0,   245,   246,   247,   248,   249,   250,   251,   252,
+     241,   242,   243,   244,   333,   330,   331,   253,   254,   340,
+     341,   342,   255,   256,   257,   258,   334,    23,     0,     0,
        0,     0,    45,     0,     0,   117,   138,   139,   140,   147,
      148,     0,     0,     0,   107,   112,     0,    95,    97,   100,
-     106,    84,    91,    88,    86,     0,   206,     0,   302,   326,
-     327,   328,   329,   330,     0,   324,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,   351,     0,
-     222,   223,     0,     0,     0,   220,   355,     0,   173,   173,
-       0,     0,     0,     0,     0,   194,   195,   273,   272,   274,
-     275,   276,   239,   231,     0,    47,    59,    62,    64,    69,
+     106,    84,    91,    88,    86,     0,   202,     0,   298,   322,
+     323,   324,   325,   326,     0,   320,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,   347,     0,
+     218,   219,     0,     0,     0,   216,   351,     0,   173,   173,
+       0,     0,     0,     0,     0,   190,   191,   269,   268,   270,
+     271,   272,   235,   227,     0,    47,    59,    62,    64,    69,
      118,     0,     0,     0,     0,     0,     0,    67,     0,   110,
-     108,     0,    99,    92,    99,     0,     0,    99,   208,   304,
-     323,   325,   292,     0,     0,     0,     0,     0,   264,     0,
+     108,     0,    99,    92,    99,     0,     0,    99,   204,   300,
+     319,   321,   288,     0,     0,     0,     0,     0,   260,     0,
        0,    26,    30,     0,     0,     0,     0,     0,     0,     0,
        0,   172,   171,     0,     0,   163,     0,   166,     0,   169,
-       0,     0,     0,     0,     0,     0,     0,     0,   196,   197,
+       0,     0,     0,     0,     0,     0,     0,     0,   192,   193,
        0,     0,     0,   147,   147,   143,   144,   145,   146,     0,
-     111,   109,   114,    96,    98,   102,     0,   104,     0,   293,
-     291,   296,   299,    30,     0,    25,    29,     0,     0,   342,
-       0,   353,   224,     0,     0,   221,     0,     0,   165,   168,
-       0,   160,     0,   161,   162,   170,   186,   185,     0,     0,
-     177,     0,   180,     0,   183,   154,   155,    14,    19,    20,
-      21,    24,     0,     0,     0,   129,     0,     0,   101,    85,
-     233,   234,     0,   237,   265,   235,     0,     0,     0,   219,
-       0,   217,   226,   216,     0,   164,   167,     0,   179,   182,
-       0,   174,     0,   175,   176,   184,    60,    63,    65,     0,
-     105,     0,    27,    31,     0,     0,     0,   178,   181,   103,
-     236,   343,   218,   225
+     111,   109,   114,    96,    98,   102,     0,   104,     0,   289,
+     287,   292,   295,    30,     0,    25,    29,     0,     0,   338,
+       0,   349,   220,     0,     0,   217,     0,     0,   165,   168,
+       0,   160,     0,   161,   162,   170,   182,   181,     0,     0,
+     176,     0,   179,   154,   155,    14,    19,    20,    21,    24,
+       0,     0,     0,   129,     0,     0,   101,    85,   229,   230,
+       0,   233,   261,   231,     0,     0,     0,   215,     0,   213,
+     222,   212,     0,   164,   167,   178,     0,   174,   175,   180,
+      60,    63,    65,     0,   105,     0,    27,    31,     0,     0,
+       0,   177,   103,   232,   339,   214,   221
   };
 
   const short
   database_parser::yypgoto_[] =
   {
-    -503,  -503,  -503,   743,  -503,   271,  -201,  -503,  -503,   529,
-    -109,  -503,  -111,  -503,  -503,  -503,  -503,  -503,  -503,  -503,
-    -503,  -503,  -503,  -503,  -503,  -503,  -503,   609,  -503,   734,
-    -503,  -503,  -503,  -503,  -503,  -135,  -503,  -131,  -503,    -2,
-    -503,  -503,  -503,  -503,  -503,   465,  -503,  -503,  -503,  -503,
-    -503,  -503,   601,  -503,   274,   281,   280,   178,  -461,  -503,
-    -503,  -274,  -503,   -16,  -503,   735,  -503,   626,  -503,  -503,
-    -503,   635,  -503,   631,   394,  -503,  -503,  -503,   -54,  -102,
-     461,  -503,   221,   348,   220,   349,  -478,   353,  -503,  -503,
-    -502,   172,   277,  -499,  -503,  -503,  -503,   -65,  -503,  -503,
-     722,  -503,  -106,  -503,  -485,   194,  -324,  -503,  -233,  -503,
-    -503,   673,   355,  -503,  -503,   255,  -503,   463,  -503,     9,
-    -503,  -503,  -503,  -503,   718,  -503,  -503,  -503,  -503,  -503,
-    -503,  -184,   -73,  -503,   199,  -503,   -77,  -503,  -503,   388,
-    -503,  -503,  -503,  -503,  -503,  -503,  -503
+    -523,  -523,  -523,   779,  -523,   305,  -201,  -523,  -523,   559,
+    -109,  -523,  -111,  -523,  -523,  -523,  -523,  -523,  -523,  -523,
+    -523,  -523,  -523,  -523,  -523,  -523,  -523,   642,  -523,   765,
+    -523,  -523,  -523,  -523,  -523,  -135,  -523,  -131,  -523,    -2,
+    -523,  -523,  -523,  -523,  -523,   496,  -523,  -523,  -523,  -523,
+    -523,  -523,   631,  -523,   307,   311,   312,   201,  -461,  -523,
+    -523,  -274,  -523,   -16,  -523,   755,  -523,   645,  -523,  -523,
+    -523,   648,  -523,   650,   415,  -523,  -523,  -523,   -54,  -102,
+     471,  -523,   237,   363,   239,   366,  -485,   368,  -523,   196,
+     236,  -506,  -523,  -523,  -523,    25,  -523,  -523,   737,  -523,
+    -106,  -523,  -522,   212,  -324,  -523,  -233,  -523,  -523,   688,
+     369,  -523,  -523,   268,  -523,   457,  -523,     9,  -523,  -523,
+    -523,  -523,   731,  -523,  -523,  -523,  -523,  -523,  -523,  -184,
+     -73,  -523,   199,  -523,    26,  -523,  -523,   400,  -523,  -523,
+    -523,  -523,  -523,  -523,  -523
   };
 
   const short
@@ -6024,12 +5967,12 @@ namespace mli {
      481,   112,   393,   113,    42,    43,    62,    63,   156,   403,
       54,    55,    59,    60,   395,   396,   397,   398,   114,   115,
      448,   514,   515,   568,   517,   569,   519,   521,   579,   580,
-     581,   582,   619,   584,   116,   117,   118,   119,   120,   121,
-     164,   297,   122,   123,   610,   444,   611,   124,   125,   604,
-     234,   126,   127,   185,   554,   128,   129,   175,   130,   131,
-     132,   133,   134,   135,   172,   302,   493,   304,   427,   306,
-     428,   236,   166,   299,   237,   137,   138,   170,   424,   425,
-     139,   140,   326,   327,   437,   201,   141
+     581,   582,   116,   117,   118,   119,   120,   121,   164,   297,
+     122,   123,   608,   444,   609,   124,   125,   602,   234,   126,
+     127,   185,   554,   128,   129,   175,   130,   131,   132,   133,
+     134,   135,   172,   302,   493,   304,   427,   306,   428,   236,
+     166,   299,   237,   137,   138,   170,   424,   425,   139,   140,
+     326,   327,   437,   201,   141
   };
 
   const short
@@ -6038,86 +5981,86 @@ namespace mli {
      167,   193,   199,   358,   445,   192,    13,    41,   341,   402,
      277,   322,    41,   228,   278,   227,   162,   205,   412,    29,
      272,   273,   274,    30,   545,   547,   269,    50,    51,    52,
-     290,   549,    -7,   576,   204,   254,   439,   440,   205,   577,
-     575,   439,   440,    74,   217,   218,   511,   148,   600,    80,
-     601,  -198,   512,   191,  -198,   202,   229,   298,   204,   203,
-    -358,  -198,   205,     6,   205,    91,    92,   329,   270,   307,
-      29,   266,    32,    33,    34,   404,   618,   289,   -93,   612,
-     158,   330,    10,    11,   625,   219,   220,   221,   222,   223,
-     324,   575,   441,   572,    26,    10,    11,   441,     8,    10,
-      11,   232,   573,   176,   177,   178,   179,   180,   479,    56,
-     345,   347,   348,   550,   228,  -352,   227,   207,   637,   609,
-     625,   624,    10,    11,   169,   442,   602,   356,   443,   279,
-     442,   340,   574,   443,   620,   547,   630,   206,   207,   238,
-     239,    12,   436,   240,   320,   277,   621,   340,   392,   278,
-     344,   643,   333,   334,    12,   509,    14,   387,    12,   291,
-     509,   206,   207,   206,   207,    57,    58,   587,   419,   420,
-     642,   421,   422,   510,   423,   361,   400,    32,    33,    34,
-     399,    12,    32,    33,    34,   565,   308,   309,   310,   311,
-     340,   241,   242,   243,   244,   245,   246,   247,   248,   249,
-     250,   251,   252,   219,   220,   221,   222,   223,    24,  -198,
-     597,   432,  -198,   622,   511,   253,   254,   255,   256,  -198,
-     512,   598,   257,   258,   623,   259,   260,   261,   191,    25,
-     262,   263,   264,   265,    91,    92,   455,    27,   415,   136,
-     142,   416,   597,   457,   458,   459,   460,   461,   490,   576,
-      53,   463,   266,   639,    49,   577,   592,   593,   594,   219,
-     220,   221,   222,   223,   279,   570,   394,    48,   513,   136,
-     389,   390,   391,   511,   163,   571,  -187,   317,   413,   512,
-     576,   564,   169,   511,   576,   445,   577,   144,   400,   512,
-     577,   357,   399,   219,   220,   221,   222,   223,    61,   417,
-     184,   578,   418,   186,   187,   188,   194,   200,   136,   488,
-      44,    45,   136,   219,   220,   221,   222,   223,   219,   220,
-     221,   603,   219,   220,   221,   222,   223,   567,   501,   503,
-      -2,     1,   617,   429,   563,    -7,   507,   508,   169,   482,
-     191,   341,   483,   217,   218,   524,   219,   220,   221,   222,
-     223,   219,   220,   221,   222,   223,   214,   317,   528,   215,
-      64,    65,   169,   328,   300,   149,   216,   535,   536,   533,
+     290,   549,   204,   575,   204,   576,   205,   511,   205,   439,
+     440,   577,   610,   512,   217,   218,   509,   148,   219,   220,
+     221,   222,   223,   191,   509,   202,   229,   298,  -354,   203,
+     511,   635,   205,     6,   254,   511,   512,   510,   270,   307,
+      -7,   512,    32,    33,    34,   619,   439,   440,   479,   219,
+     220,   221,   222,   223,   575,   219,   220,   221,   222,   223,
+     324,    29,    10,    11,     8,   441,    10,    11,   289,   -93,
+     266,   158,    14,   176,   177,   178,   179,   180,   636,   619,
+     345,   347,   348,   550,   228,   415,   227,   207,   416,   513,
+      10,    11,   607,   618,   511,    56,   564,   356,   442,   279,
+     512,   443,   441,   547,   624,   206,   207,   206,   207,   238,
+     239,   585,   436,   240,   320,   277,   574,    25,   392,   278,
+     576,    12,   333,   334,   563,    12,   577,   387,    24,   291,
+     595,   206,   207,   404,  -194,   442,   595,  -194,   443,   419,
+     420,   596,   421,   422,  -194,   423,   400,   632,   567,    12,
+     399,    57,    58,    10,    11,   565,   308,   309,   310,   311,
+      27,   241,   242,   243,   244,   245,   246,   247,   248,   249,
+     250,   251,   252,   570,    32,    33,    34,   329,   616,  -194,
+     232,   432,  -194,   571,    26,   253,   254,   255,   256,  -194,
+     617,   330,   257,   258,  -348,   259,   260,   261,   191,   576,
+     262,   263,   264,   265,   340,   577,   455,   169,   214,   136,
+     344,   215,    12,   457,   458,   459,   460,   461,   216,   490,
+     340,   463,   266,    91,    92,    48,   590,   591,   592,   219,
+     220,   221,   222,   223,   279,   361,   394,   142,    74,   136,
+     389,   390,   391,   598,    80,   599,   572,   317,   413,    -2,
+       1,   578,   169,   445,    -7,   573,    44,    45,   400,   429,
+      91,    92,   399,   340,   169,   219,   220,   221,   222,   223,
+     184,    64,    65,   186,   187,   188,   194,   200,   136,   488,
+     357,    49,   136,   219,   220,   221,   222,   223,   217,   218,
+     586,   601,   219,   220,   221,   222,   223,    53,   501,   503,
+     219,   220,   221,   222,   223,    61,   507,   508,   317,   482,
+     191,   341,   483,   169,    29,   524,   144,   417,    30,    31,
+     418,   600,   219,   220,   221,   222,   223,   149,   528,   219,
+     220,   221,   222,   223,   300,   328,   150,   535,   536,   533,
      534,   219,   220,   221,   222,   223,   219,   220,   221,   222,
-     223,   314,   315,   559,   219,   220,   221,   222,   223,   150,
-      17,   152,   613,    18,    19,   325,   523,   253,   254,   255,
-     256,   151,   480,   153,   566,   136,   136,   219,   220,   221,
-     222,   223,   588,   471,   472,   346,   641,   191,   191,   219,
-     220,   221,   222,   223,   155,   154,   555,   556,   157,   158,
-     320,   355,   325,   595,   266,   462,   482,   359,   360,   599,
+     223,   314,   315,   559,   219,   220,   221,   222,   253,   254,
+     255,   256,   611,   471,   472,   325,   523,    32,    33,    34,
+     634,   163,   480,  -183,   566,   136,   136,   151,   153,    17,
+     154,   320,    18,    19,   152,   346,   155,   191,   191,   219,
+     220,   221,   222,   223,   157,   266,   555,   556,   158,  -223,
+     462,   355,   325,   593,   171,   499,   482,   359,   360,   597,
      362,   363,   364,   365,   366,   367,   368,   369,   370,   371,
      372,   373,   163,   374,   375,   376,   377,   378,   379,   380,
-     381,   382,   383,   384,   385,   386,   499,   585,   586,    29,
-     165,  -227,  -357,    30,    31,  -228,   171,   174,   640,   281,
-     271,   401,   136,    29,   272,   273,   274,    30,   208,   224,
-     267,   136,   286,   288,   303,    82,   631,   207,   253,   254,
-     255,   256,   634,   253,   254,   255,   256,   305,   259,   260,
-     261,   301,   169,   259,   260,   261,   433,    94,    95,    96,
-      97,    98,    32,    33,    34,   316,   318,    70,   446,   591,
-     319,   232,   608,   632,   633,   266,    32,    33,    34,   342,
-     266,   456,   343,    71,    72,    73,    74,    75,    76,    77,
-      78,    79,    80,    81,    82,    83,    84,   388,    85,    86,
-      87,    88,    89,   411,    90,    32,    33,    34,    91,    92,
-      93,   426,   219,   220,   221,   222,    94,    95,    96,    97,
-      98,   217,   218,  -295,   253,   254,   255,   256,  -298,   473,
-     474,   431,   430,   401,   259,   260,   261,   438,   434,  -188,
-      99,   100,   219,   220,   221,   222,   223,  -229,   321,   101,
-     102,   450,   103,   451,   435,   104,   489,   105,   447,   106,
-     452,   266,   219,   220,   221,   222,   223,   464,   496,   107,
-     453,   478,   454,   502,   465,   253,   254,   255,   256,   108,
-     466,   467,   109,   468,   485,   259,   260,   261,   469,   136,
-     477,   486,  -113,   527,   253,   254,   255,   256,   487,   500,
-     484,   492,   497,   529,   259,   260,   261,   331,   332,   494,
-     136,   136,   266,   495,   537,   538,   253,   254,   255,   256,
-     505,   498,   349,   350,   351,   352,   353,   260,   261,   419,
-     420,   266,   421,   422,   504,   423,   553,   506,   520,   526,
-     219,   539,   540,   560,   541,   562,   551,   561,   552,   589,
-     590,  -141,  -142,   266,   572,   606,    70,   596,   607,   614,
-     136,   136,   567,   626,   627,   628,   636,   617,   622,   136,
+     381,   382,   383,   384,   385,   386,   271,   583,   584,    29,
+     272,   273,   274,    30,   165,  -224,   217,   218,   633,  -353,
+     174,   401,   136,   208,   473,   474,   419,   420,   224,   421,
+     422,   136,   423,   267,   625,   286,   253,   254,   255,   256,
+     628,   253,   254,   255,   256,   281,   259,   260,   261,   288,
+     207,   259,   260,   261,   303,   301,   433,   219,   220,   221,
+     222,   223,    32,    33,    34,   321,   305,    70,   446,   169,
+     606,   626,   627,   266,    32,    33,    34,   316,   266,   318,
+     319,   456,   232,    71,    72,    73,    74,    75,    76,    77,
+      78,    79,    80,    81,    82,    83,    84,   342,    85,    86,
+      87,    88,    89,   343,    90,    32,    33,    34,    91,    92,
+      93,   253,   254,   255,   256,   388,    94,    95,    96,    97,
+      98,   259,   260,   261,   219,   220,   221,   253,   254,   255,
+     256,   411,   426,   401,   430,   500,   431,   259,   260,   261,
+      99,   100,   219,   220,   221,   222,   223,  -291,   266,   101,
+     102,  -294,   103,   589,   434,   104,   489,   105,  -184,   106,
+     253,   254,   255,   256,   266,  -225,   435,   438,   496,   107,
+     259,   260,   261,   502,   447,   253,   254,   255,   256,   108,
+     450,   451,   109,    82,   452,   453,   260,   261,   454,   136,
+     464,   465,   466,   527,   467,   468,   469,   266,   477,   478,
+     487,   331,   332,   529,  -113,    94,    95,    96,    97,    98,
+     136,   136,   266,   484,   537,   538,   349,   350,   351,   352,
+     353,   335,   336,   337,   338,   485,   339,   181,   486,    85,
+      86,    87,    88,    89,   492,    90,   553,   494,   495,   497,
+     498,   504,   505,   560,   506,   562,   339,   181,   526,    85,
+      86,    87,    88,    89,   520,    90,    70,   219,   539,   540,
+     136,   136,   541,   551,   561,   587,   552,   588,  -141,   136,
      136,   136,    71,    72,    73,    74,    75,    76,    77,    78,
-      79,    80,    81,    82,    83,   189,     7,    85,    86,    87,
-      88,    89,   542,    90,   354,   280,    28,    91,    92,    93,
-     414,   548,   296,   543,   544,    94,    95,    96,    97,    98,
-     335,   336,   337,   338,   629,   339,   181,   143,    85,    86,
-      87,    88,    89,   287,    90,   190,   285,   284,   470,    99,
-     100,   615,   616,   449,   638,   516,   518,   583,   101,   102,
-     168,   103,   522,   635,   104,   235,   105,   525,   106,   605,
-     173,     0,   491,     0,     0,     0,    70,     0,   107,     0,
-     339,   181,     0,    85,    86,    87,    88,    89,   108,    90,
+      79,    80,    81,    82,    83,   189,  -142,    85,    86,    87,
+      88,    89,   604,    90,   572,   605,   594,    91,    92,    93,
+     612,   567,   620,   621,   622,    94,    95,    96,    97,    98,
+     336,   337,   338,   630,   339,   181,   578,    85,    86,    87,
+      88,    89,     7,    90,   354,   190,   542,    28,   280,    99,
+     100,   414,   296,   543,   548,   623,   544,   143,   101,   102,
+     284,   103,   287,   449,   104,   285,   105,   613,   106,   470,
+     516,   614,   631,   518,   615,   168,    70,   522,   107,   629,
+     235,   525,   603,   173,   491,     0,     0,     0,   108,     0,
        0,   109,    71,    72,    73,    74,    75,    76,    77,    78,
       79,    80,    81,    82,    83,    84,     0,    85,    86,    87,
       88,    89,     0,    90,     0,     0,     0,    91,    92,    93,
@@ -6126,8 +6069,8 @@ namespace mli {
        0,     0,     0,   238,   239,     0,     0,   240,     0,    99,
      100,   475,   476,     0,     0,     0,     0,     0,   101,   102,
        0,   103,     0,     0,   104,     0,   105,     0,   106,     0,
-       0,     0,   336,   337,   338,     0,   339,   181,   107,    85,
-      86,    87,    88,    89,     0,    90,   238,   239,   108,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,   107,     0,
+       0,     0,     0,     0,     0,     0,   238,   239,   108,     0,
      240,   109,     0,     0,     0,   241,   242,   243,   244,   245,
      246,   247,   248,   249,   250,   251,   252,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,   253,
@@ -6226,86 +6169,86 @@ namespace mli {
       73,   107,   108,   236,   328,   107,     8,    23,   209,   283,
      145,   195,    28,   124,   145,   124,    70,    24,   292,     9,
       10,    11,    12,    13,   485,   486,   137,    29,    30,    31,
-     161,    53,     5,    47,    20,   104,    53,    54,    24,    53,
-     518,    53,    54,    43,    27,    28,    47,    49,    48,    49,
-      50,    23,    53,   107,    26,   109,   129,   163,    20,   113,
-      20,    33,    24,     0,    24,    65,    66,   124,   141,   175,
-       9,   140,    62,    63,    64,    18,   578,    16,    17,   564,
-      19,   138,    38,    39,   583,    68,    69,    70,    71,    72,
-     196,   569,   109,   124,    38,    38,    39,   109,     5,    38,
-      39,   110,   133,    94,    95,    96,    97,    98,    24,    38,
-     216,   217,   218,   135,   225,   124,   225,   124,   620,   136,
-     619,   135,    38,    39,    96,   142,   126,   233,   145,   145,
-     142,   208,   133,   145,   123,   596,   597,   123,   124,    27,
-      28,    97,   326,    31,   127,   280,   135,   224,   138,   280,
-     215,   636,   206,   207,    97,   123,   125,   268,    97,   161,
-     123,   123,   124,   123,   124,    94,    95,   129,    55,    56,
-     138,    58,    59,   136,    61,   240,   282,    62,    63,    64,
-     282,    97,    62,    63,    64,   509,   177,   178,   179,   180,
-     267,    79,    80,    81,    82,    83,    84,    85,    86,    87,
-      88,    89,    90,    68,    69,    70,    71,    72,     5,    23,
-     124,   317,    26,   124,    47,   103,   104,   105,   106,    33,
-      53,   135,   110,   111,   135,   113,   114,   115,   282,   125,
-     118,   119,   120,   121,    65,    66,   342,     6,   124,    40,
-     125,   127,   124,   349,   350,   351,   352,   353,   135,    47,
-      38,   357,   140,   135,     5,    53,   530,   531,   532,    68,
-      69,    70,    71,    72,   280,   123,   282,   136,   101,    70,
-     272,   273,   274,    47,   126,   133,   128,    91,   294,    53,
-      47,   146,    96,    47,    47,   609,    53,   125,   394,    53,
-      53,   122,   394,    68,    69,    70,    71,    72,    38,   124,
-     101,    99,   127,   104,   105,   106,   107,   108,   109,   415,
-      38,    39,   113,    68,    69,    70,    71,    72,    68,    69,
-      70,   554,    68,    69,    70,    71,    72,   101,   434,   435,
-       0,     1,    99,    91,   143,     5,   442,   443,    96,   122,
-     394,   542,   125,    27,    28,   451,    68,    69,    70,    71,
-      72,    68,    69,    70,    71,    72,    23,    91,   464,    26,
-      15,    16,    96,   138,   165,   125,    33,   473,   474,   471,
+     161,    53,    20,   518,    20,    47,    24,    47,    24,    53,
+      54,    53,   564,    53,    27,    28,   123,    49,    68,    69,
+      70,    71,    72,   107,   123,   109,   129,   163,    20,   113,
+      47,   138,    24,     0,   104,    47,    53,   136,   141,   175,
+       5,    53,    62,    63,    64,   581,    53,    54,    24,    68,
+      69,    70,    71,    72,   569,    68,    69,    70,    71,    72,
+     196,     9,    38,    39,     5,   109,    38,    39,    16,    17,
+     140,    19,   125,    94,    95,    96,    97,    98,   630,   615,
+     216,   217,   218,   135,   225,   124,   225,   124,   127,   101,
+      38,    39,   136,   135,    47,    38,   146,   233,   142,   145,
+      53,   145,   109,   594,   595,   123,   124,   123,   124,    27,
+      28,   129,   326,    31,   127,   280,   133,   125,   138,   280,
+      47,    97,   206,   207,   143,    97,    53,   268,     5,   161,
+     124,   123,   124,    18,    23,   142,   124,    26,   145,    55,
+      56,   135,    58,    59,    33,    61,   282,   135,   101,    97,
+     282,    94,    95,    38,    39,   509,   177,   178,   179,   180,
+       6,    79,    80,    81,    82,    83,    84,    85,    86,    87,
+      88,    89,    90,   123,    62,    63,    64,   124,   123,    23,
+     110,   317,    26,   133,    38,   103,   104,   105,   106,    33,
+     135,   138,   110,   111,   124,   113,   114,   115,   282,    47,
+     118,   119,   120,   121,   208,    53,   342,    96,    23,    40,
+     215,    26,    97,   349,   350,   351,   352,   353,    33,   135,
+     224,   357,   140,    65,    66,   136,   530,   531,   532,    68,
+      69,    70,    71,    72,   280,   240,   282,   125,    43,    70,
+     272,   273,   274,    48,    49,    50,   124,    91,   294,     0,
+       1,    99,    96,   607,     5,   133,    38,    39,   394,    91,
+      65,    66,   394,   267,    96,    68,    69,    70,    71,    72,
+     101,    15,    16,   104,   105,   106,   107,   108,   109,   415,
+     122,     5,   113,    68,    69,    70,    71,    72,    27,    28,
+     129,   554,    68,    69,    70,    71,    72,    38,   434,   435,
+      68,    69,    70,    71,    72,    38,   442,   443,    91,   122,
+     394,   542,   125,    96,     9,   451,   125,   124,    13,    14,
+     127,   126,    68,    69,    70,    71,    72,   125,   464,    68,
+      69,    70,    71,    72,   165,   138,   125,   473,   474,   471,
      472,    68,    69,    70,    71,    72,    68,    69,    70,    71,
-      72,   182,   183,   138,    68,    69,    70,    71,    72,   125,
-       4,   124,   138,     7,     8,   196,   450,   103,   104,   105,
-     106,   125,   404,    38,   510,   206,   207,    68,    69,    70,
-      71,    72,   129,    35,    36,   216,   138,   471,   472,    68,
-      69,    70,    71,    72,   124,    38,   499,   500,   124,    19,
-     127,   232,   233,   539,   140,   127,   122,   238,   239,   125,
+      72,   182,   183,   138,    68,    69,    70,    71,   103,   104,
+     105,   106,   138,    35,    36,   196,   450,    62,    63,    64,
+     138,   126,   404,   128,   510,   206,   207,   125,    38,     4,
+      38,   127,     7,     8,   124,   216,   124,   471,   472,    68,
+      69,    70,    71,    72,   124,   140,   499,   500,    19,   128,
+     127,   232,   233,   539,    96,   127,   122,   238,   239,   125,
      241,   242,   243,   244,   245,   246,   247,   248,   249,   250,
      251,   252,   126,   254,   255,   256,   257,   258,   259,   260,
-     261,   262,   263,   264,   265,   266,   127,   521,   522,     9,
-     126,   128,   126,    13,    14,   128,    96,   101,   127,   125,
-       6,   282,   283,     9,    10,    11,    12,    13,   128,   128,
-     128,   292,   122,    17,    55,    51,   602,   124,   103,   104,
-     105,   106,   608,   103,   104,   105,   106,    56,   113,   114,
-     115,   134,    96,   113,   114,   115,   317,    73,    74,    75,
-      76,    77,    62,    63,    64,   134,    57,    24,   329,   129,
-     127,   110,   137,   606,   607,   140,    62,    63,    64,    33,
-     140,   342,    53,    40,    41,    42,    43,    44,    45,    46,
-      47,    48,    49,    50,    51,    52,    53,     7,    55,    56,
-      57,    58,    59,   125,    61,    62,    63,    64,    65,    66,
-      67,   134,    68,    69,    70,    71,    73,    74,    75,    76,
-      77,    27,    28,   124,   103,   104,   105,   106,   124,    35,
-      36,    58,    57,   394,   113,   114,   115,    58,    91,   128,
-      97,    98,    68,    69,    70,    71,    72,   128,   127,   106,
-     107,    92,   109,    92,   137,   112,   417,   114,   132,   116,
-      92,   140,    68,    69,    70,    71,    72,    32,   429,   126,
-      92,    57,    92,   434,   125,   103,   104,   105,   106,   136,
-     125,   125,   139,   125,   124,   113,   114,   115,   125,   450,
-     125,   134,   128,   454,   103,   104,   105,   106,    17,   127,
-     123,    53,    91,   464,   113,   114,   115,   204,   205,   124,
-     471,   472,   140,   124,   475,   476,   103,   104,   105,   106,
-     124,   135,   219,   220,   221,   222,   223,   114,   115,    55,
-      56,   140,    58,    59,   135,    61,   497,    35,   134,    44,
-      68,    91,    99,   504,    99,   506,    55,    58,    56,   129,
-     129,   125,   125,   140,   124,   127,    24,   134,   127,   101,
-     521,   522,   101,   125,   125,   125,   144,    99,   124,   530,
+     261,   262,   263,   264,   265,   266,     6,   521,   522,     9,
+      10,    11,    12,    13,   126,   128,    27,    28,   127,   126,
+     101,   282,   283,   128,    35,    36,    55,    56,   128,    58,
+      59,   292,    61,   128,   600,   122,   103,   104,   105,   106,
+     606,   103,   104,   105,   106,   125,   113,   114,   115,    17,
+     124,   113,   114,   115,    55,   134,   317,    68,    69,    70,
+      71,    72,    62,    63,    64,   127,    56,    24,   329,    96,
+     137,   604,   605,   140,    62,    63,    64,   134,   140,    57,
+     127,   342,   110,    40,    41,    42,    43,    44,    45,    46,
+      47,    48,    49,    50,    51,    52,    53,    33,    55,    56,
+      57,    58,    59,    53,    61,    62,    63,    64,    65,    66,
+      67,   103,   104,   105,   106,     7,    73,    74,    75,    76,
+      77,   113,   114,   115,    68,    69,    70,   103,   104,   105,
+     106,   125,   134,   394,    57,   127,    58,   113,   114,   115,
+      97,    98,    68,    69,    70,    71,    72,   124,   140,   106,
+     107,   124,   109,   129,    91,   112,   417,   114,   128,   116,
+     103,   104,   105,   106,   140,   128,   137,    58,   429,   126,
+     113,   114,   115,   434,   132,   103,   104,   105,   106,   136,
+      92,    92,   139,    51,    92,    92,   114,   115,    92,   450,
+      32,   125,   125,   454,   125,   125,   125,   140,   125,    57,
+      17,   204,   205,   464,   128,    73,    74,    75,    76,    77,
+     471,   472,   140,   123,   475,   476,   219,   220,   221,   222,
+     223,    47,    48,    49,    50,   124,    52,    53,   134,    55,
+      56,    57,    58,    59,    53,    61,   497,   124,   124,    91,
+     135,   135,   124,   504,    35,   506,    52,    53,    44,    55,
+      56,    57,    58,    59,   134,    61,    24,    68,    91,    99,
+     521,   522,    99,    55,    58,   129,    56,   129,   125,   530,
      531,   532,    40,    41,    42,    43,    44,    45,    46,    47,
-      48,    49,    50,    51,    52,    53,     3,    55,    56,    57,
-      58,    59,   481,    61,   225,   146,    22,    65,    66,    67,
-     295,   487,   161,   482,   484,    73,    74,    75,    76,    77,
-      47,    48,    49,    50,   596,    52,    53,    42,    55,    56,
-      57,    58,    59,   157,    61,    93,   155,   152,   394,    97,
-      98,   570,   572,   332,   622,   447,   447,   520,   106,   107,
-      78,   109,   449,   609,   112,   132,   114,   452,   116,   554,
-      92,    -1,   424,    -1,    -1,    -1,    24,    -1,   126,    -1,
-      52,    53,    -1,    55,    56,    57,    58,    59,   136,    61,
+      48,    49,    50,    51,    52,    53,   125,    55,    56,    57,
+      58,    59,   127,    61,   124,   127,   134,    65,    66,    67,
+     101,   101,   125,   125,   125,    73,    74,    75,    76,    77,
+      48,    49,    50,   144,    52,    53,    99,    55,    56,    57,
+      58,    59,     3,    61,   225,    93,   481,    22,   146,    97,
+      98,   295,   161,   482,   487,   594,   484,    42,   106,   107,
+     152,   109,   157,   332,   112,   155,   114,   570,   116,   394,
+     447,   572,   616,   447,   578,    78,    24,   449,   126,   607,
+     132,   452,   554,    92,   424,    -1,    -1,    -1,   136,    -1,
       -1,   139,    40,    41,    42,    43,    44,    45,    46,    47,
       48,    49,    50,    51,    52,    53,    -1,    55,    56,    57,
       58,    59,    -1,    61,    -1,    -1,    -1,    65,    66,    67,
@@ -6314,8 +6257,8 @@ namespace mli {
       -1,    -1,    -1,    27,    28,    -1,    -1,    31,    -1,    97,
       98,    35,    36,    -1,    -1,    -1,    -1,    -1,   106,   107,
       -1,   109,    -1,    -1,   112,    -1,   114,    -1,   116,    -1,
-      -1,    -1,    48,    49,    50,    -1,    52,    53,   126,    55,
-      56,    57,    58,    59,    -1,    61,    27,    28,   136,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   126,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    27,    28,   136,    -1,
       31,   139,    -1,    -1,    -1,    79,    80,    81,    82,    83,
       84,    85,    86,    87,    88,    89,    90,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   103,
@@ -6422,60 +6365,59 @@ namespace mli {
       49,    50,    51,    52,    53,    55,    56,    57,    58,    59,
       61,    65,    66,    67,    73,    74,    75,    76,    77,    97,
       98,   106,   107,   109,   112,   114,   116,   126,   136,   139,
-     169,   171,   217,   219,   234,   235,   250,   251,   252,   253,
-     254,   255,   258,   259,   263,   264,   267,   268,   271,   272,
-     274,   275,   276,   277,   278,   279,   290,   291,   292,   296,
-     297,   302,   125,   221,   125,   183,   181,   175,   195,   125,
+     169,   171,   217,   219,   234,   235,   248,   249,   250,   251,
+     252,   253,   256,   257,   261,   262,   265,   266,   269,   270,
+     272,   273,   274,   275,   276,   277,   288,   289,   290,   294,
+     295,   300,   125,   221,   125,   183,   181,   175,   195,   125,
      125,   125,   124,    38,    38,   124,   224,   124,    19,   208,
-     209,   203,   234,   126,   256,   126,   288,   288,   256,    96,
-     293,    96,   280,   280,   101,   273,   275,   275,   275,   275,
-     275,    53,   126,   136,   290,   269,   290,   290,   290,    53,
-      93,   234,   235,   258,   290,    60,   126,   134,   138,   258,
-     290,   301,   234,   234,    20,    24,   123,   124,   128,   161,
+     209,   203,   234,   126,   254,   126,   286,   286,   254,    96,
+     291,    96,   278,   278,   101,   271,   273,   273,   273,   273,
+     273,    53,   126,   136,   288,   267,   288,   288,   288,    53,
+      93,   234,   235,   256,   288,    60,   126,   134,   138,   256,
+     288,   299,   234,   234,    20,    24,   123,   124,   128,   161,
      162,   163,   166,   168,    23,    26,    33,    27,    28,    68,
-      69,    70,    71,    72,   128,   164,   165,   166,   168,   288,
-      48,    50,   110,   126,   266,   267,   287,   290,    27,    28,
+      69,    70,    71,    72,   128,   164,   165,   166,   168,   286,
+      48,    50,   110,   126,   264,   265,   285,   288,    27,    28,
       31,    79,    80,    81,    82,    83,    84,    85,    86,    87,
       88,    89,    90,   103,   104,   105,   106,   110,   111,   113,
      114,   115,   118,   119,   120,   121,   140,   128,   167,   168,
-     288,     6,    10,    11,    12,   184,   187,   191,   193,   219,
+     286,     6,    10,    11,    12,   184,   187,   191,   193,   219,
      183,   125,   194,   192,   227,   229,   122,   223,    17,    16,
-     193,   195,   204,   205,   206,   207,   208,   257,   258,   289,
-     290,   134,   281,    55,   283,    56,   285,   258,   275,   275,
-     275,   275,    53,    93,   290,   290,   134,    91,    57,   127,
-     127,   127,   287,    53,   258,   290,   298,   299,   138,   124,
-     138,   273,   273,   234,   234,    47,    48,    49,    50,    52,
-     292,   162,    33,    53,   253,   258,   290,   258,   258,   273,
-     273,   273,   273,   273,   165,   290,   258,   122,   264,   290,
-     290,   253,   290,   290,   290,   290,   290,   290,   290,   290,
-     290,   290,   290,   290,   290,   290,   290,   290,   290,   290,
-     290,   290,   290,   290,   290,   290,   290,   168,     7,   195,
+     193,   195,   204,   205,   206,   207,   208,   255,   256,   287,
+     288,   134,   279,    55,   281,    56,   283,   256,   273,   273,
+     273,   273,    53,    93,   288,   288,   134,    91,    57,   127,
+     127,   127,   285,    53,   256,   288,   296,   297,   138,   124,
+     138,   271,   271,   234,   234,    47,    48,    49,    50,    52,
+     290,   162,    33,    53,   251,   256,   288,   256,   256,   271,
+     271,   271,   271,   271,   165,   288,   256,   122,   262,   288,
+     288,   251,   288,   288,   288,   288,   288,   288,   288,   288,
+     288,   288,   288,   288,   288,   288,   288,   288,   288,   288,
+     288,   288,   288,   288,   288,   288,   288,   168,     7,   195,
      195,   195,   138,   218,   219,   230,   231,   232,   233,   235,
-     258,   290,   217,   225,    18,   195,   210,   211,   212,   214,
+     256,   288,   217,   225,    18,   195,   210,   211,   212,   214,
      215,   125,   217,   219,   201,   124,   127,   124,   127,    55,
-      56,    58,    59,    61,   294,   295,   134,   284,   286,    91,
-      57,    58,   258,   290,    91,   137,   287,   300,    58,    53,
-      54,   109,   142,   145,   261,   262,   290,   132,   236,   236,
-      92,    92,    92,    92,    92,   258,   290,   258,   258,   258,
-     258,   258,   127,   258,    32,   125,   125,   125,   125,   125,
+      56,    58,    59,    61,   292,   293,   134,   282,   284,    91,
+      57,    58,   256,   288,    91,   137,   285,   298,    58,    53,
+      54,   109,   142,   145,   259,   260,   288,   132,   236,   236,
+      92,    92,    92,    92,    92,   256,   288,   256,   256,   256,
+     256,   256,   127,   256,    32,   125,   125,   125,   125,   125,
      230,    35,    36,    35,    36,    35,    36,   125,    57,    24,
-     195,   216,   122,   125,   123,   124,   134,    17,   258,   290,
-     135,   295,    53,   282,   124,   124,   290,    91,   135,   127,
-     127,   258,   290,   258,   135,   124,    35,   258,   258,   123,
+     195,   216,   122,   125,   123,   124,   134,    17,   256,   288,
+     135,   293,    53,   280,   124,   124,   288,    91,   135,   127,
+     127,   256,   288,   256,   135,   124,    35,   256,   256,   123,
      136,    47,    53,   101,   237,   238,   239,   240,   241,   242,
-     134,   243,   243,   234,   258,   268,    44,   290,   258,   290,
-     188,   189,   190,   235,   235,   258,   258,   290,   290,    91,
+     134,   243,   243,   234,   256,   266,    44,   288,   256,   288,
+     188,   189,   190,   235,   235,   256,   256,   288,   288,    91,
       99,    99,   161,   211,   212,   214,   213,   214,   210,    53,
-     135,    55,    56,   290,   270,   288,   288,   170,   172,   138,
-     290,    58,   290,   143,   146,   262,   258,   101,   239,   241,
+     135,    55,    56,   288,   268,   286,   286,   170,   172,   138,
+     288,    58,   288,   143,   146,   260,   256,   101,   239,   241,
      123,   133,   124,   133,   133,   242,    47,    53,    99,   244,
-     245,   246,   247,   248,   249,   234,   234,   129,   129,   129,
-     129,   129,   217,   217,   217,   258,   134,   124,   135,   125,
-      48,    50,   126,   264,   265,   271,   127,   127,   137,   136,
-     260,   262,   260,   138,   101,   238,   240,    99,   246,   248,
-     123,   135,   124,   135,   135,   249,   125,   125,   125,   213,
-     214,   258,   288,   288,   258,   261,   144,   246,   247,   135,
-     127,   138,   138,   260
+     245,   246,   247,   234,   234,   129,   129,   129,   129,   129,
+     217,   217,   217,   256,   134,   124,   135,   125,    48,    50,
+     126,   262,   263,   269,   127,   127,   137,   136,   258,   260,
+     258,   138,   101,   238,   240,   246,   123,   135,   135,   247,
+     125,   125,   125,   213,   214,   256,   286,   286,   256,   259,
+     144,   245,   135,   127,   138,   138,   258
   };
 
   const short
@@ -6498,25 +6440,25 @@ namespace mli {
      230,   231,   231,   232,   232,   233,   233,   234,   234,   235,
      235,   235,   235,   235,   235,   235,   235,   235,   235,   236,
      236,   236,   236,   237,   237,   238,   239,   239,   240,   241,
-     241,   242,   242,   243,   243,   243,   243,   244,   244,   245,
-     246,   246,   247,   248,   248,   249,   249,   250,   250,   251,
-     251,   252,   252,   252,   252,   252,   252,   252,   253,   254,
-     254,   254,   254,   254,   255,   255,   256,   257,   257,   258,
-     258,   258,   258,   258,   258,   258,   259,   260,   260,   261,
-     261,   261,   262,   262,   262,   262,   262,   263,   263,   263,
-     264,   264,   264,   265,   265,   265,   265,   265,   266,   266,
-     267,   267,   267,   267,   268,   268,   268,   268,   268,   268,
-     268,   268,   268,   268,   268,   268,   268,   268,   268,   268,
-     268,   268,   268,   269,   270,   268,   271,   272,   272,   273,
-     273,   274,   274,   274,   274,   274,   274,   274,   275,   275,
-     275,   275,   275,   275,   276,   277,   277,   278,   279,   280,
-     281,   280,   282,   282,   283,   284,   283,   285,   286,   285,
-     287,   287,   288,   289,   289,   290,   290,   290,   290,   291,
-     291,   291,   291,   291,   292,   292,   292,   292,   292,   292,
-     292,   292,   293,   293,   294,   294,   295,   295,   295,   295,
-     295,   296,   296,   296,   296,   296,   296,   296,   296,   297,
-     297,   297,   297,   297,   297,   297,   297,   297,   297,   297,
-     299,   298,   300,   298,   301,   301,   302,   302
+     241,   242,   242,   243,   243,   243,   244,   244,   245,   246,
+     246,   247,   247,   248,   248,   249,   249,   250,   250,   250,
+     250,   250,   250,   250,   251,   252,   252,   252,   252,   252,
+     253,   253,   254,   255,   255,   256,   256,   256,   256,   256,
+     256,   256,   257,   258,   258,   259,   259,   259,   260,   260,
+     260,   260,   260,   261,   261,   261,   262,   262,   262,   263,
+     263,   263,   263,   263,   264,   264,   265,   265,   265,   265,
+     266,   266,   266,   266,   266,   266,   266,   266,   266,   266,
+     266,   266,   266,   266,   266,   266,   266,   266,   266,   267,
+     268,   266,   269,   270,   270,   271,   271,   272,   272,   272,
+     272,   272,   272,   272,   273,   273,   273,   273,   273,   273,
+     274,   275,   275,   276,   277,   278,   279,   278,   280,   280,
+     281,   282,   281,   283,   284,   283,   285,   285,   286,   287,
+     287,   288,   288,   288,   288,   289,   289,   289,   289,   289,
+     290,   290,   290,   290,   290,   290,   290,   290,   291,   291,
+     292,   292,   293,   293,   293,   293,   293,   294,   294,   294,
+     294,   294,   294,   294,   294,   295,   295,   295,   295,   295,
+     295,   295,   295,   295,   295,   295,   297,   296,   298,   296,
+     299,   299,   300,   300
   };
 
   const signed char
@@ -6539,25 +6481,25 @@ namespace mli {
        1,     3,     3,     3,     3,     3,     3,     1,     1,     1,
        1,     2,     3,     3,     6,     6,     2,     3,     2,     0,
        3,     3,     3,     1,     3,     2,     1,     3,     2,     1,
-       2,     1,     1,     0,     3,     3,     3,     1,     3,     2,
-       1,     3,     2,     1,     2,     1,     1,     1,     3,     1,
-       1,     3,     3,     3,     4,     4,     5,     5,     1,     1,
-       3,     3,     3,     3,     2,     2,     3,     1,     3,     1,
-       2,     1,     1,     3,     1,     1,     7,     1,     3,     0,
-       1,     3,     1,     1,     3,     6,     4,     1,     1,     3,
-       2,     4,     3,     1,     1,     1,     3,     1,     1,     3,
-       1,     1,     1,     1,     1,     3,     3,     3,     3,     3,
-       3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     3,     3,     0,     0,     7,     2,     1,     1,     0,
-       1,     3,     4,     4,     4,     4,     4,     1,     1,     2,
-       3,     3,     3,     3,     1,     1,     1,     3,     3,     0,
-       0,     5,     1,     2,     1,     0,     4,     1,     0,     4,
-       0,     2,     3,     1,     3,     1,     1,     2,     1,     1,
-       1,     1,     1,     3,     2,     1,     1,     1,     1,     1,
-       1,     1,     0,     4,     1,     2,     1,     1,     1,     1,
-       1,     2,     1,     2,     3,     3,     2,     3,     3,     2,
-       1,     3,     6,     9,     3,     3,     3,     2,     2,     2,
-       0,     2,     0,     4,     1,     3,     1,     1
+       2,     1,     1,     0,     3,     3,     1,     3,     2,     1,
+       2,     1,     1,     1,     3,     1,     1,     3,     3,     3,
+       4,     4,     5,     5,     1,     1,     3,     3,     3,     3,
+       2,     2,     3,     1,     3,     1,     2,     1,     1,     3,
+       1,     1,     7,     1,     3,     0,     1,     3,     1,     1,
+       3,     6,     4,     1,     1,     3,     2,     4,     3,     1,
+       1,     1,     3,     1,     1,     3,     1,     1,     1,     1,
+       1,     3,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,     3,     3,     3,     0,
+       0,     7,     2,     1,     1,     0,     1,     3,     4,     4,
+       4,     4,     4,     1,     1,     2,     3,     3,     3,     3,
+       1,     1,     1,     3,     3,     0,     0,     5,     1,     2,
+       1,     0,     4,     1,     0,     4,     0,     2,     3,     1,
+       3,     1,     1,     2,     1,     1,     1,     1,     1,     3,
+       2,     1,     1,     1,     1,     1,     1,     1,     0,     4,
+       1,     2,     1,     1,     1,     1,     1,     2,     1,     2,
+       3,     3,     2,     3,     3,     2,     1,     3,     6,     9,
+       3,     3,     3,     2,     2,     2,     0,     2,     0,     4,
+       1,     3,     1,     1
   };
 
 
@@ -6627,11 +6569,9 @@ namespace mli {
   "varied_variable_conclusions", "varied_variable_conclusion",
   "varied_variable_premises", "varied_variable_premise",
   "varied_variable_set", "varied_variable",
-  "optional_varied_in_reduction_variable_matrix",
+  "optional_varied_in_reduction_variable_sequence",
   "varied_in_reduction_variable_conclusions",
   "varied_in_reduction_variable_conclusion",
-  "varied_in_reduction_variable_premises",
-  "varied_in_reduction_variable_premise",
   "varied_in_reduction_variable_set", "varied_in_reduction_variable",
   "simple_metaformula", "atomic_metaformula", "special_metaformula",
   "meta_object_free", "metapredicate", "metapredicate_function",
@@ -6657,42 +6597,42 @@ namespace mli {
   const short
   database_parser::yyrline_[] =
   {
-       0,   787,   787,   788,   789,   798,   799,   804,   804,   809,
-     810,   817,   818,   819,   824,   833,   834,   841,   842,   847,
-     852,   857,   866,   867,   874,   883,   886,   886,   889,   894,
-     897,   897,   900,   906,   905,   924,   925,   930,   931,   935,
-     947,   948,   953,   954,   960,   959,   964,   963,   971,   972,
-     977,   978,   979,   984,   985,   995,   996,   997,   999,  1005,
-    1004,  1010,  1012,  1011,  1024,  1023,  1040,  1039,  1049,  1048,
-    1058,  1059,  1060,  1065,  1076,  1086,  1096,  1097,  1097,  1111,
-    1116,  1121,  1130,  1131,  1136,  1144,  1175,  1190,  1190,  1194,
-    1205,  1210,  1220,  1231,  1232,  1237,  1238,  1246,  1249,  1257,
-    1258,  1260,  1264,  1268,  1277,  1279,  1287,  1290,  1293,  1306,
-    1320,  1325,  1335,  1349,  1349,  1391,  1392,  1436,  1437,  1444,
-    1449,  1450,  1455,  1456,  1457,  1462,  1463,  1474,  1475,  1474,
-    1509,  1510,  1515,  1530,  1531,  1536,  1547,  1558,  1573,  1574,
-    1575,  1580,  1584,  1597,  1601,  1614,  1624,  1632,  1633,  1638,
-    1639,  1640,  1643,  1646,  1649,  1717,  1778,  1780,  1781,  1787,
-    1788,  1789,  1790,  1794,  1795,  1808,  1820,  1821,  1833,  1845,
-    1846,  1857,  1862,  1872,  1873,  1874,  1875,  1879,  1880,  1893,
-    1906,  1907,  1919,  1931,  1932,  1943,  1948,  2016,  2017,  2022,
-    2023,  2035,  2038,  2041,  2044,  2047,  2050,  2054,  2062,  2067,
-    2068,  2071,  2074,  2077,  2084,  2088,  2096,  2101,  2105,  2113,
-    2114,  2117,  2118,  2119,  2120,  2121,  2126,  2137,  2138,  2143,
-    2144,  2145,  2150,  2151,  2152,  2153,  2154,  2159,  2160,  2161,
-    2166,  2173,  2180,  2191,  2192,  2193,  2194,  2195,  2201,  2202,
-    2206,  2207,  2208,  2209,  2215,  2216,  2217,  2220,  2221,  2224,
-    2225,  2226,  2227,  2228,  2229,  2230,  2231,  2233,  2234,  2235,
-    2236,  2237,  2238,  2239,  2240,  2239,  2250,  2258,  2259,  2264,
-    2265,  2277,  2283,  2289,  2295,  2301,  2307,  2313,  2318,  2319,
-    2323,  2327,  2331,  2335,  2343,  2347,  2348,  2353,  2365,  2377,
-    2378,  2378,  2386,  2387,  2397,  2401,  2401,  2411,  2415,  2415,
-    2426,  2427,  2434,  2439,  2444,  2453,  2454,  2455,  2458,  2463,
-    2464,  2465,  2466,  2467,  2472,  2478,  2479,  2480,  2481,  2482,
-    2483,  2484,  2489,  2490,  2495,  2496,  2505,  2506,  2507,  2508,
-    2509,  2514,  2517,  2518,  2522,  2526,  2530,  2534,  2538,  2546,
-    2547,  2548,  2549,  2553,  2561,  2565,  2569,  2573,  2577,  2581,
-    2589,  2589,  2594,  2594,  2604,  2608,  2617,  2618
+       0,   782,   782,   783,   784,   793,   794,   799,   799,   804,
+     805,   812,   813,   814,   819,   828,   829,   836,   837,   842,
+     847,   852,   861,   862,   869,   878,   881,   881,   884,   889,
+     892,   892,   895,   901,   900,   919,   920,   925,   926,   930,
+     942,   943,   948,   949,   955,   954,   959,   958,   966,   967,
+     972,   973,   974,   979,   980,   990,   991,   992,   994,  1000,
+     999,  1005,  1007,  1006,  1019,  1018,  1035,  1034,  1044,  1043,
+    1053,  1054,  1055,  1060,  1071,  1081,  1091,  1092,  1092,  1106,
+    1111,  1116,  1125,  1126,  1131,  1139,  1170,  1185,  1185,  1189,
+    1200,  1205,  1215,  1226,  1227,  1232,  1233,  1241,  1244,  1252,
+    1253,  1255,  1259,  1263,  1272,  1274,  1282,  1285,  1288,  1301,
+    1315,  1320,  1330,  1344,  1344,  1386,  1387,  1431,  1432,  1439,
+    1444,  1445,  1450,  1451,  1452,  1457,  1458,  1469,  1470,  1469,
+    1504,  1505,  1510,  1525,  1526,  1531,  1542,  1553,  1568,  1569,
+    1570,  1575,  1579,  1592,  1596,  1609,  1619,  1627,  1628,  1633,
+    1634,  1635,  1638,  1641,  1644,  1712,  1773,  1775,  1776,  1782,
+    1783,  1784,  1785,  1789,  1790,  1803,  1815,  1816,  1828,  1840,
+    1841,  1852,  1857,  1867,  1868,  1869,  1873,  1874,  1886,  1899,
+    1900,  1911,  1916,  1925,  1926,  1931,  1932,  1944,  1947,  1950,
+    1953,  1956,  1959,  1963,  1971,  1976,  1977,  1980,  1983,  1986,
+    1993,  1997,  2005,  2010,  2014,  2022,  2023,  2026,  2027,  2028,
+    2029,  2030,  2035,  2046,  2047,  2052,  2053,  2054,  2059,  2060,
+    2061,  2062,  2063,  2068,  2069,  2070,  2075,  2082,  2089,  2100,
+    2101,  2102,  2103,  2104,  2110,  2111,  2115,  2116,  2117,  2118,
+    2124,  2125,  2126,  2129,  2130,  2133,  2134,  2135,  2136,  2137,
+    2138,  2139,  2140,  2142,  2143,  2144,  2145,  2146,  2147,  2148,
+    2149,  2148,  2159,  2167,  2168,  2173,  2174,  2186,  2192,  2198,
+    2204,  2210,  2216,  2222,  2227,  2228,  2232,  2236,  2240,  2244,
+    2252,  2256,  2257,  2262,  2274,  2286,  2287,  2287,  2295,  2296,
+    2306,  2310,  2310,  2320,  2324,  2324,  2335,  2336,  2343,  2348,
+    2353,  2362,  2363,  2364,  2367,  2372,  2373,  2374,  2375,  2376,
+    2381,  2387,  2388,  2389,  2390,  2391,  2392,  2393,  2398,  2399,
+    2404,  2405,  2414,  2415,  2416,  2417,  2418,  2423,  2426,  2427,
+    2431,  2435,  2439,  2443,  2447,  2455,  2456,  2457,  2458,  2462,
+    2470,  2474,  2478,  2482,  2486,  2490,  2498,  2498,  2503,  2503,
+    2513,  2517,  2526,  2527
   };
 
   void
@@ -6787,9 +6727,9 @@ namespace mli {
 
 #line 25 "../../mli-root/src/database-parser.yy"
 } // mli
-#line 6791 "../../mli-root/src/database-parser.cc"
+#line 6731 "../../mli-root/src/database-parser.cc"
 
-#line 2622 "../../mli-root/src/database-parser.yy"
+#line 2531 "../../mli-root/src/database-parser.yy"
 
 
   extern std::istream::pos_type line_position;
