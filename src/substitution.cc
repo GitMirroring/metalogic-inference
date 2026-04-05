@@ -444,22 +444,12 @@ namespace mli {
           if (varied_in_reduction_.size() != 1 || i.first != 0)
             os << to_index(subscript, i.first) << " ";
 
-          bool j0 = true;
-
-          for (auto& j: i.second) {
-            if (j0) j0 = false;
-            else os << ",";
-
-            if (varied_in_reduction_.size() != 1 || !(i.second.size() == 1 && j.first == 0))
-              os << to_index(subscript, j.first) << " ";
-
             bool k0 = true;
 
-            for (auto& k: j.second) {
+            for (auto& k: i.second) {
               if (k0) k0 = false; else os << " ";
               os << k;
             }
-          }
         }
 
         os << "₎";

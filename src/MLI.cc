@@ -3646,6 +3646,7 @@ namespace mli {
     return val<inference>(make, head_->add_premise(y, ml, vs, vrs), body_, metalevel_, vs, vrs);
   }
 
+
   bool inference::is_axiom() const {
     if (metalevel() > 1)
       return head_->is_axiom();
@@ -4087,8 +4088,7 @@ namespace mli {
 
                     if (jy != iy->second.end())
                       if (!jy->second.empty())
-                        for (size_type p = 0; p < xinf->body_->formula_sequence_size(); ++p)
-                          xinf->varied_in_reduction_[k][p].insert(jy->second.begin(), jy->second.end());
+                        xinf->varied_in_reduction_[k].insert(jy->second.begin(), jy->second.end());
                   }
 
                   ++k;
@@ -4208,8 +4208,7 @@ namespace mli {
 
                     if (jy != iy->second.end())
                       if (!jy->second.empty())
-                        for (size_type p = 0; p < xinf->body_->formula_sequence_size(); ++p)
-                          xinf->varied_in_reduction_[k][p].insert(jy->second.begin(), jy->second.end());
+                        xinf->varied_in_reduction_[k].insert(jy->second.begin(), jy->second.end());
                   }
 
                   ++k;
@@ -5245,12 +5244,18 @@ namespace mli {
 
       // As the components varied_[l] and varied_in_reduction_[l] should be extracted,
       // it is necessary to divide into cases when these already exist.
-      if (j != varied_.end() && k != varied_in_reduction_.end())
-        r->push_back(val<inference>(make, i, body_, metalevel_, j->second, k->second));
+      if (j != varied_.end() && k != varied_in_reduction_.end()) {
+        varied_in_reduction_type vir;
+        vir[0] = k->second;
+        r->push_back(val<inference>(make, i, body_, metalevel_, j->second, vir));
+      }
       else if (j != varied_.end())
         r->push_back(val<inference>(make, i, body_, metalevel_, j->second));
-      else if (k != varied_in_reduction_.end())
-        r->push_back(val<inference>(make, i, body_, metalevel_, varied_premise_type(), k->second));
+      else if (k != varied_in_reduction_.end()) {
+        varied_in_reduction_type vir;
+        vir[0] = k->second;
+        r->push_back(val<inference>(make, i, body_, metalevel_, varied_premise_type(), vir));
+      }
       else
         r->push_back(val<inference>(make, i, body_, metalevel_));
 
@@ -5305,8 +5310,8 @@ namespace mli {
         }
       }
 
-    for (auto& i: varied_in_reduction_)
-      for (auto& j: i.second) {
+    for (auto& j: varied_in_reduction_)
+    {
         std::set<val<variable>> vs(std::move(j.second));
         j.second.clear();
 
@@ -5345,12 +5350,11 @@ namespace mli {
         for (auto& k: j.second)
           vvs[i.first][j.first].insert(k->rename(lv, sl));
 
-    varied_type vrs;
+    varied_in_reduction_type vrs;
 
-    for (auto& i: varied_in_reduction_)
-      for (auto& j: i.second)
-        for (auto& k: j.second)
-          vrs[i.first][j.first].insert(k->rename(lv, sl));
+    for (auto& j: varied_in_reduction_)
+      for (auto& k: j.second)
+        vrs[j.first].insert(k->rename(lv, sl));
 
     return val<inference>(make, h, b, metalevel_, vvs, vrs);
   }
@@ -5393,7 +5397,8 @@ namespace mli {
       // formula sequence variable.
       val<formula> b = body_->substitute(s, vt);
 
-      varied_type vvs, vrs;
+      varied_type vvs;
+      varied_in_reduction_type vrs;
 
       size_type n = 1;
 
@@ -5423,18 +5428,17 @@ namespace mli {
       // only the conclusion, there is no need to take into account changes
       // in the body formula sequence size.
 
-      for (auto& i: varied_in_reduction_)
-        for (auto& j: i.second)
-          for (auto& k: j.second) {
-            val<variable> sk = k->substitute(s, vt);
+      for (auto& j: varied_in_reduction_)
+        for (auto& k: j.second) {
+          val<variable> sk = k->substitute(s, vt);
 
-            // A variable in varied in reduction, not immediately occurring
-            // free in a premise, may later be unify with a premise and
-            // substituted to do so, so it cannot be removed, contrary to the
-            // case of variables varied for a premise.
-            for (size_type m = 0; m < n; ++m)
-              vrs[i.first][j.first + m].insert(sk);
-          }
+          // A variable in varied in reduction, not immediately occurring
+          // free in a premise, may later be unify with a premise and
+          // substituted to do so, so it cannot be removed, contrary to the
+          // case of variables varied for a premise.
+          for (size_type m = 0; m < n; ++m)
+            vrs[j.first + m].insert(sk);
+        }
 
       // Extracting the varied variables from substitutable formula sequence variables,
       // become appended after the varied variable of *this.
@@ -5533,27 +5537,8 @@ namespace mli {
 
       // If varied_[vt1.conclusion_index_][n] exists, write over to:
       // vvs[vt1.conclusion_index_][m] … vvs[vt1.conclusion_index_][m1]
-      for (auto& i: varied_in_reduction_) {
-      
-        auto j = i.second.find(n);
 
-        if (j != i.second.end()) {
-
-          std::set<val<variable>> vs;
-
-          for (auto& v: j->second) {
-            // As the variables varied in reduction are not assoicated with any
-            // premise (only carried along to admit that in a later stage), a
-            // check for free occurences ahosul not be done (unlike the case of the
-            // variables varied of a premise).
-            vs.insert(v->substitute(s, vt));
-          }
-
-          if (!vs.empty())
-            for (size_type k = m0; k < m1; ++k)
-              vrs[i.first][k] = vs;
-          }
-      }
+      // Variables varied in reduction lifted out of the body n-loop, as they are independent of the premises.
 
       // Extracting the varied variables from substitutable formula sequence variables,
       // become appended after the varied variable of *this.
@@ -5566,6 +5551,20 @@ namespace mli {
       m = m1;
     }
 
+    for (auto& i: varied_in_reduction_) {
+        std::set<val<variable>> vs;
+
+        for (auto& v: i.second) {
+          // As the variables varied in reduction are not associated with any
+          // premise (only carried along to admit that in a later stage), a
+          // check for free occurences ahosul not be done (unlike the case of the
+          // variables varied of a premise).
+          vs.insert(v->substitute(s, vt));
+        }
+
+        if (!vs.empty())
+            vrs[i.first] = vs;
+    }
 
 #if 1
 #if SIMPLIFY_PROVED_INFERENCE
@@ -5676,7 +5675,6 @@ namespace mli {
       os << "⁾";
     }
 
-
     if (!varied_in_reduction_.empty()) {
       os << "₍";
 
@@ -5692,18 +5690,8 @@ namespace mli {
         bool j0 = true;
 
         for (auto& j: i.second) {
-          if (j0) j0 = false;
-          else os << ",";
-
-          if (varied_in_reduction_.size() != 1 || !(i.second.size() == 1 && j.first == 0))
-            os << to_index(subscript, j.first) << " ";
-
-          bool k0 = true;
-
-          for (auto& k: j.second) {
-            if (k0) k0 = false; else os << " ";
-            os << k;
-          }
+          if (j0) j0 = false; else os << " ";
+          os << j;
         }
       }
 

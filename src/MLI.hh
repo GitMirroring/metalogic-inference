@@ -312,7 +312,7 @@ namespace mli {
 
   // Type for indicating the set of inference variables that are varied in
   // reduction, one set for each conclusion formula.
-  using varied_in_reduction_type = varied_type;
+  using varied_in_reduction_type = std::map<size_type, std::set<val<variable>>>;
 
   // The root class of the dynamic polymorphic hierarchy.
   class unit {
@@ -1757,10 +1757,10 @@ namespace mli {
      : head_(h), body_(b), metalevel_(ml) { if(!vs.empty()) varied_[0] = vs; }
 
     inference(const val<formula>& h, const val<formula>& b, metalevel_t ml,
-      const varied_premise_type& vs, const varied_premise_type& vrs)
+      const varied_premise_type& vs, const varied_in_reduction_type& vrs)
      : head_(h), body_(b), metalevel_(ml) {
        if(!vs.empty()) varied_[0] = vs;
-       if(!vrs.empty()) varied_in_reduction_[0] = vrs; }
+       if(!vrs.empty()) varied_in_reduction_ = vrs; }
 
     inference(const val<formula>& h, const std::list<val<formula>>& bfs, metalevel_t ml)
      : head_(h), body_(val<formula_sequence>(make, bfs)), metalevel_(ml) {}
