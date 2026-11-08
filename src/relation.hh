@@ -34,7 +34,7 @@ namespace mli {
 namespace std {
   // Not defined in C++20:
   // Lexical ordering of tuples starting at index i:
-#define USE_TUPLE_COMPARE 1
+#define USE_TUPLE_COMPARE 0
 
 #if USE_TUPLE_COMPARE
   template <std::size_t i, class... A, class... B>
