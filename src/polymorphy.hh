@@ -30,6 +30,10 @@
 #include <variant>
 
 
+#ifdef __cpp_lib_polymorphic
+#warning std::polymorhic is now implemented.
+#endif
+
 namespace mli {
 
   template<class A>
@@ -174,7 +178,7 @@ namespace mli {
 
 
   template<class A, class B>
-  inline order operator<=>(const ref<A>& x, const ref<B>& y) { return *x <=> *y; }
+  inline ordering operator<=>(const ref<A>& x, const ref<B>& y) { return *x <=> *y; }
 
 
   template<class A, class B>
@@ -402,7 +406,7 @@ namespace mli {
 
 
   template<class A, class B>
-  inline order operator<=>(const val<A>& x, const val<B>& y) { return *x <=> *y; }
+  inline ordering operator<=>(const val<A>& x, const val<B>& y) { return *x <=> *y; }
 
 
   template<class A, class B>

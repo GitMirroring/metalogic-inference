@@ -18,8 +18,8 @@
 #pragma once
 
 
-#if (__cplusplus < 202002L) // C++20
-#error "C++20 or later required."
+#if (__cplusplus < 202400L) // C++26 draft 202400L, standard 202603L.
+#error "C++26 or later required."
 #endif
 
 #include <climits>
@@ -90,10 +90,6 @@
 
 namespace mli {
 
-  // std::string operator<=> not defined in C++20:
-  inline order operator<=>(const std::string& x, const std::string& y) { return sgn(x.compare(y)); }
-
-
   // Number k of concurrent threads used if k >= 0. If k < 0, then -k times the thread::hardware_concurrency
   // value is used, which may be 0. If k or the result is 0, then no threads are created; if k is 1,
   // one thread is created. Default -1, i.e., the hardware_concurrency value.
@@ -148,23 +144,16 @@ namespace mli {
     size_type sub = 0;
 
     level(size_type n) : top(n) {}
-
-#if (__cplusplus > 201703L) // C++20
-    order operator<=>(const level& x) const {
-      return {top <=> x.top, sub <=> x.sub};
-    }
-#endif
-
-    order compare(const level& x) const {
-#if (__cplusplus > 201703L) // C++20
-      if (top != x.top) return top <=> x.top;
-      return sub <=> x.sub;
-#else
-      if (top != x.top) return order(top, x.top);
-      return order(sub, x.sub);
-#endif
-    }
   };
+
+  inline ordering operator<=>(const level& x, const level& y) { return {x.top <=> y.top, x.sub <=> y.sub}; }
+
+  inline bool operator==(const level& x, const level& y) { return is_equal(x <=> y); }
+  inline bool operator!=(const level& x, const level& y) { return is_not_equal(x <=> y); }
+  inline bool operator<(const level& x, const level& y) { return is_less(x <=> y); }
+  inline bool operator>(const level& x, const level& y) { return is_greater(x <=> y); }
+  inline bool operator<=(const level& x, const level& y) { return is_less_equal(x <=> y); }
+  inline bool operator>=(const level& x, const level& y) { return is_greater_equal(x <=> y); }
 
 
 } // namespace mli
@@ -353,9 +342,8 @@ namespace mli {
     new_copy(unit);
     new_move(unit);
 
-
     // Semantic comparison.
-    virtual order compare(const unit& x) const { return equal; }
+    virtual ordering compare(const unit& x) const { return equal; }
 
     virtual size_t hash() const { return 0; }
 
@@ -378,80 +366,23 @@ namespace std {
 
 namespace mli {
 
-
-// If the set of types should have a total order set to 1, or if unequal types
-// should be unordered, set to 0:
-#define TOTAL_TYPE_ORDER 1
-
-
-#if (__cplusplus > 201703L) // C++20
   // Semantic comparison.
-  // Different types are unequal, a total order by the C++ implementation
-  // dependent class typeid collation order.
-  inline order operator<=>(const unit& x, const unit& y) {
-#if TOTAL_TYPE_ORDER
+  // Different types are unequal: a total order by the C++ implementation dependent
+  // class typeid collation order, so as to allow the use in associative containers.
+  inline ordering operator<=>(const unit& x, const unit& y) {
     if (typeid(x) != typeid(y))
       return (typeid(x).before(typeid(y)))? less : greater;
-#else
-    if (typeid(x) != typeid(y)) return unordered;
-#endif
     return x.compare(y);
   }
-#else
-  // Semantic comparison.
-  // Different types are unequal, a total order by the C++ implementation
-  // dependent class typeid collation order.
-  inline order compare(const unit& x, const unit& y) {
-#if TOTAL_TYPE_ORDER
-    if (typeid(x) != typeid(y))
-      return (typeid(x).before(typeid(y)))? less : greater;
-#else
-    if (typeid(x) != typeid(y)) return unordered;
-#endif
-    return x.compare(y);
-  }
-#endif
 
 
-#if (__cplusplus > 201703L) // C++20
-  inline bool operator==(const unit& x, const unit& y) { return comparison(equal)(x <=> y); }
+  inline bool operator==(const unit& x, const unit& y) { return is_equal(x <=> y); }
+  inline bool operator!=(const unit& x, const unit& y) { return is_not_equal(x <=> y); }
+  inline bool operator<(const unit& x, const unit& y) { return is_less(x <=> y); }
+  inline bool operator>(const unit& x, const unit& y) { return is_greater(x <=> y); }
+  inline bool operator<=(const unit& x, const unit& y) { return is_less_equal(x <=> y); }
+  inline bool operator>=(const unit& x, const unit& y) { return is_greater_equal(x <=> y); }
 
-  inline bool operator!=(const unit& x, const unit& y) { return comparison(~equal)(x <=> y); }
-
-  inline bool operator<(const unit& x, const unit& y) { return comparison(less)(x <=> y); }
-
-  inline bool operator>(const unit& x, const unit& y) { return comparison(greater)(x <=> y); }
-
-  inline bool operator<=(const unit& x, const unit& y) { return comparison(less|equal)(x <=> y); }
-
-  inline bool operator>=(const unit& x, const unit& y) { return comparison(greater|equal)(x <=> y); }
-#else
-  inline bool operator==(const unit& x, const unit& y) {
-    return compare(x, y) == equal;
-  }
-
-  inline bool operator!=(const unit& x, const unit& y) {
-    return compare(x, y) != equal;
-  }
-
-  inline bool operator<(const unit& x, const unit& y) {
-    return compare(x, y) == less;
-  }
-
-  inline bool operator<=(const unit& x, const unit& y) {
-    order r = compare(x, y);
-    return (r == less) || (r == equal);
-  }
-
-  inline bool operator>(const unit& x, const unit& y) {
-    return compare(x, y) == greater;
-  }
-
-  inline bool operator>=(const unit& x, const unit& y) {
-    order r = compare(x, y);
-    return (r == greater) || (r == equal);
-  }
-#endif
 
   enum statement_type {
     no_statement,
@@ -677,7 +608,7 @@ namespace mli {
     // Required for unification and database lookup.
 
     // Semantic comparison.
-    virtual order compare(const unit& x) const override { return equal; }
+    virtual ordering compare(const unit& x) const override { return equal; }
 
 
     // Writing:
@@ -823,7 +754,7 @@ namespace mli {
     size_type metasize() const override { return statement_->metasize(); }
     size_type formula_sequence_size() const override { return statement_->formula_sequence_size(); }
 
-    order compare(const unit& x) const override { return statement_->compare(x); }
+    ordering compare(const unit& x) const override { return statement_->compare(x); }
 
     void write(std::ostream& os, write_style) const override { os << name_; }
   };
@@ -1019,7 +950,7 @@ namespace mli {
 
     // compare() is on the object level the classical variable comparison, comparing only
     // name and level numbers, even though on the meta level, also type is compared.
-    virtual order compare(const unit&) const override;
+    virtual ordering compare(const unit&) const override;
 
     virtual size_t hash() const override {
       return std::hash<std::string>()(name) ^ std::hash<depth>()(depth_)
@@ -1204,7 +1135,7 @@ namespace mli {
 
     virtual void set_bind(bind&, name_variable_table&) override {}
 
-    virtual order compare(const unit&) const override;
+    virtual ordering compare(const unit&) const override;
 
     virtual void write(std::ostream&, write_style) const override;
   };
@@ -1294,7 +1225,7 @@ namespace mli {
 
     virtual void set_bind(bind&, name_variable_table&) override;
 
-    virtual order compare(const unit&) const override;
+    virtual ordering compare(const unit&) const override;
 
     virtual precedence_t precedence() const override;
     virtual void write(std::ostream&, write_style) const override;
@@ -1421,7 +1352,7 @@ namespace mli {
 
     virtual void set_bind(bind&, name_variable_table&) override;
 
-    virtual order compare(const unit&) const override;
+    virtual ordering compare(const unit&) const override;
 
     virtual precedence_t precedence() const override { return precedence_; }
     virtual void write(std::ostream&, write_style) const override;
@@ -1510,7 +1441,7 @@ namespace mli {
 
     virtual void set_bind(bind&, name_variable_table&) override;
 
-    virtual order compare(const unit&) const override;
+    virtual ordering compare(const unit&) const override;
 
     virtual precedence_t precedence() const override;
     virtual void write(std::ostream&, write_style) const override;
@@ -1650,7 +1581,7 @@ namespace mli {
 
     bool has_formula(val<formula> x) const override;
 
-    virtual order compare(const unit&) const override;
+    virtual ordering compare(const unit&) const override;
 
     virtual precedence_t precedence() const override;
     virtual void write(std::ostream&, write_style) const override;
@@ -1826,7 +1757,7 @@ namespace mli {
 
     virtual void set_bind(bind&, name_variable_table&) override;
 
-    virtual order compare(const unit&) const override;
+    virtual ordering compare(const unit&) const override;
 
     virtual precedence_t precedence() const override;
     virtual void write(std::ostream&, write_style) const override;
@@ -1889,7 +1820,7 @@ namespace mli {
 
     virtual size_type metasize() const override { return 0; }
 
-    virtual order compare(const unit&) const override { return unordered; }
+    virtual ordering compare(const unit&) const override { return unordered; }
 
     virtual void write(std::ostream&, write_style) const override;
   };

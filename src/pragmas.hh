@@ -23,4 +23,5 @@
 #pragma clang diagnostic ignored "-Wdeprecated-register"
 #pragma clang diagnostic ignored "-Wlogical-op-parentheses"
 #pragma clang diagnostic ignored "-Wdangling-else"
+#pragma clang diagnostic ignored "-Wunused-result"
 

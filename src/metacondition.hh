@@ -53,7 +53,7 @@ namespace mli {
 
     virtual void set_bind(bind&, name_variable_table&);
 
-    virtual order compare(const unit&) const;
+    virtual ordering compare(const unit&) const;
 
     virtual precedence_t precedence() const;
     virtual void write(std::ostream&, write_style) const;
@@ -93,7 +93,7 @@ namespace mli {
 
     virtual void set_bind(bind&, name_variable_table&) {}
 
-    virtual order compare(const unit&) const;
+    virtual ordering compare(const unit&) const;
 
     virtual precedence_t precedence() const;
     virtual void write(std::ostream&, write_style) const;
@@ -133,7 +133,7 @@ namespace mli {
 
     virtual void set_bind(bind&, name_variable_table&);
 
-    virtual order compare(const unit&) const;
+    virtual ordering compare(const unit&) const;
 
     virtual precedence_t precedence() const;
     virtual void write(std::ostream&, write_style) const;
@@ -176,7 +176,7 @@ namespace mli {
 
     virtual void set_bind(bind&, name_variable_table&);
 
-    virtual order compare(const unit&) const;
+    virtual ordering compare(const unit&) const;
 
     virtual precedence_t precedence() const;
     virtual void write(std::ostream&, write_style) const;
@@ -218,7 +218,7 @@ namespace mli {
 
     virtual void set_bind(bind&, name_variable_table&);
 
-    virtual order compare(const unit&) const;
+    virtual ordering compare(const unit&) const;
 
     virtual precedence_t precedence() const;
     virtual void write(std::ostream&, write_style) const;
@@ -261,7 +261,7 @@ namespace mli {
 
     virtual void set_bind(bind&, name_variable_table&);
 
-    virtual order compare(const unit&) const;
+    virtual ordering compare(const unit&) const;
 
     virtual precedence_t precedence() const;
     virtual void write(std::ostream&, write_style) const;

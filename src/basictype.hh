@@ -55,7 +55,7 @@ namespace mli {
 
     virtual void set_bind(bind&, name_variable_table&) {}
 
-    virtual order compare(const unit&) const;
+    virtual ordering compare(const unit&) const;
 
     virtual void write(std::ostream&, write_style) const;
   };

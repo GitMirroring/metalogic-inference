@@ -44,7 +44,7 @@ namespace mli {
   }
 
 
-  order substitution::compare(const unit& x) const {
+  ordering substitution::compare(const unit& x) const {
     auto& xr = dynamic_cast<const substitution&>(x);
     return xr.is_identity()? equal : unordered;
   }
@@ -365,17 +365,11 @@ namespace mli {
   }
 
 
-  order variable_substitution::compare(const unit& x) const {
+  ordering variable_substitution::compare(const unit& x) const {
     auto& xr = dynamic_cast<const variable_substitution&>(x);
-#if (__cplusplus > 201703L) // C++20
-    order c = variable_ <=> xr.variable_;
+    ordering c = variable_ <=> xr.variable_;
     if (c != equal)  return c;
     return formula_ <=> xr.formula_;
-#else
-    order c = mli::compare(variable_, xr.variable_);
-    if (c != equal)  return c;
-    return mli::compare(formula_, xr.formula_);
-#endif
   }
 
 
@@ -1007,17 +1001,11 @@ namespace mli {
   }
 
 
-  order explicit_substitution::compare(const unit& x) const {
+  ordering explicit_substitution::compare(const unit& x) const {
     auto& xr = dynamic_cast<const explicit_substitution&>(x);
-#if (__cplusplus > 201703L) // C++20
-    order c = variable_ <=> xr.variable_;
+    ordering c = variable_ <=> xr.variable_;
     if (c != equal)  return c;
     return formula_ <=> xr.formula_;
-#else
-    order c = mli::compare(variable_, xr.variable_);
-    if (c != equal)  return c;
-    return mli::compare(formula_, xr.formula_);
-#endif
   }
 
 
@@ -1178,15 +1166,9 @@ namespace mli {
   }
 
 
-  order substitution_composition::compare(const unit& x) const {
+  ordering substitution_composition::compare(const unit& x) const {
     auto& xr = dynamic_cast<const substitution_composition&>(x);
-#if (__cplusplus > 201703L) // C++20
     return {inner_ <=> xr.inner_, outer_ <=> xr.outer_};
-#else
-    order c = mli::compare(inner_, xr.inner_);
-    if (c != equal)  return c;
-    return mli::compare(outer_, xr.outer_);
-#endif
   }
 
 
@@ -1439,17 +1421,11 @@ namespace mli {
   }
 
 
-  order substitution_formula::compare(const unit& x) const {
+  ordering substitution_formula::compare(const unit& x) const {
     auto& xr = dynamic_cast<const substitution_formula&>(x);
-#if (__cplusplus > 201703L) // C++20
-    order c = substitution_ <=> xr.substitution_;
+    ordering c = substitution_ <=> xr.substitution_;
     if (c != equal)  return c;
     return formula_ <=> xr.formula_;
-#else
-    order c = mli::compare(substitution_, xr.substitution_);
-    if (c != equal)  return c;
-    return mli::compare(formula_, xr.formula_);
-#endif
   }
 
 

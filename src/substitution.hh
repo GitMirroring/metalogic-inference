@@ -102,7 +102,7 @@ namespace mli {
     virtual val<substitution> outermost() const { return *this; }
     virtual val<substitution> within() const { return *this; }
 
-    virtual order compare(const unit&) const;
+    virtual ordering compare(const unit&) const;
 
     virtual void write(std::ostream& os, write_style) const { os << "I"; }
   };
@@ -200,7 +200,7 @@ namespace mli {
     virtual val<substitution> outermost() const;
     virtual val<substitution> within() const;
 
-    virtual order compare(const unit&) const;
+    virtual ordering compare(const unit&) const;
 
     virtual precedence_t precedence() const { return formula_->precedence(); }
 
@@ -256,7 +256,7 @@ namespace mli {
     virtual val<substitution> outermost() const;
     virtual val<substitution> within() const;
 
-    virtual order compare(const unit&) const;
+    virtual ordering compare(const unit&) const;
 
     virtual precedence_t precedence() const { return formula_->precedence(); }
 
@@ -321,7 +321,7 @@ namespace mli {
     virtual val<substitution> within() const;
 
     // Comparison, needed for unification and database lookup.
-    virtual order compare(const unit&) const;
+    virtual ordering compare(const unit&) const;
 
     // Writing:
     virtual precedence_t precedence() const { return precedence_t(); }
@@ -396,7 +396,7 @@ namespace mli {
     virtual split_formula split(unify_environment, const val<variable>&, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const;
 
     // Comparison, needed for unification and database lookup.
-    virtual order compare(const unit&) const;
+    virtual ordering compare(const unit&) const;
 
     // Writing:
     virtual precedence_t precedence() const;
@@ -1138,7 +1138,7 @@ namespace mli {
 
       std::clog << "), replacement " << x << ", condition: " << t << ":\n";
 
-      std::make_from_tuple<print_sfs>(sfs);
+      static_cast<void>(std::make_from_tuple<print_sfs>(sfs));
 
       std::clog << std::endl;
     }

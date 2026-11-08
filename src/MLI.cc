@@ -305,7 +305,7 @@ namespace mli {
     unify_environment tx, ty;
 
     // If arguments are reversed, change them back, so that 'unify'
-    // here always gets them in reduction (original, unreversed) order, that is,
+    // here always gets them in reduction (original, unreversed) ordering, that is,
     // x is goal and y is fact.
     // Subsequent calls to 'unify' should use directions 'reduction' and 'deduction',
     // not dr and !dr.
@@ -1605,42 +1605,16 @@ namespace mli {
   }
 
 
-  order variable::compare(const unit& y) const {
+  ordering variable::compare(const unit& y) const {
     auto& yr = dynamic_cast<const variable&>(y);
-
-#if (__cplusplus > 201703L) // C++20
 
 #if 1
     return {depth_ <=> yr.depth_, level_ <=> yr.level_, degree_ <=> yr.degree_,
       bind_ <=> yr.bind_, type_ <=> yr.type_, unspecializable_ <=> yr.unspecializable_,
       name <=> yr.name, is_implicit_ <=> yr.is_implicit_};
 #else
-    return std::tuple(depth_, level_, degree_, bind_, type_, unspecializable_, name)
-       <=> std::tuple(yr.depth_, yr.level_, yr.degree_, yr.bind_, yr.type_, yr.unspecializable_, yr.name);
-#endif
-
-#else
-    // A total ordering for use with std::set.
-    if (depth_ != yr.depth_)
-      return order(depth_, yr.depth_);
-
-    order c = level_.compare(yr.level_);
-    if (c != equal)
-      return c;
-
-    if (degree_ != yr.degree_)
-      return order(degree_, yr.degree_);
-
-    if (bind_ != yr.bind_)
-      return order(bind_, yr.bind_);
-
-    if (type_ != yr.type_)
-      return order(type_, yr.type_);
-
-    if (unspecializable_ != yr.unspecializable_)
-      return order(unspecializable_, yr.unspecializable_);
-
-    return sgn(name.compare(yr.name));
+    return std::tuple(depth_, level_, degree_, bind_, type_, unspecializable_, name, is_implicit_)
+       <=> std::tuple(yr.depth_, yr.level_, yr.degree_, yr.bind_, yr.type_, yr.unspecializable_, yr.name, yr.is_implicit_);
 #endif
   }
 
@@ -1745,7 +1719,7 @@ namespace mli {
   }
 
 
-  order equivalence(const variable& x, const variable& y) {
+  ordering equivalence(const variable& x, const variable& y) {
     return {x.depth_ <=> y.depth_, x.level_ <=> y.level_, x.degree_ <=> y.degree_,
       x.bind_ <=> y.bind_, x.type_ <=> y.type_,
       x.name <=> y.name};
@@ -1935,12 +1909,12 @@ namespace mli {
   }
 
 
-  inline order compare(const constant& x, const constant& y) {
+  inline ordering compare(const constant& x, const constant& y) {
     return sgn(x.name.compare(y.name));
   }
 
 
-  order constant::compare(const unit& x) const {
+  ordering constant::compare(const unit& x) const {
     auto& xr = dynamic_cast<const constant&>(x);
 
     if (type_ != xr.type_)
@@ -2094,10 +2068,10 @@ namespace mli {
   }
 
 
-  order sequence::compare(const unit& x) const {
+  ordering sequence::compare(const unit& x) const {
     auto& xr = dynamic_cast<const sequence&>(x);
     if (type_ != xr.type_)  return unordered;
-    return order(formulas_.begin(), formulas_.end(), xr.formulas_.begin(), xr.formulas_.end());
+    return ordering(formulas_.begin(), formulas_.end(), xr.formulas_.begin(), xr.formulas_.end());
   }
 
 
@@ -2319,25 +2293,15 @@ namespace mli {
   }
 
 
-  order structure::compare(const unit& x) const {
+  ordering structure::compare(const unit& x) const {
     auto& xr = dynamic_cast<const structure&>(x);
 
-#if (__cplusplus > 201703L) // C++20
-    order d = metalevel_ <=> xr.metalevel_;
-#else
-    order d = order(metalevel_, xr.metalevel_);
-#endif
+    ordering d = metalevel_ <=> xr.metalevel_;
     if (d != equal)  return d;
 
-#if (__cplusplus > 201703L) // C++20
-    order c = atom <=> xr.atom;
+    ordering c = atom <=> xr.atom;
     if (c != equal)  return c;
     return argument <=> xr.argument;
-#else
-    order c = mli::compare(atom, xr.atom);
-    if (c != equal)  return c;
-    return mli::compare(argument, xr.argument);
-#endif
   }
 
 
@@ -2926,26 +2890,16 @@ namespace mli {
 #endif
 
 
-  order bound_formula::compare(const unit& t) const {
+  ordering bound_formula::compare(const unit& t) const {
     auto& tr = dynamic_cast<const bound_formula&>(t);
 
-#if (__cplusplus > 201703L) // C++20
-    order r = variable_ <=> tr.variable_;
+    ordering r = variable_ <=> tr.variable_;
     if (r != equal)  return r;
 
-    order d = domain_ <=> tr.domain_;
+    ordering d = domain_ <=> tr.domain_;
     if (d != equal)  return d;
 
     return formula_ <=> tr.formula_;
-#else
-    order r = mli::compare(variable_, tr.variable_);
-    if (r != equal)  return r;
-
-    order d = mli::compare(domain_, tr.domain_);
-    if (d != equal)  return d;
-
-    return mli::compare(formula_, tr.formula_);
-#endif
   }
 
 
@@ -3530,10 +3484,10 @@ namespace mli {
   }
 
 
-  order formula_sequence::compare(const unit& x) const {
+  ordering formula_sequence::compare(const unit& x) const {
     auto& xr = dynamic_cast<const formula_sequence&>(x);
 
-    return order(formulas_.begin(), formulas_.end(), xr.formulas_.begin(), xr.formulas_.end());
+    return ordering(formulas_.begin(), formulas_.end(), xr.formulas_.begin(), xr.formulas_.end());
   }
 
 
@@ -5598,21 +5552,13 @@ namespace mli {
   }
 
 
-  order inference::compare(const unit& x) const {
+  ordering inference::compare(const unit& x) const {
     auto& xr = dynamic_cast<const inference&>(x);
 
-#if (__cplusplus > 201703L) // C++20
 #if 1
     return {metalevel_ <=> xr.metalevel_, head_ <=> xr.head_, body_ <=> xr.body_};
 #else
     return std::tuple(metalevel_, head_, body_) <=> std::tuple(xr.metalevel_, xr.head_, xr.body_);
-#endif
-#else
-    order d = order(metalevel_, xr.metalevel_);
-    if (d != equal)  return d;
-    order c = mli::compare(head_, xr.head_);
-    if (c != equal)  return c;
-    return mli::compare(body_, xr.body_);
 #endif
   }
 

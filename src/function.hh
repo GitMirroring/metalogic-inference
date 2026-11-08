@@ -84,7 +84,7 @@ namespace mli {
     virtual val<function> outermost() const { return *this; }
     virtual val<function> within() const { return *this; }
 
-    virtual order compare(const unit&) const;
+    virtual ordering compare(const unit&) const;
 
     virtual void write(std::ostream& os, write_style) const { os << "id"; }
   };
@@ -136,7 +136,7 @@ namespace mli {
     val<function> outermost() const override;
     val<function> within() const override;
 
-    order compare(const unit&) const override;
+    ordering compare(const unit&) const override;
 
     precedence_t precedence() const override { return formula_->precedence(); }
 
@@ -194,7 +194,7 @@ namespace mli {
     val<function> within() const override;
 
     // Comparison, needed for unification and database lookup.
-    order compare(const unit&) const override;
+    ordering compare(const unit&) const override;
 
     // Writing:
     precedence_t precedence() const override { return precedence_t(); }
@@ -253,7 +253,7 @@ namespace mli {
 
     split_formula split(unify_environment, const val<variable>&, const val<formula>&, unify_environment, database*, level, degree_pool&, direction) const override;
 
-    order compare(const unit&) const override;
+    ordering compare(const unit&) const override;
 
     // Writing:
     precedence_t precedence() const override;

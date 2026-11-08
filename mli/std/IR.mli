@@ -151,11 +151,11 @@ theory IR. — Logic: Inference rules. Cf. Kleene, p. 98-99.
 
     — Existence, Existential quantifier
 
-    — Existential introduction:
+    — Existential quantifier introduction:
     rule ExI. formula 𝑨 object 𝒕 object °𝒙.
       𝑨[𝒙 ⤇ 𝒕] ⊢ ∃𝒙 𝑨.
 
-    — Existential elimination:
+    — Existential quantifier elimination:
     postulate ExE. formula sequence 𝜞 formula 𝑨, 𝑩 object °𝒙.
       𝒙 not free in 𝑩; 𝜞, 𝑨 ⊢ 𝑩 ⊩ 𝜞, ∃𝒙 𝑨 ⊢⁽𝒙⁾ 𝑩.
 

@@ -38,7 +38,7 @@ namespace mli {
   }
 
 
-  order function::compare(const unit& x) const {
+  ordering function::compare(const unit& x) const {
     auto& xr = dynamic_cast<const function&>(x);
     return xr.is_identity()? equal : unordered;
   }
@@ -198,9 +198,9 @@ namespace mli {
   }
 
 
-  order function_map::compare(const unit& x) const {
+  ordering function_map::compare(const unit& x) const {
     auto& xr = dynamic_cast<const function_map&>(x);
-    order c = variable_ <=> xr.variable_;
+    ordering c = variable_ <=> xr.variable_;
     if (c != equal)  return c;
     return formula_ <=> xr.formula_;
   }
@@ -357,15 +357,9 @@ namespace mli {
   }
 
 
-  order function_composition::compare(const unit& x) const {
+  ordering function_composition::compare(const unit& x) const {
     auto& xr = dynamic_cast<const function_composition&>(x);
-#if (__cplusplus > 201703L) // C++20
     return {inner_ <=> xr.inner_, outer_ <=> xr.outer_};
-#else
-    order c = mli::compare(inner_, xr.inner_);
-    if (c != equal)  return c;
-    return mli::compare(outer_, xr.outer_);
-#endif
   }
 
 
@@ -538,17 +532,11 @@ namespace mli {
   }
 
 
-  order function_application::compare(const unit& x) const {
+  ordering function_application::compare(const unit& x) const {
     auto& xr = dynamic_cast<const function_application&>(x);
-#if (__cplusplus > 201703L) // C++20
-    order c = function_ <=> xr.function_;
+    ordering c = function_ <=> xr.function_;
     if (c != equal)  return c;
     return formula_ <=> xr.formula_;
-#else
-    order c = mli::compare(function_, xr.function_);
-    if (c != equal)  return c;
-    return mli::compare(formula_, xr.formula_);
-#endif
   }
 
 

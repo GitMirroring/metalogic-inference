@@ -96,13 +96,9 @@ namespace mli {
   }
 
 
-  order metanot::compare(const unit& x) const {
+  ordering metanot::compare(const unit& x) const {
     auto& xr = dynamic_cast<const metanot&>(x);
-#if (__cplusplus > 201703L) // C++20
     return formula_ <=> xr.formula_;
-#else
-    return mli::compare(formula_, xr.formula_);
-#endif
   }
 
 
@@ -139,13 +135,9 @@ namespace mli {
   }
 
 
-  order succeed_fail::compare(const unit& x) const {
+  ordering succeed_fail::compare(const unit& x) const {
     auto& xr = dynamic_cast<const succeed_fail&>(x);
-#if (__cplusplus > 201703L) // C++20
     return succeed_ <=> xr.succeed_;
-#else
-    return order(succeed_, xr.succeed_);
-#endif
   }
 
 
@@ -242,23 +234,13 @@ namespace mli {
   }
 
 
-  order identical::compare(const unit& x) const {
+  ordering identical::compare(const unit& x) const {
     auto& xr = dynamic_cast<const identical&>(x);
-#if (__cplusplus > 201703L) // C++20
-    order a = positive_ <=> xr.positive_;
-#else
-    order a = order(positive_, xr.positive_);
-#endif
+    ordering a = positive_ <=> xr.positive_;
     if (a != equal)  return a;
-#if (__cplusplus > 201703L) // C++20
-    order c = first_ <=> xr.first_;
+    ordering c = first_ <=> xr.first_;
     if (c != equal)  return c;
     return second_ <=> xr.second_;
-#else
-    order c = mli::compare(first_, xr.first_);
-    if (c != equal)  return c;
-    return mli::compare(second_, xr.second_);
-#endif
   }
 
 
@@ -372,23 +354,13 @@ namespace mli {
   }
 
 
-  order objectidentical::compare(const unit& x) const {
+  ordering objectidentical::compare(const unit& x) const {
     auto& xr = dynamic_cast<const objectidentical&>(x);
-#if (__cplusplus > 201703L) // C++20
-    order a = positive_ <=> xr.positive_;
-#else
-    order a = order(positive_, xr.positive_);
-#endif
+    ordering a = positive_ <=> xr.positive_;
     if (a != equal)  return a;
-#if (__cplusplus > 201703L) // C++20
-    order c = first_ <=> xr.first_;
+    ordering c = first_ <=> xr.first_;
     if (c != equal)  return c;
     return second_ <=> xr.second_;
-#else
-    order c = mli::compare(first_, xr.first_);
-    if (c != equal)  return c;
-    return mli::compare(second_, xr.second_);
-#endif
   }
 
 
@@ -510,27 +482,16 @@ namespace mli {
   }
 
 
-  order free_in_object::compare(const unit& x) const {
+  ordering free_in_object::compare(const unit& x) const {
     auto& xr = dynamic_cast<const free_in_object&>(x);
 
-#if (__cplusplus > 201703L) // C++20
-    order a = positive_ <=> xr.positive_;
-#else
-    order a = order(positive_, xr.positive_);
-#endif
+    ordering a = positive_ <=> xr.positive_;
     if (a != equal)  return a;
 
-#if (__cplusplus > 201703L) // C++20
-    order c = variable_ <=> xr.variable_;
+    ordering c = variable_ <=> xr.variable_;
     if (c != equal)  return c;
 
     return formula_ <=> xr.formula_;
-#else
-    order c = mli::compare(variable_, xr.variable_);
-    if (c != equal)  return c;
-
-    return mli::compare(formula_, xr.formula_);
-#endif
   }
 
 
@@ -671,32 +632,18 @@ namespace mli {
   }
 
 
-  order free_for_object::compare(const unit& x) const {
+  ordering free_for_object::compare(const unit& x) const {
     auto& xr = dynamic_cast<const free_for_object&>(x);
-#if (__cplusplus > 201703L) // C++20
-    order a = positive_ <=> xr.positive_;
-#else
-    order a = order(positive_, xr.positive_);
-#endif
+    ordering a = positive_ <=> xr.positive_;
     if (a != equal)  return a;
 
-#if (__cplusplus > 201703L) // C++20
-    order b = term_ <=> xr.term_;
+    ordering b = term_ <=> xr.term_;
     if (b != equal)  return b;
 
-    order c = variable_ <=> xr.variable_;
+    ordering c = variable_ <=> xr.variable_;
     if (c != equal)  return c;
 
     return formula_ <=> xr.formula_;
-#else
-    order b = mli::compare(term_, xr.term_);
-    if (b != equal)  return b;
-
-    order c = mli::compare(variable_, xr.variable_);
-    if (c != equal)  return c;
-
-    return mli::compare(formula_, xr.formula_);
-#endif
   }
 
 

@@ -189,21 +189,13 @@ namespace mli {
   }
 
 
-  order abbreviation::compare(const unit& x) const {
+  ordering abbreviation::compare(const unit& x) const {
     auto& xr = dynamic_cast<const abbreviation&>(x);
-#if (__cplusplus > 201703L) // C++20
-    order c = defined_ <=> xr.defined_;
+    ordering c = defined_ <=> xr.defined_;
     if (c != equal)  return c;
     c = definer_ <=> xr.definer_;
     if (c != equal)  return c;
     return condition_ <=> xr.condition_;
-#else
-    order c = mli::compare(defined_, xr.defined_);
-    if (c != equal)  return c;
-    c = mli::compare(definer_, xr.definer_);
-    if (c != equal)  return c;
-    return mli::compare(condition_, xr.condition_);
-#endif
   }
 
 
