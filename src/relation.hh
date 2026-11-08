@@ -246,7 +246,7 @@ namespace mli {
   template<class A>
   inline ordering sgn(A const& x) { return x <=> A(); }
 
-4
+
   // Class comparison: Producing the set of all possible comparison operators
   // that can be derived from the class ordering comparison values.
   // All 0xf mask values are possible, with each bit representing a class ordering
