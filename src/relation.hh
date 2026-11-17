@@ -28,25 +28,33 @@
 #include <compare>
 
 namespace mli {
-  class ordering;
-}
-
-namespace std {
-  // Not defined in C++20:
-  // Lexical ordering of tuples starting at index i:
-#define USE_TUPLE_COMPARE 0
-
-#if USE_TUPLE_COMPARE
-  template <std::size_t i, class... A, class... B>
-  mli::ordering operator<=>(const std::tuple<A...>& x, const std::tuple<B...>& y);
-#endif
-
-} // namespace std
-
-
-namespace mli {
-
   // Classes for four-way comparison:
+  class ordering;
+  class comparison;
+
+  constexpr bool is_unordered(ordering x);
+  constexpr bool is_ordered(ordering x);
+  constexpr bool is_less(ordering x);
+  constexpr bool is_greater(ordering x);
+  constexpr bool is_equal(ordering x);
+  constexpr bool is_not_less(ordering x);
+  constexpr bool is_not_greater(ordering x);
+  constexpr bool is_not_equal(ordering x);
+  constexpr bool is_less_equal(ordering x);
+  constexpr bool is_less_greater(ordering x);
+  constexpr bool is_greater_equal(ordering x);
+  constexpr bool is_not_less_equal(ordering x);
+  constexpr bool is_not_less_greater(ordering x);
+  constexpr bool is_not_greater_equal(ordering x);
+
+  // Lexical ordering of tuples.
+  // Use syntax mli::operator<=>(t0, t1) if t0 <=> t1 conflicts with std::operator<=>. The results
+  // are the same if no class ordering value “undordered” occurs and the tuples have the same size,
+  // as the latter downgrades x <=> y to x < y and y < x and assumes x == y if both are false.
+  template <class... A, class... B>
+  mli::ordering operator<=>(const std::tuple<A...>& x, const std::tuple<B...>& y);
+
+
   // class ordering = {unordered, less, gtreater, equal}, allowing simultaneously giving
   // the values r(x, y) and r(y, x) of binary relations r.
   // The class comparison defines all possible comparison operators from these class ordering values.
@@ -73,7 +81,6 @@ namespace mli {
   //   equal ↦ equal, unordered ↦ unordered, less ↦ greater, greater ↦ less
   // then ι(compare(x, y)) = compare(y, x) for all x, y.
   // A comparison function compare(x, y) is assumed to fulfill this requirement.
-
   //
   /* Comparison values, as in class ordering: unordered ⋚̸, less <, greater >, equal =.
     The class comparison, defining the various comparison operators, consists of the
@@ -97,42 +104,42 @@ namespace mli {
      ⋚̸  1  0  0  0   unordered             !(x <= y) && !(x >= y)
    */
 
-  // type relation: total order, partial order.
-
-  class ordering;
-  class comparison;
 
   // Class for comparison values: unordered ⋚̸, less <, greater >, equal =.
   class ordering {
     uint8_t c_ = 0x0;  // Comparison value.
 
   public:
+    static const ordering unordered;
+    static const ordering less;
+    static const ordering greater;
+    static const ordering equal;
+
 
     ordering() = default;
 
     constexpr explicit ordering(uint8_t const& x) : c_(x) {}
 
-    constexpr operator uint8_t() const { return c_; }
+    constexpr explicit operator uint8_t() const { return c_; }
 
     constexpr comparison operator~() const;
 
 
     // Constructor that translates the two comparisons x <= y and y <= x into a class ordering value:
-    //   y <= x   x <= y   result
-    //   false    false    unordered
-    //   false    true     less
-    //   true     false    greater
-    //   true     true     equal
+    //   value       y <= x   x <= y   identities expressed in C++
+    //   unordered   false    false    x ⋚̸ y  ≔ !(x <= y) && !(y <= x)
+    //   less        false    true     x < y  ≔ (x <= y) && !(y <= x)
+    //   greater     true     false    x > y  ≔ !(x <= y) && (y <= x)
+    //   equal       true     true     x == y ≔ (x <= y) && (y <= x)
     //
-    // Classical C comparison value converted to class ordering value is given
-    // by ordering(x, 0), derived from operator x <= y, with values:
+    // Also converts C comparison value int to class ordering value
+    // by ordering(x, 0), derived from operator x < y, with values:
     //   x < 0 ↦ less, x == 0 ↦ equal, x > 0 ↦ greater
     template<class A>
     constexpr ordering(const A& x, const A& y);
 
     template<class A, class Less_equal>
     ordering(const A& x, const A& y, Less_equal comp) : c_(comp(x, y) + (comp(y, x) << 1)) {}
-
 
     // Constructor that translates the two comparisons x < y and y < x into a class ordering value:
     //   y < x    x < y    result
@@ -144,8 +151,11 @@ namespace mli {
     // is added for completeness.
     //
     // Classical C comparison value converted to class ordering value is given
-    // by ordering(x, 0, 0), derived from operator x < y, with values:
+    // by ordering(x, 0), derived from operator x < y, with values:
     //   x < 0 ↦ less, x == 0 ↦ equal, x > 0 ↦ greater
+    // or alternatively convert integral values to std::strong_ordering using
+    //   x <=> 0
+    // which in turn is convertible to class ordering.
     template<class A>
     constexpr ordering(const A& x, const A& y, int);
 
@@ -153,6 +163,9 @@ namespace mli {
     ordering(std::partial_ordering x) : ordering((x <= 0) + ((x >= 0) << 1)) {}
     ordering(std::strong_ordering x) : ordering((x <= 0) + ((x >= 0) << 1)) {}
     ordering(std::weak_ordering x) : ordering((x <= 0) + ((x >= 0) << 1)) {}
+
+    // Conversion to std::partial_ordering:
+    constexpr operator std::partial_ordering() const;
 
     // Lexicographical order, as in {x0 <=> y0, …}.
     ordering(std::initializer_list<ordering> xs);
@@ -178,17 +191,56 @@ namespace mli {
     friend constexpr ordering operator&&(ordering const&, ordering const&);
   };
 
-  constexpr ordering unordered(0x0);
-  constexpr ordering less(0x1);
-  constexpr ordering greater(0x2);
-  constexpr ordering equal(0x3);
+  constexpr ordering ordering::unordered(0x0);
+  constexpr ordering ordering::less(0x1);
+  constexpr ordering ordering::greater(0x2);
+  constexpr ordering ordering::equal(0x3);
+
+  constexpr ordering unordered = ordering::unordered;
+  constexpr ordering less = ordering::less;
+  constexpr ordering greater = ordering::greater;
+  constexpr ordering equal = ordering::equal;
+
+  // std::tuple hardcodes std::partial_ordering via std::common_comparison_category
+  constexpr ordering::operator std::partial_ordering() const {
+    switch (c_) {
+      case (uint8_t)ordering::unordered: return std::partial_ordering::unordered;
+      case (uint8_t)ordering::less: return std::partial_ordering::less;
+      case (uint8_t)ordering::greater: return std::partial_ordering::greater;
+      case (uint8_t)ordering::equal: return std::partial_ordering::equivalent;
+    };
+    return ordering();
+  }
+
 
   constexpr bool operator==(ordering const& x, ordering const& y) { return (x.c_ == y.c_); }
   constexpr bool operator!=(ordering const& x, ordering const& y) { return (x.c_ != y.c_); }
 
+
   constexpr ordering operator!(ordering const& x) { return ordering(~x.c_); }
   constexpr ordering operator||(ordering const& x, ordering const& y) { return ordering(x.c_ | y.c_); }
   constexpr ordering operator&&(ordering const& x, ordering const& y) { return ordering(x.c_ & y.c_); }
+
+
+  // Defining a partial order on class ordering, compatible with C when int value is used as ordering:
+  // “less” < “equal” < “greater”, with “unordered” equal to itself, but unordered with other values,
+  // corresponding to int values: “less” ↔ < 0, “equal” ↔ = 0, “greater” ↔ > 0. and no representation
+  // for “unordered”.
+  constexpr ordering operator<=>(const ordering& x, const ordering& y) {
+    if (x == y) return equal;
+    if (x == unordered || y == unordered) return unordered;
+    if (x == less) return less;
+    if (x == greater) return greater;
+    // Now x == equal, so if y == less, return greater, and y == greater, return less.
+    if (y == less) return greater;
+    return less;
+  }
+
+  // operator== and operator!= are defined above.
+  constexpr bool operator<(const ordering& x, const ordering& y) { return is_less(x <=> y); }
+  constexpr bool operator>(const ordering& x, const ordering& y) { return is_greater(x <=> y); }
+  constexpr bool operator<=(const ordering& x, const ordering& y) { return is_less_equal(x <=> y); }
+  constexpr bool operator>=(const ordering& x, const ordering& y) { return is_greater_equal(x <=> y); }
 
 
   inline ordering::ordering(std::initializer_list<ordering> xs) {
@@ -226,25 +278,19 @@ namespace mli {
 
 
   inline std::ostream& operator<<(std::ostream& os, ordering const& x) {
-    switch (x) {
-      case unordered:
+    switch ((uint8_t)x) {
+      case (uint8_t)ordering::unordered:
         os << "⋚̸"; break;
-      case less:
+      case (uint8_t)ordering::less:
         os << "<"; break;
-      case equal:
+      case (uint8_t)ordering::equal:
         os << "="; break;
-      case greater:
+      case (uint8_t)ordering::greater:
         os << ">"; break;
     };
 
     return os;
   }
-
-
-  // Classical C comparison value converted to class ordering value:
-  //  x < 0 ~> less, x == 0 ~> equal, x > 0 ~> greater.
-  template<class A>
-  inline ordering sgn(A const& x) { return x <=> A(); }
 
 
   // Class comparison: Producing the set of all possible comparison operators
@@ -343,37 +389,28 @@ namespace mli {
   std::ostream& operator<<(std::ostream& os, comparison const& x);
 
 
-  constexpr comparison is_unordered(unordered);
-  constexpr comparison is_ordered(~unordered);
-  constexpr comparison is_less(less);
-  constexpr comparison is_greater(greater);
-  constexpr comparison is_equal(equal);
-  constexpr comparison is_not_less(~less);
-  constexpr comparison is_not_greater(~greater);
-  constexpr comparison is_not_equal(~equal);
-  constexpr comparison is_less_equal(less|equal);
-  constexpr comparison is_less_greater(less|greater);
-  constexpr comparison is_greater_equal(greater|equal);
-  constexpr comparison is_not_less_equal(~(less|equal));
-  constexpr comparison is_not_less_greater(~(less|greater));
-  constexpr comparison is_not_greater_equal(~(greater|equal));
-
+  constexpr bool is_unordered(ordering x)         { return (comparison(unordered))(x); };
+  constexpr bool is_ordered(ordering x)           { return (comparison(~unordered))(x); };
+  constexpr bool is_less(ordering x)              { return (comparison(less))(x); };
+  constexpr bool is_greater(ordering x)           { return (comparison(greater))(x); };
+  constexpr bool is_equal(ordering x)             { return (comparison(equal))(x); };
+  constexpr bool is_not_less(ordering x)          { return (comparison(~less))(x); };
+  constexpr bool is_not_greater(ordering x)       { return (comparison(~greater))(x); };
+  constexpr bool is_not_equal(ordering x)         { return (comparison(~equal))(x); };
+  constexpr bool is_less_equal(ordering x)        { return (comparison(less|equal))(x); };
+  constexpr bool is_less_greater(ordering x)      { return (comparison(less|greater))(x); };
+  constexpr bool is_greater_equal(ordering x)     { return (comparison(greater|equal))(x); };
+  constexpr bool is_not_less_equal(ordering x)    { return (comparison(~(less|equal)))(x); };
+  constexpr bool is_not_less_greater(ordering x)  { return (comparison(~(less|greater)))(x); };
+  constexpr bool is_not_greater_equal(ordering x) { return (comparison(~(greater|equal)))(x); };
 
 
 #if 0
-#if 1
   template<class A>
   constexpr bool operator==(A const& x, A const& y) { return is_equal(x <=> y); }
 
   template<class A>
   constexpr bool operator!=(A const& x, A const& y) { return is_not_equal(x <=> y); }
-#else
-  template<class A, class B>
-  constexpr bool operator==(A const& x, B const& y) { return is_equal(x <=> y); }
-
-  template<class A, class B>
-  constexpr bool operator!=(A const& x, B const& y) { return is_not_equal(x <=> y); }
-#endif
 
   template<class A>
   constexpr bool operator<(A const& x, A const& y) { return is_less(x <=> y); }
@@ -385,46 +422,39 @@ namespace mli {
   constexpr bool operator<=(A const& x, A const& y) { return is_less_equal(x <=> y); }
 
   template<class A>
-  constexpr bool operator>=(A const& x, A const& y) { return is_greater_equal)(x <=> y); }
+  constexpr bool operator>=(A const& x, A const& y) { return is_greater_equal(x <=> y); }
 #endif
 
+
   // As the operator<= called here may reference operator<= defined via the class comparison
-  // its defininition must be later:
+  // its definition must be later:
   template<class A>
   constexpr ordering::ordering(const A& x, const A& y) : c_((x <= y) + ((y <= x) << 1)) {}
 
   template<class A>
   constexpr ordering::ordering(const A& x, const A& y, int) : c_((!(y < x)) + ((!(x < y)) << 1)) {}
 
-} // namespace mli
 
-
-namespace std {
-
-#if USE_TUPLE_COMPARE
-  // Lexical ordering of tuples starting at index i:
-  template <std::size_t i, class... A, class... B>
-  mli::ordering operator<=>(const std::tuple<A...>& x, const std::tuple<B...>& y) {
-    constexpr std::size_t a = std::tuple_size<std::tuple<A...>>::value;
-    constexpr std::size_t b = std::tuple_size<std::tuple<B...>>::value;
-
-    if constexpr (i != std::min(a, b)) {
-      mli::ordering r = get<i>(x) <=> get<i>(y);
-      if (r != mli::equal) return r;
-      return operator<=><i+1>(x, y);
-    }
-
-    // Index out of bounds; sizes determine the return:
-    return a <=> b;
+  // Helper function to operator<=>:
+  template <class T, class U, size_t... I>
+  ordering tuple_compare(const T& x, const U& y, std::index_sequence<I...>) {
+    ordering result = ordering::equal;
+    static_cast<void>(((result = ordering(std::get<I>(x), std::get<I>(y)), result != ordering::equal) || ...));
+    return result;
   }
 
   // Lexical ordering of tuples.
   template <class... A, class... B>
-  mli::ordering operator<=>(const std::tuple<A...>& x, const std::tuple<B...>& y) {
-    return operator<=><0>(x, y);
-  }
-#endif
+  ordering operator<=>(const std::tuple<A...>& x, const std::tuple<B...>& y) {
+    ordering result = ordering::equal;
+    if constexpr (sizeof...(A) <= sizeof...(B))
+      result = tuple_compare(x, y, std::index_sequence_for<A...>{});
+    else
+      result = tuple_compare(x, y, std::index_sequence_for<B...>{});
 
-} // namespace std
+    return result == ordering::equal? sizeof...(A) <=> sizeof...(B) : result;
+  }
+
+} // namespace mli
 
 

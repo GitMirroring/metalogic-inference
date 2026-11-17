@@ -146,15 +146,14 @@ namespace mli {
     level(size_type n) : top(n) {}
   };
 
-  inline ordering operator<=>(const level& x, const level& y) { return {x.top <=> y.top, x.sub <=> y.sub}; }
+  constexpr ordering operator<=>(const level& x, const level& y) { return {x.top <=> y.top, x.sub <=> y.sub}; }
 
-  inline bool operator==(const level& x, const level& y) { return is_equal(x <=> y); }
-  inline bool operator!=(const level& x, const level& y) { return is_not_equal(x <=> y); }
-  inline bool operator<(const level& x, const level& y) { return is_less(x <=> y); }
-  inline bool operator>(const level& x, const level& y) { return is_greater(x <=> y); }
-  inline bool operator<=(const level& x, const level& y) { return is_less_equal(x <=> y); }
-  inline bool operator>=(const level& x, const level& y) { return is_greater_equal(x <=> y); }
-
+  constexpr bool operator==(const level& x, const level& y) { return is_equal(x <=> y); }
+  constexpr bool operator!=(const level& x, const level& y) { return is_not_equal(x <=> y); }
+  constexpr bool operator<(const level& x, const level& y) { return is_less(x <=> y); }
+  constexpr bool operator>(const level& x, const level& y) { return is_greater(x <=> y); }
+  constexpr bool operator<=(const level& x, const level& y) { return is_less_equal(x <=> y); }
+  constexpr bool operator>=(const level& x, const level& y) { return is_greater_equal(x <=> y); }
 
 } // namespace mli
 

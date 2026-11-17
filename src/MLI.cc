@@ -1609,10 +1609,17 @@ namespace mli {
     auto& yr = dynamic_cast<const variable&>(y);
 
 #if 1
+    // Calls ordering(std::initializer_list<ordering>):
     return {depth_ <=> yr.depth_, level_ <=> yr.level_, degree_ <=> yr.degree_,
       bind_ <=> yr.bind_, type_ <=> yr.type_, unspecializable_ <=> yr.unspecializable_,
       name <=> yr.name, is_implicit_ <=> yr.is_implicit_};
+#elif 1
+    // Calls mli::operator<=>:
+    return mli::operator<=>(
+       std::tuple(depth_, level_, degree_, bind_, type_, unspecializable_, name, is_implicit_),
+       std::tuple(yr.depth_, yr.level_, yr.degree_, yr.bind_, yr.type_, yr.unspecializable_, yr.name, yr.is_implicit_));
 #else
+    // Calls std::operator<=>:
     return std::tuple(depth_, level_, degree_, bind_, type_, unspecializable_, name, is_implicit_)
        <=> std::tuple(yr.depth_, yr.level_, yr.degree_, yr.bind_, yr.type_, yr.unspecializable_, yr.name, yr.is_implicit_);
 #endif
@@ -1910,17 +1917,15 @@ namespace mli {
 
 
   inline ordering compare(const constant& x, const constant& y) {
-    return sgn(x.name.compare(y.name));
+    return {x.type_ <=> y.type_, x.name.compare(y.name) <=> 0};
   }
 
 
   ordering constant::compare(const unit& x) const {
     auto& xr = dynamic_cast<const constant&>(x);
 
-    if (type_ != xr.type_)
-      return unordered;
-
-    return sgn(name.compare(xr.name));
+    // Or mli::compare(*this, xr):
+    return {type_ <=> xr.type_, name.compare(xr.name) <=> 0};
   }
 
 
@@ -5555,11 +5560,7 @@ namespace mli {
   ordering inference::compare(const unit& x) const {
     auto& xr = dynamic_cast<const inference&>(x);
 
-#if 1
     return {metalevel_ <=> xr.metalevel_, head_ <=> xr.head_, body_ <=> xr.body_};
-#else
-    return std::tuple(metalevel_, head_, body_) <=> std::tuple(xr.metalevel_, xr.head_, xr.body_);
-#endif
   }
 
 

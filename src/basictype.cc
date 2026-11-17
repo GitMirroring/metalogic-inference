@@ -38,7 +38,7 @@ namespace mli {
   ordering integer::compare(const unit& x) const {
     auto& xr = dynamic_cast<const integer&>(x);
 
-    return ordering(value, xr.value);
+    return value <=> xr.value;
   }
 
 
