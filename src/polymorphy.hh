@@ -182,22 +182,22 @@ namespace mli {
 
 
   template<class A, class B>
-  constexpr bool operator==(const ref<A>& x, const ref<B>& y) { return comparison(equal)(*x <=> *y); }
+  constexpr bool operator==(const ref<A>& x, const ref<B>& y) { return is_equal(*x <=> *y); }
 
   template<class A, class B>
-  constexpr bool operator!=(const ref<A>& x, const ref<B>& y) { return comparison(~equal)(*x <=> *y); }
+  constexpr bool operator!=(const ref<A>& x, const ref<B>& y) { return is_not_equal(*x <=> *y); }
 
   template<class A, class B>
-  constexpr bool operator<(const ref<A>& x, const ref<B>& y) { return comparison(less)(*x <=> *y); }
+  constexpr bool operator<(const ref<A>& x, const ref<B>& y) { return is_less(*x <=> *y); }
 
   template<class A, class B>
-  constexpr bool operator>(const ref<A>& x, const ref<B>& y) { return comparison(greater)(*x <=> *y); }
+  constexpr bool operator>(const ref<A>& x, const ref<B>& y) { return is_greater(*x <=> *y); }
 
   template<class A, class B>
-  constexpr bool operator<=(const ref<A>& x, const ref<B>& y) { return comparison(less|equal)(*x <=> *y); }
+  constexpr bool operator<=(const ref<A>& x, const ref<B>& y) { return is_less_equal(*x <=> *y); }
 
   template<class A, class B>
-  constexpr bool operator>=(const ref<A>& x, const ref<B>& y) { return comparison(greater|equal)(*x <=> *y); }
+  constexpr bool operator>=(const ref<A>& x, const ref<B>& y) { return is_greater_equal(*x <=> *y); }
 
 
   template<class A, class B>
@@ -410,22 +410,22 @@ namespace mli {
 
 
   template<class A, class B>
-  constexpr bool operator==(const val<A>& x, const val<B>& y) { return comparison(equal)(*x <=> *y); }
+  constexpr bool operator==(const val<A>& x, const val<B>& y) { return is_equal(*x <=> *y); }
 
   template<class A, class B>
-  constexpr bool operator!=(const val<A>& x, const val<B>& y) { return comparison(~equal)(*x <=> *y); }
+  constexpr bool operator!=(const val<A>& x, const val<B>& y) { return is_not_equal(*x <=> *y); }
 
   template<class A, class B>
-  constexpr bool operator<(const val<A>& x, const val<B>& y) { return comparison(less)(*x <=> *y); }
+  constexpr bool operator<(const val<A>& x, const val<B>& y) { return is_less(*x <=> *y); }
 
   template<class A, class B>
-  constexpr bool operator>(const val<A>& x, const val<B>& y) { return comparison(greater)(*x <=> *y); }
+  constexpr bool operator>(const val<A>& x, const val<B>& y) { return is_greater(*x <=> *y); }
 
   template<class A, class B>
-  constexpr bool operator<=(const val<A>& x, const val<B>& y) { return comparison(less|equal)(*x <=> *y); }
+  constexpr bool operator<=(const val<A>& x, const val<B>& y) { return is_less_equal(*x <=> *y); }
 
   template<class A, class B>
-  constexpr bool operator>=(const val<A>& x, const val<B>& y) { return comparison(greater|equal)(*x <=> *y); }
+  constexpr bool operator>=(const val<A>& x, const val<B>& y) { return is_greater_equal(*x <=> *y); }
 
 
   template<class A, class B>
