@@ -2038,7 +2038,7 @@ namespace mli {
 
 
   val<formula> sequence::rename(level lv, degree sl) const {
-    ref0<sequence> s(make, *this);
+    val<sequence> s(make, *this);
 
     std::transform(formulas_.begin(), formulas_.end(), s->formulas_.begin(),
       [=](const val<formula>& x) { return x->rename(lv, sl); });
@@ -2048,7 +2048,7 @@ namespace mli {
 
 
   val<formula> sequence::add_exception_set(variable_map& vm) const {
-    ref0<sequence> sr(make, *this);
+    val<sequence> sr(make, *this);
 
     std::transform(formulas_.begin(), formulas_.end(), sr->formulas_.begin(),
       [&vm](const val<formula>& x) { return x->add_exception_set(vm); });
@@ -2058,7 +2058,7 @@ namespace mli {
 
 
   val<formula> sequence::substitute(const val<substitution>& s, substitute_environment vt) const {
-    ref0<sequence> sq(make, *this);
+    val<sequence> sq(make, *this);
 
     std::transform(formulas_.begin(), formulas_.end(), sq->formulas_.begin(),
       [&s, vt](const val<formula>& x) { return x->substitute(s, vt); });

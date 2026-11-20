@@ -447,22 +447,13 @@ namespace mli {
 
 
   // val<A> when 1, ref<A> when 0.
-#define USE_VAL0 0 // <sequence>
 #define USE_VAL1 0 // <theory>
 #define USE_VAL2 0 // <sequence_database>
 #define USE_VAL3 0 // <sublevel_database>
 #define USE_VAL4 0 // <statement>
 #define USE_VAL5 0 // <level_database>
 #define USE_VAL6 0 // <unit>
-#define USE_VAL7 1
 
-#if USE_VAL0
-  template<class A>
-  using ref0 = val<A>;
-#else
-  template<class A>
-  using ref0 = ref<A>;
-#endif
 
 #if USE_VAL1
   template<class A>
@@ -511,15 +502,6 @@ namespace mli {
   template<class A>
   using ref6 = ref<A>;
 #endif
-
-#if USE_VAL7
-  template<class A>
-  using ref7 = val<A>;
-#else
-  template<class A>
-  using ref7 = ref<A>;
-#endif
-
 
 } // namespace mli
 

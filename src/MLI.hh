@@ -1300,7 +1300,7 @@ namespace mli {
     // Structure with constant atom (a string, which is its name, and argument a sequence.
     structure(const std::string& s, type t, metalevel_t ml, style st, precedence_t p, std::initializer_list<val<formula>> xs)
      : atom(val<constant>(make, s, to_constant_type(t))),
-       argument(ref0<sequence>(make, (t == logic)? sequence::logic : sequence::tuple, xs)),
+       argument(val<sequence>(make, (t == logic)? sequence::logic : sequence::tuple, xs)),
        type_(t), style_(st), precedence_(p), metalevel_(ml) {}
 
     // Allows variadic templates to be forwarded to the initializer list:

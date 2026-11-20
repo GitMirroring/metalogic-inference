@@ -491,8 +491,6 @@ namespace mli {
       // meta_object_free
       // metapredicate
       // metapredicate_function
-      // metapredicate_argument
-      // metapredicate_argument_body
       // object_formula
       // hoare_triple
       // code_statement
@@ -517,8 +515,6 @@ namespace mli {
       // all_identifier_list
       // exist_identifier_list
       // optional_in_term
-      // tuple
-      // tuple_body
       // term
       // simple_term
       // term_identifier
@@ -528,7 +524,6 @@ namespace mli {
       // function_term
       // set_term
       // implicit_set_identifier_list
-      // set_member_list
       // function_term_identifier
       char dummy2[sizeof (ref6<unit>)];
 
@@ -598,6 +593,13 @@ namespace mli {
       // definition_labelstatement
       char dummy8[sizeof (val<definition>)];
 
+      // metapredicate_argument
+      // metapredicate_argument_body
+      // tuple
+      // tuple_body
+      // set_member_list
+      char dummy9[sizeof (val<sequence>)];
+
       // "metapredicate constant"
       // "function"
       // "predicate"
@@ -620,7 +622,7 @@ namespace mli {
       // "set variable"
       // "set variable definition"
       // "implicit set variable"
-      char dummy9[sizeof (val<unit>)];
+      char dummy10[sizeof (val<unit>)];
     };
 
     /// The size of the largest semantic type.
@@ -1258,8 +1260,6 @@ namespace mli {
       case symbol_kind::S_meta_object_free: // meta_object_free
       case symbol_kind::S_metapredicate: // metapredicate
       case symbol_kind::S_metapredicate_function: // metapredicate_function
-      case symbol_kind::S_metapredicate_argument: // metapredicate_argument
-      case symbol_kind::S_metapredicate_argument_body: // metapredicate_argument_body
       case symbol_kind::S_object_formula: // object_formula
       case symbol_kind::S_hoare_triple: // hoare_triple
       case symbol_kind::S_code_statement: // code_statement
@@ -1284,8 +1284,6 @@ namespace mli {
       case symbol_kind::S_all_identifier_list: // all_identifier_list
       case symbol_kind::S_exist_identifier_list: // exist_identifier_list
       case symbol_kind::S_optional_in_term: // optional_in_term
-      case symbol_kind::S_tuple: // tuple
-      case symbol_kind::S_tuple_body: // tuple_body
       case symbol_kind::S_term: // term
       case symbol_kind::S_simple_term: // simple_term
       case symbol_kind::S_term_identifier: // term_identifier
@@ -1295,7 +1293,6 @@ namespace mli {
       case symbol_kind::S_function_term: // function_term
       case symbol_kind::S_set_term: // set_term
       case symbol_kind::S_implicit_set_identifier_list: // implicit_set_identifier_list
-      case symbol_kind::S_set_member_list: // set_member_list
       case symbol_kind::S_function_term_identifier: // function_term_identifier
         value.move< ref6<unit> > (std::move (that.value));
         break;
@@ -1370,6 +1367,14 @@ namespace mli {
 
       case symbol_kind::S_definition_labelstatement: // definition_labelstatement
         value.move< val<definition> > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_metapredicate_argument: // metapredicate_argument
+      case symbol_kind::S_metapredicate_argument_body: // metapredicate_argument_body
+      case symbol_kind::S_tuple: // tuple
+      case symbol_kind::S_tuple_body: // tuple_body
+      case symbol_kind::S_set_member_list: // set_member_list
+        value.move< val<sequence> > (std::move (that.value));
         break;
 
       case symbol_kind::S_metapredicate_constant: // "metapredicate constant"
@@ -1533,6 +1538,20 @@ namespace mli {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, val<sequence>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const val<sequence>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
       basic_symbol (typename Base::kind_type t, val<unit>&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
@@ -1651,8 +1670,6 @@ switch (yykind)
       case symbol_kind::S_meta_object_free: // meta_object_free
       case symbol_kind::S_metapredicate: // metapredicate
       case symbol_kind::S_metapredicate_function: // metapredicate_function
-      case symbol_kind::S_metapredicate_argument: // metapredicate_argument
-      case symbol_kind::S_metapredicate_argument_body: // metapredicate_argument_body
       case symbol_kind::S_object_formula: // object_formula
       case symbol_kind::S_hoare_triple: // hoare_triple
       case symbol_kind::S_code_statement: // code_statement
@@ -1677,8 +1694,6 @@ switch (yykind)
       case symbol_kind::S_all_identifier_list: // all_identifier_list
       case symbol_kind::S_exist_identifier_list: // exist_identifier_list
       case symbol_kind::S_optional_in_term: // optional_in_term
-      case symbol_kind::S_tuple: // tuple
-      case symbol_kind::S_tuple_body: // tuple_body
       case symbol_kind::S_term: // term
       case symbol_kind::S_simple_term: // simple_term
       case symbol_kind::S_term_identifier: // term_identifier
@@ -1688,7 +1703,6 @@ switch (yykind)
       case symbol_kind::S_function_term: // function_term
       case symbol_kind::S_set_term: // set_term
       case symbol_kind::S_implicit_set_identifier_list: // implicit_set_identifier_list
-      case symbol_kind::S_set_member_list: // set_member_list
       case symbol_kind::S_function_term_identifier: // function_term_identifier
         value.template destroy< ref6<unit> > ();
         break;
@@ -1763,6 +1777,14 @@ switch (yykind)
 
       case symbol_kind::S_definition_labelstatement: // definition_labelstatement
         value.template destroy< val<definition> > ();
+        break;
+
+      case symbol_kind::S_metapredicate_argument: // metapredicate_argument
+      case symbol_kind::S_metapredicate_argument_body: // metapredicate_argument_body
+      case symbol_kind::S_tuple: // tuple
+      case symbol_kind::S_tuple_body: // tuple_body
+      case symbol_kind::S_set_member_list: // set_member_list
+        value.template destroy< val<sequence> > ();
         break;
 
       case symbol_kind::S_metapredicate_constant: // "metapredicate constant"
@@ -4663,7 +4685,7 @@ switch (yykind)
 
 #line 25 "../../mli-root/src/database-parser.yy"
 } // mli
-#line 4667 "../../mli-root/src/database-parser.hh"
+#line 4689 "../../mli-root/src/database-parser.hh"
 
 
 // "%code provides" blocks.
@@ -4716,7 +4738,7 @@ switch (yykind)
   } // namespace mli
 
 
-#line 4720 "../../mli-root/src/database-parser.hh"
+#line 4742 "../../mli-root/src/database-parser.hh"
 
 
 #endif // !YY_MLI_MLI_ROOT_SRC_DATABASE_PARSER_HH_INCLUDED

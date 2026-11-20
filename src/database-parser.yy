@@ -661,8 +661,8 @@
 %nterm <ref6<unit>> meta_object_free
 %nterm <ref6<unit>> metapredicate
 %nterm <ref6<unit>> metapredicate_function
-%nterm <ref6<unit>> metapredicate_argument
-%nterm <ref6<unit>> metapredicate_argument_body
+%nterm <val<sequence>> metapredicate_argument
+%nterm <val<sequence>> metapredicate_argument_body
 %nterm <ref6<unit>> object_formula
 %nterm <ref6<unit>> hoare_triple
 /*
@@ -694,8 +694,8 @@
 %nterm <ref6<unit>> all_identifier_list
 %nterm <ref6<unit>> exist_identifier_list
 %nterm <ref6<unit>> optional_in_term
-%nterm <ref6<unit>> tuple
-%nterm <ref6<unit>> tuple_body
+%nterm <val<sequence>> tuple
+%nterm <val<sequence>> tuple_body
 %nterm <ref6<unit>> term
 %nterm <ref6<unit>> simple_term
 %nterm <ref6<unit>> term_identifier
@@ -705,7 +705,7 @@
 %nterm <ref6<unit>> function_term
 %nterm <ref6<unit>> set_term
 %nterm <ref6<unit>> implicit_set_identifier_list
-%nterm <ref6<unit>> set_member_list
+%nterm <val<sequence>> set_member_list
 %nterm <ref6<unit>> function_term_identifier
 
 
@@ -2008,13 +2008,13 @@ metapredicate_argument:
 
 metapredicate_argument_body:
     object_formula[x] {
-      ref0<sequence> vr(make, sequence::tuple);
-      $$ = vr;
-      vr->push_back(val<formula>($x)); }
+      $$->type_ = sequence::tuple;
+      $$->push_back($x);
+    }
   | metapredicate_argument_body[x] "," object_formula[y] {
       $$ = $x;
-      sequence& vr = dyn_cast<sequence&>($$);
-      vr.push_back(val<formula>($y)); }
+      $$->push_back($y);
+    }
 ;
 
 
@@ -2346,14 +2346,12 @@ tuple:
 
 tuple_body:
     term[x] {
-      ref0<sequence> vr(make, sequence::tuple);
-      $$ = vr;
-      vr->push_back(val<formula>($x));
+      $$->type_ = sequence::tuple;
+      $$->push_back($x);
     }
   | tuple_body[x] "," term[y] {
       $$ = $x;
-      sequence& vr = dyn_cast<sequence&>($$);
-      vr.push_back(val<formula>($y));
+      $$->push_back($y);
     }
 ;
 
@@ -2452,7 +2450,7 @@ function_term:
 
 
 set_term:
-    "{" "}" { $$ = ref0<sequence>(make, sequence::member_list_set); }
+    "{" "}" { $$ = val<sequence>(make, sequence::member_list_set); }
   | "∅" { $$ = val<constant>(make, "∅", constant::object); }
   | "{" set_member_list[x] "}" { $$ = $x; }
   | "{" set_variable_definition[x] optional_in_term[s] "|" object_formula[y] "}" {
@@ -2462,7 +2460,7 @@ set_term:
   | "{" "₍" implicit_set_identifier_list[x] optional_in_term[s] "₎" term[y] "|" object_formula[z] "}" {
       symbol_table.pop_level();
       variable_list& vs = dyn_cast<variable_list&>($x);
-      ref0<sequence> sp(make, val<formula>($y), sequence::implicit_set);
+      val<sequence> sp(make, val<formula>($y), sequence::implicit_set);
       sp->push_back(val<formula>($z));
       $$ =
         val<bound_formula>(make, vs, $s, val<formula>(sp));
@@ -2511,13 +2509,12 @@ implicit_set_identifier_list:
 
 set_member_list:
     term[x] {
-      ref0<sequence> vr(make, sequence::member_list_set);
-      $$ = vr;
-      vr->push_back(val<formula>($x)); }
+      $$->type_ = sequence::member_list_set;
+      $$->push_back($x);
+    }
   | set_member_list[x] "," term[y] {
       $$ = $x;
-      sequence& vr = dyn_cast<sequence&>($$);
-      vr.push_back(val<formula>($y));
+      $$->push_back($y);
     }
 ;
 
