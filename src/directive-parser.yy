@@ -366,6 +366,7 @@
   structure_key "structure"
   thread_key "thread"
 // level_key "level": Defined above.
+  parser_key "parser"
 ;
 
 
@@ -699,6 +700,7 @@ trace_type:
   | "thread" { trace_flag = trace_thread; }
   | "level" { trace_flag = trace_level; }
   | "logic" { trace_flag = trace_logic; }
+  | "parser" { trace_flag = trace_parser; }
 ;
 
 

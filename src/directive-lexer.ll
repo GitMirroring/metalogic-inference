@@ -247,6 +247,9 @@ utf8char    [\x09\x0A\x0D\x20-\x7E]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-
 
 "logic" { return mli::directive_parser::token::logic_key; }
 
+"parser" { return mli::directive_parser::token::parser_key; }
+
+
 "-𝕗" { return mli::directive_parser::token::false_elimination_key; }
 "+𝕗" { return mli::directive_parser::token::false_introduction_key; }
 

@@ -55,7 +55,8 @@ namespace mli {
     trace_structure_type  = (trace_bit << 15),
     trace_thread          = (trace_bit << 16),
     trace_level           = (trace_bit << 17),
-    trace_logic           = (trace_bit << 18)
+    trace_logic           = (trace_bit << 18),
+    trace_parser          = (trace_bit << 19)
   };
 
   using trace_type = uint32_t;

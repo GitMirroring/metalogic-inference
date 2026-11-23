@@ -50,6 +50,7 @@
   #include "MLI.hh"
   #include "database.hh"
   #include "basictype.hh"
+  #include "function.hh"
   #include "proposition.hh"
 
   #include "location-type.hh"
@@ -71,7 +72,7 @@
   } // namespace mli
 
 
-#line 75 "../../mli-root/src/database-parser.hh"
+#line 76 "../../mli-root/src/database-parser.hh"
 
 
 # include <cstdlib> // std::abort
@@ -215,7 +216,7 @@
 
 #line 25 "../../mli-root/src/database-parser.yy"
 namespace mli {
-#line 219 "../../mli-root/src/database-parser.hh"
+#line 220 "../../mli-root/src/database-parser.hh"
 
 
 
@@ -503,7 +504,6 @@ namespace mli {
       // atomic_formula
       // predicate
       // predicate_expression
-      // predicate_identifier
       // logic_formula
       // prefix_logic_formula
       // quantizer_declaration
@@ -539,8 +539,6 @@ namespace mli {
       // "result"
       // "name"
       // "label"
-      // "∀"
-      // "∃"
       // "¬"
       // "∧"
       // "∨"
@@ -590,23 +588,30 @@ namespace mli {
       // "theorem"
       char dummy7[sizeof (theorem::type)];
 
-      // definition_labelstatement
-      char dummy8[sizeof (val<definition>)];
-
-      // metapredicate_argument
-      // metapredicate_argument_body
-      // tuple
-      // tuple_body
-      // set_member_list
-      char dummy9[sizeof (val<sequence>)];
-
-      // "metapredicate constant"
-      // "function"
-      // "predicate"
       // "predicate constant"
       // "atom constant"
       // "function constant"
       // "term constant"
+      char dummy8[sizeof (val<constant>)];
+
+      // definition_labelstatement
+      char dummy9[sizeof (val<definition>)];
+
+      // "metapredicate constant"
+      // metapredicate_argument
+      // predicate_identifier
+      char dummy10[sizeof (val<formula>)];
+
+      // "function"
+      // "predicate"
+      char dummy11[sizeof (val<function>)];
+
+      // metapredicate_argument_body
+      // tuple
+      // tuple_body
+      // set_member_list
+      char dummy12[sizeof (val<sequence>)];
+
       // "metaformula variable"
       // "object formula variable"
       // "predicate variable"
@@ -622,7 +627,7 @@ namespace mli {
       // "set variable"
       // "set variable definition"
       // "implicit set variable"
-      char dummy10[sizeof (val<unit>)];
+      char dummy13[sizeof (val<variable>)];
     };
 
     /// The size of the largest semantic type.
@@ -1272,7 +1277,6 @@ namespace mli {
       case symbol_kind::S_atomic_formula: // atomic_formula
       case symbol_kind::S_predicate: // predicate
       case symbol_kind::S_predicate_expression: // predicate_expression
-      case symbol_kind::S_predicate_identifier: // predicate_identifier
       case symbol_kind::S_logic_formula: // logic_formula
       case symbol_kind::S_prefix_logic_formula: // prefix_logic_formula
       case symbol_kind::S_quantizer_declaration: // quantizer_declaration
@@ -1312,8 +1316,6 @@ namespace mli {
       case symbol_kind::S_result_key: // "result"
       case symbol_kind::S_plain_name: // "name"
       case symbol_kind::S_label_key: // "label"
-      case symbol_kind::S_all_key: // "∀"
-      case symbol_kind::S_exist_key: // "∃"
       case symbol_kind::S_logical_not_key: // "¬"
       case symbol_kind::S_logical_and_key: // "∧"
       case symbol_kind::S_logical_or_key: // "∨"
@@ -1365,11 +1367,28 @@ namespace mli {
         value.move< theorem::type > (std::move (that.value));
         break;
 
+      case symbol_kind::S_predicate_constant: // "predicate constant"
+      case symbol_kind::S_atom_constant: // "atom constant"
+      case symbol_kind::S_function_constant: // "function constant"
+      case symbol_kind::S_term_constant: // "term constant"
+        value.move< val<constant> > (std::move (that.value));
+        break;
+
       case symbol_kind::S_definition_labelstatement: // definition_labelstatement
         value.move< val<definition> > (std::move (that.value));
         break;
 
+      case symbol_kind::S_metapredicate_constant: // "metapredicate constant"
       case symbol_kind::S_metapredicate_argument: // metapredicate_argument
+      case symbol_kind::S_predicate_identifier: // predicate_identifier
+        value.move< val<formula> > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_function_key: // "function"
+      case symbol_kind::S_predicate_key: // "predicate"
+        value.move< val<function> > (std::move (that.value));
+        break;
+
       case symbol_kind::S_metapredicate_argument_body: // metapredicate_argument_body
       case symbol_kind::S_tuple: // tuple
       case symbol_kind::S_tuple_body: // tuple_body
@@ -1377,13 +1396,6 @@ namespace mli {
         value.move< val<sequence> > (std::move (that.value));
         break;
 
-      case symbol_kind::S_metapredicate_constant: // "metapredicate constant"
-      case symbol_kind::S_function_key: // "function"
-      case symbol_kind::S_predicate_key: // "predicate"
-      case symbol_kind::S_predicate_constant: // "predicate constant"
-      case symbol_kind::S_atom_constant: // "atom constant"
-      case symbol_kind::S_function_constant: // "function constant"
-      case symbol_kind::S_term_constant: // "term constant"
       case symbol_kind::S_metaformula_variable: // "metaformula variable"
       case symbol_kind::S_object_formula_variable: // "object formula variable"
       case symbol_kind::S_predicate_variable: // "predicate variable"
@@ -1399,7 +1411,7 @@ namespace mli {
       case symbol_kind::S_set_variable: // "set variable"
       case symbol_kind::S_set_variable_definition: // "set variable definition"
       case symbol_kind::S_implicit_set_variable: // "implicit set variable"
-        value.move< val<unit> > (std::move (that.value));
+        value.move< val<variable> > (std::move (that.value));
         break;
 
       default:
@@ -1524,6 +1536,20 @@ namespace mli {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, val<constant>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const val<constant>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
       basic_symbol (typename Base::kind_type t, val<definition>&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
@@ -1531,6 +1557,34 @@ namespace mli {
       {}
 #else
       basic_symbol (typename Base::kind_type t, const val<definition>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, val<formula>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const val<formula>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, val<function>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const val<function>& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -1552,13 +1606,13 @@ namespace mli {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, val<unit>&& v, location_type&& l)
+      basic_symbol (typename Base::kind_type t, val<variable>&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
         , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const val<unit>& v, const location_type& l)
+      basic_symbol (typename Base::kind_type t, const val<variable>& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -1682,7 +1736,6 @@ switch (yykind)
       case symbol_kind::S_atomic_formula: // atomic_formula
       case symbol_kind::S_predicate: // predicate
       case symbol_kind::S_predicate_expression: // predicate_expression
-      case symbol_kind::S_predicate_identifier: // predicate_identifier
       case symbol_kind::S_logic_formula: // logic_formula
       case symbol_kind::S_prefix_logic_formula: // prefix_logic_formula
       case symbol_kind::S_quantizer_declaration: // quantizer_declaration
@@ -1722,8 +1775,6 @@ switch (yykind)
       case symbol_kind::S_result_key: // "result"
       case symbol_kind::S_plain_name: // "name"
       case symbol_kind::S_label_key: // "label"
-      case symbol_kind::S_all_key: // "∀"
-      case symbol_kind::S_exist_key: // "∃"
       case symbol_kind::S_logical_not_key: // "¬"
       case symbol_kind::S_logical_and_key: // "∧"
       case symbol_kind::S_logical_or_key: // "∨"
@@ -1775,11 +1826,28 @@ switch (yykind)
         value.template destroy< theorem::type > ();
         break;
 
+      case symbol_kind::S_predicate_constant: // "predicate constant"
+      case symbol_kind::S_atom_constant: // "atom constant"
+      case symbol_kind::S_function_constant: // "function constant"
+      case symbol_kind::S_term_constant: // "term constant"
+        value.template destroy< val<constant> > ();
+        break;
+
       case symbol_kind::S_definition_labelstatement: // definition_labelstatement
         value.template destroy< val<definition> > ();
         break;
 
+      case symbol_kind::S_metapredicate_constant: // "metapredicate constant"
       case symbol_kind::S_metapredicate_argument: // metapredicate_argument
+      case symbol_kind::S_predicate_identifier: // predicate_identifier
+        value.template destroy< val<formula> > ();
+        break;
+
+      case symbol_kind::S_function_key: // "function"
+      case symbol_kind::S_predicate_key: // "predicate"
+        value.template destroy< val<function> > ();
+        break;
+
       case symbol_kind::S_metapredicate_argument_body: // metapredicate_argument_body
       case symbol_kind::S_tuple: // tuple
       case symbol_kind::S_tuple_body: // tuple_body
@@ -1787,13 +1855,6 @@ switch (yykind)
         value.template destroy< val<sequence> > ();
         break;
 
-      case symbol_kind::S_metapredicate_constant: // "metapredicate constant"
-      case symbol_kind::S_function_key: // "function"
-      case symbol_kind::S_predicate_key: // "predicate"
-      case symbol_kind::S_predicate_constant: // "predicate constant"
-      case symbol_kind::S_atom_constant: // "atom constant"
-      case symbol_kind::S_function_constant: // "function constant"
-      case symbol_kind::S_term_constant: // "term constant"
       case symbol_kind::S_metaformula_variable: // "metaformula variable"
       case symbol_kind::S_object_formula_variable: // "object formula variable"
       case symbol_kind::S_predicate_variable: // "predicate variable"
@@ -1809,7 +1870,7 @@ switch (yykind)
       case symbol_kind::S_set_variable: // "set variable"
       case symbol_kind::S_set_variable_definition: // "set variable definition"
       case symbol_kind::S_implicit_set_variable: // "implicit set variable"
-        value.template destroy< val<unit> > ();
+        value.template destroy< val<variable> > ();
         break;
 
       default:
@@ -1941,10 +2002,34 @@ switch (yykind)
 #endif
       {}
 #if 201103L <= YY_CPLUSPLUS
-      symbol_type (int tok, val<unit> v, location_type l)
+      symbol_type (int tok, val<constant> v, location_type l)
         : super_type (token_kind_type (tok), std::move (v), std::move (l))
 #else
-      symbol_type (int tok, const val<unit>& v, const location_type& l)
+      symbol_type (int tok, const val<constant>& v, const location_type& l)
+        : super_type (token_kind_type (tok), v, l)
+#endif
+      {}
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, val<formula> v, location_type l)
+        : super_type (token_kind_type (tok), std::move (v), std::move (l))
+#else
+      symbol_type (int tok, const val<formula>& v, const location_type& l)
+        : super_type (token_kind_type (tok), v, l)
+#endif
+      {}
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, val<function> v, location_type l)
+        : super_type (token_kind_type (tok), std::move (v), std::move (l))
+#else
+      symbol_type (int tok, const val<function>& v, const location_type& l)
+        : super_type (token_kind_type (tok), v, l)
+#endif
+      {}
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, val<variable> v, location_type l)
+        : super_type (token_kind_type (tok), std::move (v), std::move (l))
+#else
+      symbol_type (int tok, const val<variable>& v, const location_type& l)
         : super_type (token_kind_type (tok), v, l)
 #endif
       {}
@@ -2599,14 +2684,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_metapredicate_constant (val<unit> v, location_type l)
+      make_metapredicate_constant (val<formula> v, location_type l)
       {
         return symbol_type (token::metapredicate_constant, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_metapredicate_constant (const val<unit>& v, const location_type& l)
+      make_metapredicate_constant (const val<formula>& v, const location_type& l)
       {
         return symbol_type (token::metapredicate_constant, v, l);
       }
@@ -2614,14 +2699,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_function_key (val<unit> v, location_type l)
+      make_function_key (val<function> v, location_type l)
       {
         return symbol_type (token::function_key, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_function_key (const val<unit>& v, const location_type& l)
+      make_function_key (const val<function>& v, const location_type& l)
       {
         return symbol_type (token::function_key, v, l);
       }
@@ -2629,14 +2714,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_predicate_key (val<unit> v, location_type l)
+      make_predicate_key (val<function> v, location_type l)
       {
         return symbol_type (token::predicate_key, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_predicate_key (const val<unit>& v, const location_type& l)
+      make_predicate_key (const val<function>& v, const location_type& l)
       {
         return symbol_type (token::predicate_key, v, l);
       }
@@ -2644,14 +2729,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_predicate_constant (val<unit> v, location_type l)
+      make_predicate_constant (val<constant> v, location_type l)
       {
         return symbol_type (token::predicate_constant, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_predicate_constant (const val<unit>& v, const location_type& l)
+      make_predicate_constant (const val<constant>& v, const location_type& l)
       {
         return symbol_type (token::predicate_constant, v, l);
       }
@@ -2659,14 +2744,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_atom_constant (val<unit> v, location_type l)
+      make_atom_constant (val<constant> v, location_type l)
       {
         return symbol_type (token::atom_constant, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_atom_constant (const val<unit>& v, const location_type& l)
+      make_atom_constant (const val<constant>& v, const location_type& l)
       {
         return symbol_type (token::atom_constant, v, l);
       }
@@ -2674,14 +2759,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_function_constant (val<unit> v, location_type l)
+      make_function_constant (val<constant> v, location_type l)
       {
         return symbol_type (token::function_constant, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_function_constant (const val<unit>& v, const location_type& l)
+      make_function_constant (const val<constant>& v, const location_type& l)
       {
         return symbol_type (token::function_constant, v, l);
       }
@@ -2689,14 +2774,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_term_constant (val<unit> v, location_type l)
+      make_term_constant (val<constant> v, location_type l)
       {
         return symbol_type (token::term_constant, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_term_constant (const val<unit>& v, const location_type& l)
+      make_term_constant (const val<constant>& v, const location_type& l)
       {
         return symbol_type (token::term_constant, v, l);
       }
@@ -2704,14 +2789,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_metaformula_variable (val<unit> v, location_type l)
+      make_metaformula_variable (val<variable> v, location_type l)
       {
         return symbol_type (token::metaformula_variable, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_metaformula_variable (const val<unit>& v, const location_type& l)
+      make_metaformula_variable (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::metaformula_variable, v, l);
       }
@@ -2719,14 +2804,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_object_formula_variable (val<unit> v, location_type l)
+      make_object_formula_variable (val<variable> v, location_type l)
       {
         return symbol_type (token::object_formula_variable, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_object_formula_variable (const val<unit>& v, const location_type& l)
+      make_object_formula_variable (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::object_formula_variable, v, l);
       }
@@ -2734,14 +2819,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_predicate_variable (val<unit> v, location_type l)
+      make_predicate_variable (val<variable> v, location_type l)
       {
         return symbol_type (token::predicate_variable, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_predicate_variable (const val<unit>& v, const location_type& l)
+      make_predicate_variable (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::predicate_variable, v, l);
       }
@@ -2749,14 +2834,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_atom_variable (val<unit> v, location_type l)
+      make_atom_variable (val<variable> v, location_type l)
       {
         return symbol_type (token::atom_variable, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_atom_variable (const val<unit>& v, const location_type& l)
+      make_atom_variable (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::atom_variable, v, l);
       }
@@ -2764,14 +2849,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_prefix_formula_variable (val<unit> v, location_type l)
+      make_prefix_formula_variable (val<variable> v, location_type l)
       {
         return symbol_type (token::prefix_formula_variable, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_prefix_formula_variable (const val<unit>& v, const location_type& l)
+      make_prefix_formula_variable (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::prefix_formula_variable, v, l);
       }
@@ -2779,14 +2864,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_function_variable (val<unit> v, location_type l)
+      make_function_variable (val<variable> v, location_type l)
       {
         return symbol_type (token::function_variable, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_function_variable (const val<unit>& v, const location_type& l)
+      make_function_variable (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::function_variable, v, l);
       }
@@ -2794,14 +2879,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_object_variable (val<unit> v, location_type l)
+      make_object_variable (val<variable> v, location_type l)
       {
         return symbol_type (token::object_variable, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_object_variable (const val<unit>& v, const location_type& l)
+      make_object_variable (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::object_variable, v, l);
       }
@@ -2809,14 +2894,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_code_variable (val<unit> v, location_type l)
+      make_code_variable (val<variable> v, location_type l)
       {
         return symbol_type (token::code_variable, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_code_variable (const val<unit>& v, const location_type& l)
+      make_code_variable (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::code_variable, v, l);
       }
@@ -2824,14 +2909,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_all_variable (val<unit> v, location_type l)
+      make_all_variable (val<variable> v, location_type l)
       {
         return symbol_type (token::all_variable, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_all_variable (const val<unit>& v, const location_type& l)
+      make_all_variable (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::all_variable, v, l);
       }
@@ -2839,14 +2924,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_exist_variable (val<unit> v, location_type l)
+      make_exist_variable (val<variable> v, location_type l)
       {
         return symbol_type (token::exist_variable, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_exist_variable (const val<unit>& v, const location_type& l)
+      make_exist_variable (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::exist_variable, v, l);
       }
@@ -2854,14 +2939,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_function_map_variable (val<unit> v, location_type l)
+      make_function_map_variable (val<variable> v, location_type l)
       {
         return symbol_type (token::function_map_variable, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_function_map_variable (const val<unit>& v, const location_type& l)
+      make_function_map_variable (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::function_map_variable, v, l);
       }
@@ -2869,14 +2954,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_is_set_variable (val<unit> v, location_type l)
+      make_is_set_variable (val<variable> v, location_type l)
       {
         return symbol_type (token::is_set_variable, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_is_set_variable (const val<unit>& v, const location_type& l)
+      make_is_set_variable (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::is_set_variable, v, l);
       }
@@ -2884,14 +2969,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_set_variable (val<unit> v, location_type l)
+      make_set_variable (val<variable> v, location_type l)
       {
         return symbol_type (token::set_variable, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_set_variable (const val<unit>& v, const location_type& l)
+      make_set_variable (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::set_variable, v, l);
       }
@@ -2899,14 +2984,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_set_variable_definition (val<unit> v, location_type l)
+      make_set_variable_definition (val<variable> v, location_type l)
       {
         return symbol_type (token::set_variable_definition, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_set_variable_definition (const val<unit>& v, const location_type& l)
+      make_set_variable_definition (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::set_variable_definition, v, l);
       }
@@ -2914,14 +2999,14 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_implicit_set_variable (val<unit> v, location_type l)
+      make_implicit_set_variable (val<variable> v, location_type l)
       {
         return symbol_type (token::implicit_set_variable, std::move (v), std::move (l));
       }
 #else
       static
       symbol_type
-      make_implicit_set_variable (const val<unit>& v, const location_type& l)
+      make_implicit_set_variable (const val<variable>& v, const location_type& l)
       {
         return symbol_type (token::implicit_set_variable, v, l);
       }
@@ -2974,31 +3059,31 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_all_key (std::string v, location_type l)
+      make_all_key (location_type l)
       {
-        return symbol_type (token::all_key, std::move (v), std::move (l));
+        return symbol_type (token::all_key, std::move (l));
       }
 #else
       static
       symbol_type
-      make_all_key (const std::string& v, const location_type& l)
+      make_all_key (const location_type& l)
       {
-        return symbol_type (token::all_key, v, l);
+        return symbol_type (token::all_key, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_exist_key (std::string v, location_type l)
+      make_exist_key (location_type l)
       {
-        return symbol_type (token::exist_key, std::move (v), std::move (l));
+        return symbol_type (token::exist_key, std::move (l));
       }
 #else
       static
       symbol_type
-      make_exist_key (const std::string& v, const location_type& l)
+      make_exist_key (const location_type& l)
       {
-        return symbol_type (token::exist_key, v, l);
+        return symbol_type (token::exist_key, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -4685,11 +4770,11 @@ switch (yykind)
 
 #line 25 "../../mli-root/src/database-parser.yy"
 } // mli
-#line 4689 "../../mli-root/src/database-parser.hh"
+#line 4774 "../../mli-root/src/database-parser.hh"
 
 
 // "%code provides" blocks.
-#line 71 "../../mli-root/src/database-parser.yy"
+#line 72 "../../mli-root/src/database-parser.yy"
 
   namespace mli {
     class database_lexer : public yyFlexLexer {
@@ -4738,7 +4823,7 @@ switch (yykind)
   } // namespace mli
 
 
-#line 4742 "../../mli-root/src/database-parser.hh"
+#line 4827 "../../mli-root/src/database-parser.hh"
 
 
 #endif // !YY_MLI_MLI_ROOT_SRC_DATABASE_PARSER_HH_INCLUDED

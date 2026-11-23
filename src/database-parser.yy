@@ -45,6 +45,7 @@
   #include "MLI.hh"
   #include "database.hh"
   #include "basictype.hh"
+  #include "function.hh"
   #include "proposition.hh"
 
   #include "location-type.hh"
@@ -120,9 +121,6 @@
 
 %code {
 
-  // #define YYDEBUG 1
-
-
     /* MetaLogic Inference Database Parser. */
 
   #include <algorithm>
@@ -144,6 +142,8 @@
 
   #include "precedence.hh"
 
+
+  bool trace_parser = false;
 
   std::string infile_name;
 
@@ -375,50 +375,50 @@
 %token <std::string> label_key "label"
 
 /* Metaconstants: */
-%token <val<unit>> metapredicate_constant "metapredicate constant"
+%token <val<formula>> metapredicate_constant "metapredicate constant"
 
 /* Functions */
-%token <val<unit>> function_key "function"
-%token <val<unit>> predicate_key "predicate"
+%token <val<function>> function_key "function"
+%token <val<function>> predicate_key "predicate"
 
 /* Logic (object, non-term) constants: */
-%token <val<unit>> predicate_constant "predicate constant"
-%token <val<unit>> atom_constant "atom constant"
+%token <val<constant>> predicate_constant "predicate constant"
+%token <val<constant>> atom_constant "atom constant"
 
 /* Terms constants: */
-%token <val<unit>> function_constant "function constant"
-%token <val<unit>> term_constant "term constant"
+%token <val<constant>> function_constant "function constant"
+%token <val<constant>> term_constant "term constant"
 
 /* Metavariables: */
 
-%token <val<unit>> metaformula_variable "metaformula variable"
-%token <val<unit>> object_formula_variable "object formula variable"
-%token <val<unit>> predicate_variable "predicate variable"
-%token <val<unit>> atom_variable "atom variable"
+%token <val<variable>> metaformula_variable "metaformula variable"
+%token <val<variable>> object_formula_variable "object formula variable"
+%token <val<variable>> predicate_variable "predicate variable"
+%token <val<variable>> atom_variable "atom variable"
 
-%token <val<unit>> prefix_formula_variable "prefix formula variable"
+%token <val<variable>> prefix_formula_variable "prefix formula variable"
 
-%token <val<unit>> function_variable "function variable"
+%token <val<variable>> function_variable "function variable"
 
 
 /* Object variables: */
 
-%token <val<unit>> object_variable "object variable"
+%token <val<variable>> object_variable "object variable"
 
 /* Hoare logic code variable */
-%token <val<unit>> code_variable "code variable"
+%token <val<variable>> code_variable "code variable"
 
 
-%token <val<unit>> all_variable "all variable"
-%token <val<unit>> exist_variable "exist variable"
+%token <val<variable>> all_variable "all variable"
+%token <val<variable>> exist_variable "exist variable"
 
 /* The function map variable is the 𝒙 in 𝒙 ↦ 𝑨. */
-%token <val<unit>> function_map_variable "function map variable"
+%token <val<variable>> function_map_variable "function map variable"
 
-%token <val<unit>> is_set_variable "Set variable"
-%token <val<unit>> set_variable "set variable"
-%token <val<unit>> set_variable_definition "set variable definition"
-%token <val<unit>> implicit_set_variable "implicit set variable"
+%token <val<variable>> is_set_variable "Set variable"
+%token <val<variable>> set_variable "set variable"
+%token <val<variable>> set_variable_definition "set variable definition"
+%token <val<variable>> implicit_set_variable "implicit set variable"
 
 /* Declarators: constants and variables. */
   /* Generic tokens, returned for any identified constant or variable.
@@ -436,8 +436,8 @@
 
 /* Declarators: quantifiers. */
 
-%token <std::string> all_key "∀"
-%token <std::string> exist_key "∃"
+%token all_key "∀"
+%token exist_key "∃"
 
 
 /* Formula logic: */
@@ -661,7 +661,7 @@
 %nterm <ref6<unit>> meta_object_free
 %nterm <ref6<unit>> metapredicate
 %nterm <ref6<unit>> metapredicate_function
-%nterm <val<sequence>> metapredicate_argument
+%nterm <val<formula>> metapredicate_argument
 %nterm <val<sequence>> metapredicate_argument_body
 %nterm <ref6<unit>> object_formula
 %nterm <ref6<unit>> hoare_triple
@@ -678,7 +678,7 @@
 %nterm <ref6<unit>> atomic_formula
 %nterm <ref6<unit>> predicate
 %nterm <ref6<unit>> predicate_expression
-%nterm <ref6<unit>> predicate_identifier
+%nterm <val<formula>> predicate_identifier
 %nterm <integer> optional_superscript_natural_number_value
 /*
 %nterm <ref6<unit>> optional_subscript_natural_number_value
@@ -1991,7 +1991,7 @@ metapredicate:
 
 metapredicate_function:
     metapredicate_constant[x] metapredicate_argument[y] {
-      $$ = val<structure>(make, val<formula>($x), val<formula>($y),
+      $$ = val<structure>(make, $x, $y,
         structure::predicate, 1_ml, structure::postargument, precedence_t());
     }
   | metaformula_variable[x] metapredicate_argument[y] {
@@ -2157,7 +2157,7 @@ predicate:
 
 predicate_expression:
     predicate_identifier[x] tuple[y] {
-      $$ = val<structure>(make, val<formula>($x), val<formula>($y),
+      $$ = val<structure>(make, $x, val<formula>($y),
         structure::predicate, 0_ml, structure::postargument, precedence_t());
     }
 ;
@@ -2540,6 +2540,7 @@ namespace mli {
     database_lexer lex(is, std::cout);
 
     database_parser p(*this, lex);
+    p.set_debug_level(trace_value & trace_parser);  // Whether tracing the parseer.
 
     if (p.parse() != 0)
       is.setstate(std::ios::failbit);

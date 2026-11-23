@@ -547,11 +547,10 @@ namespace utf {
     if (it == std::istreambuf_iterator<Char>())
       is.setstate(std::ios_base::eofbit|std::ios_base::failbit);
 
-      if (s != 0)
-        throw utf32_error(
-         "Invalid conversion to char32_t, as from to_utf8("
-          + to_hex(c) + ", " + std::to_string((uint)l) + ", " + std::to_string((uint)s) + ").", {c, l, s});
-
+    if (s != 0)
+      throw utf32_error(
+       "Invalid conversion to char32_t, as from to_utf8("
+        + to_hex(c) + ", " + std::to_string((uint)l) + ", " + std::to_string((uint)s) + ").", {c, l, s});
 
     return is;
   }

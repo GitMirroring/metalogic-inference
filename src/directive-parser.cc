@@ -784,13 +784,13 @@ namespace mli {
           switch (yyn)
             {
   case 3: // file: file_contents
-#line 623 "../../mli-root/src/directive-parser.yy"
+#line 624 "../../mli-root/src/directive-parser.yy"
                   {}
 #line 790 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 4: // file: error
-#line 624 "../../mli-root/src/directive-parser.yy"
+#line 625 "../../mli-root/src/directive-parser.yy"
           {
       declaration_context = false;
       directive_bound_variable_type = free_variable_context;
@@ -800,79 +800,79 @@ namespace mli {
     break;
 
   case 5: // file_contents: file_contents command
-#line 633 "../../mli-root/src/directive-parser.yy"
+#line 634 "../../mli-root/src/directive-parser.yy"
                           {}
 #line 806 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 6: // file_contents: command
-#line 634 "../../mli-root/src/directive-parser.yy"
+#line 635 "../../mli-root/src/directive-parser.yy"
                           {}
 #line 812 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 7: // command: diagnostic_statement
-#line 639 "../../mli-root/src/directive-parser.yy"
+#line 640 "../../mli-root/src/directive-parser.yy"
                          {}
 #line 818 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 8: // command: trace_statement
-#line 640 "../../mli-root/src/directive-parser.yy"
+#line 641 "../../mli-root/src/directive-parser.yy"
                     {}
 #line 824 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 9: // command: proof_strictness
-#line 641 "../../mli-root/src/directive-parser.yy"
+#line 642 "../../mli-root/src/directive-parser.yy"
                      {}
 #line 830 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 10: // command: limits
-#line 642 "../../mli-root/src/directive-parser.yy"
+#line 643 "../../mli-root/src/directive-parser.yy"
            {}
 #line 836 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 11: // command: logic_simplification
-#line 643 "../../mli-root/src/directive-parser.yy"
+#line 644 "../../mli-root/src/directive-parser.yy"
                          {}
 #line 842 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 12: // command: implicit_logic_simplification
-#line 644 "../../mli-root/src/directive-parser.yy"
+#line 645 "../../mli-root/src/directive-parser.yy"
                                   {}
 #line 848 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 13: // diagnostic_statement: "diagnostic" diagnostic_type diagnostic
-#line 649 "../../mli-root/src/directive-parser.yy"
+#line 650 "../../mli-root/src/directive-parser.yy"
                                             { unused_variable = the_directive_type; }
 #line 854 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 14: // diagnostic_type: "ignored"
-#line 654 "../../mli-root/src/directive-parser.yy"
+#line 655 "../../mli-root/src/directive-parser.yy"
               { the_directive_type = false; }
 #line 860 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 15: // diagnostic_type: "warning"
-#line 655 "../../mli-root/src/directive-parser.yy"
+#line 656 "../../mli-root/src/directive-parser.yy"
               { the_directive_type = undefined; }
 #line 866 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 16: // diagnostic_type: "error"
-#line 656 "../../mli-root/src/directive-parser.yy"
+#line 657 "../../mli-root/src/directive-parser.yy"
               { the_directive_type = true; }
 #line 872 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 18: // trace_statement: trace_qualifier trace_type
-#line 666 "../../mli-root/src/directive-parser.yy"
+#line 667 "../../mli-root/src/directive-parser.yy"
                              {
     if (set_trace)
       trace_value |= trace_flag;
@@ -883,301 +883,307 @@ namespace mli {
     break;
 
   case 19: // trace_qualifier: "trace"
-#line 676 "../../mli-root/src/directive-parser.yy"
+#line 677 "../../mli-root/src/directive-parser.yy"
             { set_trace = true; }
 #line 889 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 20: // trace_qualifier: "untrace"
-#line 677 "../../mli-root/src/directive-parser.yy"
+#line 678 "../../mli-root/src/directive-parser.yy"
               { set_trace = false; }
 #line 895 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 21: // trace_type: "all"
-#line 682 "../../mli-root/src/directive-parser.yy"
+#line 683 "../../mli-root/src/directive-parser.yy"
           { trace_flag = trace_all; }
 #line 901 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 22: // trace_type: "null"
-#line 683 "../../mli-root/src/directive-parser.yy"
+#line 684 "../../mli-root/src/directive-parser.yy"
            { trace_flag = trace_null; }
 #line 907 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 23: // trace_type: "empty"
-#line 684 "../../mli-root/src/directive-parser.yy"
+#line 685 "../../mli-root/src/directive-parser.yy"
             { trace_flag = trace_empty; }
 #line 913 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 24: // trace_type: "result"
-#line 685 "../../mli-root/src/directive-parser.yy"
+#line 686 "../../mli-root/src/directive-parser.yy"
              { trace_flag = trace_result; }
 #line 919 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 25: // trace_type: "proof"
-#line 686 "../../mli-root/src/directive-parser.yy"
+#line 687 "../../mli-root/src/directive-parser.yy"
             { trace_flag = trace_proof; }
 #line 925 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 26: // trace_type: "solve"
-#line 687 "../../mli-root/src/directive-parser.yy"
+#line 688 "../../mli-root/src/directive-parser.yy"
             { trace_flag = trace_solve; }
 #line 931 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 27: // trace_type: "prooftree"
-#line 688 "../../mli-root/src/directive-parser.yy"
+#line 689 "../../mli-root/src/directive-parser.yy"
                 { trace_flag = trace_prooftree; }
 #line 937 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 28: // trace_type: "unify"
-#line 689 "../../mli-root/src/directive-parser.yy"
+#line 690 "../../mli-root/src/directive-parser.yy"
             { trace_flag = trace_unify; }
 #line 943 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 29: // trace_type: "split"
-#line 690 "../../mli-root/src/directive-parser.yy"
+#line 691 "../../mli-root/src/directive-parser.yy"
             { trace_flag = trace_split; }
 #line 949 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 30: // trace_type: "substitute"
-#line 691 "../../mli-root/src/directive-parser.yy"
+#line 692 "../../mli-root/src/directive-parser.yy"
                  { trace_flag = trace_substitute; }
 #line 955 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 31: // trace_type: "statement"
-#line 692 "../../mli-root/src/directive-parser.yy"
+#line 693 "../../mli-root/src/directive-parser.yy"
                 { trace_flag = trace_statement; }
 #line 961 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 32: // trace_type: "database"
-#line 693 "../../mli-root/src/directive-parser.yy"
+#line 694 "../../mli-root/src/directive-parser.yy"
                { trace_flag = trace_database; }
 #line 967 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 33: // trace_type: "formula" "type"
-#line 694 "../../mli-root/src/directive-parser.yy"
+#line 695 "../../mli-root/src/directive-parser.yy"
                      { trace_flag = trace_formula_type; }
 #line 973 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 34: // trace_type: "unspecializable"
-#line 695 "../../mli-root/src/directive-parser.yy"
+#line 696 "../../mli-root/src/directive-parser.yy"
                       { trace_flag = trace_unspecializable; }
 #line 979 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 35: // trace_type: "variable" "type"
-#line 696 "../../mli-root/src/directive-parser.yy"
+#line 697 "../../mli-root/src/directive-parser.yy"
                       { trace_flag = trace_variable_type; }
 #line 985 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 36: // trace_type: "variable" "label"
-#line 697 "../../mli-root/src/directive-parser.yy"
+#line 698 "../../mli-root/src/directive-parser.yy"
                        { trace_flag = trace_variable_label; }
 #line 991 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 37: // trace_type: "structure" "type"
-#line 698 "../../mli-root/src/directive-parser.yy"
+#line 699 "../../mli-root/src/directive-parser.yy"
                        { trace_flag = trace_structure_type; }
 #line 997 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 38: // trace_type: "thread"
-#line 699 "../../mli-root/src/directive-parser.yy"
+#line 700 "../../mli-root/src/directive-parser.yy"
              { trace_flag = trace_thread; }
 #line 1003 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 39: // trace_type: "level"
-#line 700 "../../mli-root/src/directive-parser.yy"
+#line 701 "../../mli-root/src/directive-parser.yy"
             { trace_flag = trace_level; }
 #line 1009 "../../mli-root/src/directive-parser.cc"
     break;
 
   case 40: // trace_type: "logic"
-#line 701 "../../mli-root/src/directive-parser.yy"
+#line 702 "../../mli-root/src/directive-parser.yy"
             { trace_flag = trace_logic; }
 #line 1015 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 41: // proof_strictness: "strict" "proof"
-#line 706 "../../mli-root/src/directive-parser.yy"
-                          { mli::strict_proof = true; }
+  case 41: // trace_type: "parser"
+#line 703 "../../mli-root/src/directive-parser.yy"
+             { trace_flag = trace_parser; }
 #line 1021 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 42: // proof_strictness: "conditional" "proof"
-#line 707 "../../mli-root/src/directive-parser.yy"
-                          { mli::strict_proof = false; }
+  case 42: // proof_strictness: "strict" "proof"
+#line 708 "../../mli-root/src/directive-parser.yy"
+                          { mli::strict_proof = true; }
 #line 1027 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 43: // limits: "thread" "count" integer
-#line 712 "../../mli-root/src/directive-parser.yy"
-                                { thread_count = (difference_type)dyn_cast<integer&>(yystack_[0].value.object); }
+  case 43: // proof_strictness: "conditional" "proof"
+#line 709 "../../mli-root/src/directive-parser.yy"
+                          { mli::strict_proof = false; }
 #line 1033 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 44: // limits: "level" "max" "natural number value"
-#line 713 "../../mli-root/src/directive-parser.yy"
-                                          { level_max = (size_type)dyn_cast<integer&>(yystack_[0].value.object); }
+  case 44: // limits: "thread" "count" integer
+#line 714 "../../mli-root/src/directive-parser.yy"
+                                { thread_count = (difference_type)dyn_cast<integer&>(yystack_[0].value.object); }
 #line 1039 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 45: // limits: "sublevel" "max" "natural number value"
-#line 714 "../../mli-root/src/directive-parser.yy"
-                                             { sublevel_max = (size_type)dyn_cast<integer&>(yystack_[0].value.object); }
+  case 45: // limits: "level" "max" "natural number value"
+#line 715 "../../mli-root/src/directive-parser.yy"
+                                          { level_max = (size_type)dyn_cast<integer&>(yystack_[0].value.object); }
 #line 1045 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 46: // limits: "proof" "count" "natural number value"
-#line 715 "../../mli-root/src/directive-parser.yy"
-                                            { proof_count = (size_type)dyn_cast<integer&>(yystack_[0].value.object); }
+  case 46: // limits: "sublevel" "max" "natural number value"
+#line 716 "../../mli-root/src/directive-parser.yy"
+                                             { sublevel_max = (size_type)dyn_cast<integer&>(yystack_[0].value.object); }
 #line 1051 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 47: // limits: "unify" "count" "max" "natural number value"
-#line 716 "../../mli-root/src/directive-parser.yy"
-                                                  { unify_count_max = (size_type)dyn_cast<integer&>(yystack_[0].value.object); }
+  case 47: // limits: "proof" "count" "natural number value"
+#line 717 "../../mli-root/src/directive-parser.yy"
+                                            { proof_count = (size_type)dyn_cast<integer&>(yystack_[0].value.object); }
 #line 1057 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 48: // logic_simplification: "no" "logic" "-𝕗"
-#line 721 "../../mli-root/src/directive-parser.yy"
-                        { false_elimination = false; }
+  case 48: // limits: "unify" "count" "max" "natural number value"
+#line 718 "../../mli-root/src/directive-parser.yy"
+                                                  { unify_count_max = (size_type)dyn_cast<integer&>(yystack_[0].value.object); }
 #line 1063 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 49: // logic_simplification: "logic" "+𝕗"
-#line 722 "../../mli-root/src/directive-parser.yy"
-                   { false_introduction = true; }
+  case 49: // logic_simplification: "no" "logic" "-𝕗"
+#line 723 "../../mli-root/src/directive-parser.yy"
+                        { false_elimination = false; }
 #line 1069 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 50: // logic_simplification: "no" "logic" "-¬¬"
-#line 723 "../../mli-root/src/directive-parser.yy"
-                         { double_negation_elimination = false; }
+  case 50: // logic_simplification: "logic" "+𝕗"
+#line 724 "../../mli-root/src/directive-parser.yy"
+                   { false_introduction = true; }
 #line 1075 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 51: // logic_simplification: "logic" "-¬¬"
-#line 724 "../../mli-root/src/directive-parser.yy"
-                    { double_negation_elimination = true; }
+  case 51: // logic_simplification: "no" "logic" "-¬¬"
+#line 725 "../../mli-root/src/directive-parser.yy"
+                         { double_negation_elimination = false; }
 #line 1081 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 52: // logic_simplification: "no" "logic" "-¬¬⊢"
-#line 725 "../../mli-root/src/directive-parser.yy"
-                          { double_negation_elimination_in_premise = false; }
+  case 52: // logic_simplification: "logic" "-¬¬"
+#line 726 "../../mli-root/src/directive-parser.yy"
+                    { double_negation_elimination = true; }
 #line 1087 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 53: // logic_simplification: "logic" "-¬¬⊢"
-#line 726 "../../mli-root/src/directive-parser.yy"
-                     { double_negation_elimination_in_premise = true; }
+  case 53: // logic_simplification: "no" "logic" "-¬¬⊢"
+#line 727 "../../mli-root/src/directive-parser.yy"
+                          { double_negation_elimination_in_premise = false; }
 #line 1093 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 54: // logic_simplification: "no" "logic" "+¬¬⊢"
-#line 727 "../../mli-root/src/directive-parser.yy"
-                          { double_negation_introduction_in_premise = false; }
+  case 54: // logic_simplification: "logic" "-¬¬⊢"
+#line 728 "../../mli-root/src/directive-parser.yy"
+                     { double_negation_elimination_in_premise = true; }
 #line 1099 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 55: // logic_simplification: "logic" "+¬¬⊢"
-#line 728 "../../mli-root/src/directive-parser.yy"
-                     { double_negation_introduction_in_premise = true; }
+  case 55: // logic_simplification: "no" "logic" "+¬¬⊢"
+#line 729 "../../mli-root/src/directive-parser.yy"
+                          { double_negation_introduction_in_premise = false; }
 #line 1105 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 56: // logic_simplification: "no" "logic" "-⇒"
-#line 729 "../../mli-root/src/directive-parser.yy"
-                         { implication_elimination = false; }
+  case 56: // logic_simplification: "logic" "+¬¬⊢"
+#line 730 "../../mli-root/src/directive-parser.yy"
+                     { double_negation_introduction_in_premise = true; }
 #line 1111 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 57: // logic_simplification: "logic" "-⇒"
-#line 730 "../../mli-root/src/directive-parser.yy"
-                    { implication_elimination = true; }
+  case 57: // logic_simplification: "no" "logic" "-⇒"
+#line 731 "../../mli-root/src/directive-parser.yy"
+                         { implication_elimination = false; }
 #line 1117 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 58: // logic_simplification: "no" "logic" "-⇒⊢"
-#line 731 "../../mli-root/src/directive-parser.yy"
-                          { implication_elimination_in_premise = false; }
+  case 58: // logic_simplification: "logic" "-⇒"
+#line 732 "../../mli-root/src/directive-parser.yy"
+                    { implication_elimination = true; }
 #line 1123 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 59: // logic_simplification: "logic" "-⇒⊢"
-#line 732 "../../mli-root/src/directive-parser.yy"
-                     { implication_elimination_in_premise = true; }
+  case 59: // logic_simplification: "no" "logic" "-⇒⊢"
+#line 733 "../../mli-root/src/directive-parser.yy"
+                          { implication_elimination_in_premise = false; }
 #line 1129 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 60: // logic_simplification: "no" "logic" "-∧"
-#line 733 "../../mli-root/src/directive-parser.yy"
-                        { conjunction_elimination = false; }
+  case 60: // logic_simplification: "logic" "-⇒⊢"
+#line 734 "../../mli-root/src/directive-parser.yy"
+                     { implication_elimination_in_premise = true; }
 #line 1135 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 61: // logic_simplification: "logic" "-∧"
-#line 734 "../../mli-root/src/directive-parser.yy"
-                   { conjunction_elimination = true; }
+  case 61: // logic_simplification: "no" "logic" "-∧"
+#line 735 "../../mli-root/src/directive-parser.yy"
+                        { conjunction_elimination = false; }
 #line 1141 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 62: // logic_simplification: "no" "logic" "-∧⊢"
-#line 735 "../../mli-root/src/directive-parser.yy"
-                         { conjunction_elimination_in_premise = false; }
+  case 62: // logic_simplification: "logic" "-∧"
+#line 736 "../../mli-root/src/directive-parser.yy"
+                   { conjunction_elimination = true; }
 #line 1147 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 63: // logic_simplification: "logic" "-∧⊢"
-#line 736 "../../mli-root/src/directive-parser.yy"
-                    { conjunction_elimination_in_premise = true; }
+  case 63: // logic_simplification: "no" "logic" "-∧⊢"
+#line 737 "../../mli-root/src/directive-parser.yy"
+                         { conjunction_elimination_in_premise = false; }
 #line 1153 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 64: // logic_simplification: "no" "logic" "-∨"
-#line 737 "../../mli-root/src/directive-parser.yy"
-                        { disjunction_elimination = false; }
+  case 64: // logic_simplification: "logic" "-∧⊢"
+#line 738 "../../mli-root/src/directive-parser.yy"
+                    { conjunction_elimination_in_premise = true; }
 #line 1159 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 65: // logic_simplification: "logic" "-∨"
-#line 738 "../../mli-root/src/directive-parser.yy"
-                   { disjunction_elimination = true; }
+  case 65: // logic_simplification: "no" "logic" "-∨"
+#line 739 "../../mli-root/src/directive-parser.yy"
+                        { disjunction_elimination = false; }
 #line 1165 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 66: // logic_simplification: "no" "logic" "-∨⊢"
-#line 739 "../../mli-root/src/directive-parser.yy"
-                         { disjunction_elimination_in_premise = false; }
+  case 66: // logic_simplification: "logic" "-∨"
+#line 740 "../../mli-root/src/directive-parser.yy"
+                   { disjunction_elimination = true; }
 #line 1171 "../../mli-root/src/directive-parser.cc"
     break;
 
-  case 67: // logic_simplification: "logic" "-∨⊢"
-#line 740 "../../mli-root/src/directive-parser.yy"
-                    { disjunction_elimination_in_premise = true; }
+  case 67: // logic_simplification: "no" "logic" "-∨⊢"
+#line 741 "../../mli-root/src/directive-parser.yy"
+                         { disjunction_elimination_in_premise = false; }
 #line 1177 "../../mli-root/src/directive-parser.cc"
     break;
 
+  case 68: // logic_simplification: "logic" "-∨⊢"
+#line 742 "../../mli-root/src/directive-parser.yy"
+                    { disjunction_elimination_in_premise = true; }
+#line 1183 "../../mli-root/src/directive-parser.cc"
+    break;
 
-#line 1181 "../../mli-root/src/directive-parser.cc"
+
+#line 1187 "../../mli-root/src/directive-parser.cc"
 
             default:
               break;
@@ -1529,24 +1535,24 @@ namespace mli {
   }
 
 
-  const signed char directive_parser::yypact_ninf_ = -107;
+  const signed char directive_parser::yypact_ninf_ = -108;
 
   const signed char directive_parser::yytable_ninf_ = -3;
 
   const signed char
   directive_parser::yypact_[] =
   {
-       0,  -107,     1,   -19,    -7,    -6,    -4,    -3,     6,    33,
-    -107,  -107,     9,    11,    35,    10,  -107,  -107,  -107,    34,
-    -107,  -107,  -107,  -107,  -107,  -107,  -107,    27,    64,   -18,
-     -17,   -14,  -107,  -107,  -107,  -107,  -107,  -107,  -107,  -107,
-    -107,  -107,  -107,  -107,  -107,   -85,  -107,  -106,    25,   -46,
-    -107,  -107,     5,  -107,  -107,  -107,  -107,  -107,  -107,  -107,
-    -107,  -107,  -107,  -107,  -107,  -107,  -107,    40,  -107,    41,
-    -107,  -107,    47,  -107,  -107,  -107,  -107,  -107,  -107,  -107,
-    -107,  -107,  -107,  -107,  -107,  -107,  -107,    30,  -107,  -107,
-      26,    17,  -107,  -107,  -107,  -107,  -107,  -107,  -107,  -107,
-    -107,  -107,    23,  -107,  -107,  -107
+       0,  -108,     1,   -19,    -7,    -6,    -4,    -3,     6,    33,
+    -108,  -108,     9,    11,    35,    10,  -108,  -108,  -108,    34,
+    -108,  -108,  -108,  -108,  -108,  -108,  -108,    27,    65,   -18,
+     -15,   -14,  -108,  -108,  -108,  -108,  -108,  -108,  -108,  -108,
+    -108,  -108,  -108,  -108,  -108,   -91,  -108,  -107,    25,   -47,
+    -108,  -108,     5,  -108,  -108,  -108,  -108,  -108,  -108,  -108,
+    -108,  -108,  -108,  -108,  -108,  -108,  -108,    40,  -108,    41,
+    -108,  -108,  -108,    47,  -108,  -108,  -108,  -108,  -108,  -108,
+    -108,  -108,  -108,  -108,  -108,  -108,  -108,  -108,    30,  -108,
+    -108,    26,    16,  -108,  -108,  -108,  -108,  -108,  -108,  -108,
+    -108,  -108,  -108,    23,  -108,  -108,  -108
   };
 
   const signed char
@@ -1555,91 +1561,91 @@ namespace mli {
        0,     4,     0,     0,     0,     0,     0,     0,     0,     0,
       19,    20,     0,     0,     0,     3,     6,     7,     8,     0,
        9,    10,    11,    12,    14,    15,    16,     0,     0,     0,
-       0,     0,    42,    41,    72,    49,    51,    53,    55,    57,
-      59,    61,    63,    65,    67,    68,    69,     0,     0,     0,
+       0,     0,    43,    42,    73,    50,    52,    54,    56,    58,
+      60,    62,    64,    66,    68,    69,    70,     0,     0,     0,
        1,     5,     0,    21,    39,    25,    40,    22,    23,    24,
       26,    27,    28,    29,    30,    31,    32,     0,    34,     0,
-      38,    18,     0,    13,    48,    50,    52,    54,    56,    58,
-      60,    62,    64,    66,    44,    45,    46,     0,    74,    73,
-       0,     0,    77,    78,    43,    35,    36,    33,    37,    17,
-      70,    75,     0,    47,    76,    71
+      38,    41,    18,     0,    13,    49,    51,    53,    55,    57,
+      59,    61,    63,    65,    67,    45,    46,    47,     0,    75,
+      74,     0,     0,    78,    79,    44,    35,    36,    33,    37,
+      17,    71,    76,     0,    48,    77,    72
   };
 
   const signed char
   directive_parser::yypgoto_[] =
   {
-    -107,  -107,  -107,    58,  -107,  -107,  -107,  -107,  -107,  -107,
-    -107,  -107,  -107,  -107,  -107,   -13,  -107,  -107,  -107,  -107,
-    -107
+    -108,  -108,  -108,    58,  -108,  -108,  -108,  -108,  -108,  -108,
+    -108,  -108,  -108,  -108,  -108,     3,  -108,  -108,  -108,  -108,
+    -108
   };
 
   const signed char
   directive_parser::yydefgoto_[] =
   {
-       0,    14,    15,    16,    17,    27,    73,    18,    19,    71,
-      20,    21,    22,    23,    45,    46,    47,    90,   102,   105,
-      94
+       0,    14,    15,    16,    17,    27,    74,    18,    19,    72,
+      20,    21,    22,    23,    45,    46,    47,    91,   103,   106,
+      95
   };
 
   const signed char
   directive_parser::yytable_[] =
   {
-      -2,     1,    88,    89,     2,    28,    24,    25,    26,    92,
-      93,    29,    30,    31,     2,     3,    95,    96,    32,     4,
+      -2,     1,    89,    90,     2,    28,    24,    25,    26,    93,
+      94,    29,    30,    31,     2,     3,    96,    97,    32,     4,
        5,     6,     7,     8,     9,     3,    48,    33,    49,     4,
-       5,     6,     7,     8,     9,    50,    72,    84,    85,    10,
-      11,    86,    87,    91,    52,    34,    12,    53,    34,    10,
-      11,    97,    98,    54,    13,    55,    12,    99,    56,    35,
-     101,   104,    36,    37,    13,    38,    39,    40,    41,    42,
-      43,    44,   103,    51,   100,    57,    58,    59,    60,    61,
-      62,    63,    64,    65,    66,    67,    68,    69,    70,    74,
-       0,     0,     0,    75,    76,     0,    77,    78,    79,    80,
-      81,    82,    83
+       5,     6,     7,     8,     9,    50,    73,    88,    85,    10,
+      11,    86,    87,    92,    52,    34,    12,    53,    34,    10,
+      11,    98,    99,    54,    13,    55,    12,   100,    56,    35,
+     102,   105,    36,    37,    13,    38,    39,    40,    41,    42,
+      43,    44,   104,    51,     0,    57,    58,    59,    60,    61,
+      62,    63,    64,    65,    66,    67,    68,    69,    70,    71,
+      75,   101,     0,     0,    76,    77,     0,    78,    79,    80,
+      81,    82,    83,    84
   };
 
-  const signed char
+  const short
   directive_parser::yycheck_[] =
   {
-       0,     1,   108,   109,     4,    24,     5,     6,     7,    55,
-      56,    18,    18,    17,     4,    15,    11,    12,    21,    19,
+       0,     1,   109,   110,     4,    24,     5,     6,     7,    56,
+      57,    18,    18,    17,     4,    15,    11,    12,    21,    19,
       20,    21,    22,    23,    24,    15,    17,    21,    17,    19,
-      20,    21,    22,    23,    24,     0,     9,    55,    55,    39,
-      40,    55,   127,    18,    10,    15,    46,    13,    15,    39,
+      20,    21,    22,    23,    24,     0,     9,   128,    56,    39,
+      40,    56,    56,    18,    10,    15,    46,    13,    15,    39,
       40,    11,    11,    19,    54,    21,    46,    10,    24,    26,
       34,    38,    29,    30,    54,    32,    33,    34,    35,    36,
-      37,    38,    55,    15,    87,    41,    42,    43,    44,    45,
-      46,    47,    48,    49,    50,    51,    52,    53,    54,    25,
-      -1,    -1,    -1,    29,    30,    -1,    32,    33,    34,    35,
-      36,    37,    38
+      37,    38,    56,    15,    -1,    41,    42,    43,    44,    45,
+      46,    47,    48,    49,    50,    51,    52,    53,    54,    55,
+      25,    88,    -1,    -1,    29,    30,    -1,    32,    33,    34,
+      35,    36,    37,    38
   };
 
   const unsigned char
   directive_parser::yystos_[] =
   {
        0,     1,     4,    15,    19,    20,    21,    22,    23,    24,
-      39,    40,    46,    54,   174,   175,   176,   177,   180,   181,
-     183,   184,   185,   186,     5,     6,     7,   178,    24,    18,
+      39,    40,    46,    54,   175,   176,   177,   178,   181,   182,
+     184,   185,   186,   187,     5,     6,     7,   179,    24,    18,
       18,    17,    21,    21,    15,    26,    29,    30,    32,    33,
-      34,    35,    36,    37,    38,   187,   188,   189,    17,    17,
-       0,   176,    10,    13,    19,    21,    24,    41,    42,    43,
+      34,    35,    36,    37,    38,   188,   189,   190,    17,    17,
+       0,   177,    10,    13,    19,    21,    24,    41,    42,    43,
       44,    45,    46,    47,    48,    49,    50,    51,    52,    53,
-      54,   182,     9,   179,    25,    29,    30,    32,    33,    34,
-      35,    36,    37,    38,    55,    55,    55,   127,   108,   109,
-     190,    18,    55,    56,   193,    11,    12,    11,    11,    10,
-     188,    34,   191,    55,    38,   192
+      54,    55,   183,     9,   180,    25,    29,    30,    32,    33,
+      34,    35,    36,    37,    38,    56,    56,    56,   128,   109,
+     110,   191,    18,    56,    57,   194,    11,    12,    11,    11,
+      10,   189,    34,   192,    56,    38,   193
   };
 
   const unsigned char
   directive_parser::yyr1_[] =
   {
-       0,   173,   174,   174,   174,   175,   175,   176,   176,   176,
-     176,   176,   176,   177,   178,   178,   178,   179,   180,   181,
-     181,   182,   182,   182,   182,   182,   182,   182,   182,   182,
-     182,   182,   182,   182,   182,   182,   182,   182,   182,   182,
-     182,   183,   183,   184,   184,   184,   184,   184,   185,   185,
-     185,   185,   185,   185,   185,   185,   185,   185,   185,   185,
-     185,   185,   185,   185,   185,   185,   185,   185,   186,   187,
-     187,   188,   189,   190,   190,   191,   192,   193,   193
+       0,   174,   175,   175,   175,   176,   176,   177,   177,   177,
+     177,   177,   177,   178,   179,   179,   179,   180,   181,   182,
+     182,   183,   183,   183,   183,   183,   183,   183,   183,   183,
+     183,   183,   183,   183,   183,   183,   183,   183,   183,   183,
+     183,   183,   184,   184,   185,   185,   185,   185,   185,   186,
+     186,   186,   186,   186,   186,   186,   186,   186,   186,   186,
+     186,   186,   186,   186,   186,   186,   186,   186,   186,   187,
+     188,   188,   189,   190,   191,   191,   192,   193,   194,   194
   };
 
   const signed char
@@ -1649,10 +1655,10 @@ namespace mli {
        1,     1,     1,     3,     1,     1,     1,     2,     2,     1,
        1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
        1,     1,     1,     2,     1,     2,     2,     2,     1,     1,
-       1,     2,     2,     3,     3,     3,     3,     4,     3,     2,
-       3,     2,     3,     2,     3,     2,     3,     2,     3,     2,
-       3,     2,     3,     2,     3,     2,     3,     2,     2,     1,
-       3,     4,     1,     1,     1,     1,     1,     1,     1
+       1,     1,     2,     2,     3,     3,     3,     3,     4,     3,
+       2,     3,     2,     3,     2,     3,     2,     3,     2,     3,
+       2,     3,     2,     3,     2,     3,     2,     3,     2,     2,
+       1,     3,     4,     1,     1,     1,     1,     1,     1,     1
   };
 
 
@@ -1673,15 +1679,16 @@ namespace mli {
   "\"null\"", "\"empty\"", "\"result\"", "\"solve\"", "\"prooftree\"",
   "\"unify\"", "\"split\"", "\"substitute\"", "\"statement\"",
   "\"database\"", "\"formula\"", "\"unspecializable\"", "\"structure\"",
-  "\"thread\"", "\"natural number value\"", "\"integer value\"",
-  "\"include\"", "\"end\"", "\"name\"", "\"metapredicate constant\"",
-  "\"predicate constant\"", "\"atom constant\"", "\"function constant\"",
-  "\"term constant\"", "\"metaformula variable\"",
-  "\"object formula variable\"", "\"predicate variable\"",
-  "\"atom variable\"", "\"prefix formula variable\"",
-  "\"function variable\"", "\"constant variable\"", "\"object variable\"",
-  "\"code variable\"", "\"all variable\"", "\"exist variable\"",
-  "\"Set variable\"", "\"set variable\"", "\"set variable definition\"",
+  "\"thread\"", "\"parser\"", "\"natural number value\"",
+  "\"integer value\"", "\"include\"", "\"end\"", "\"name\"",
+  "\"metapredicate constant\"", "\"predicate constant\"",
+  "\"atom constant\"", "\"function constant\"", "\"term constant\"",
+  "\"metaformula variable\"", "\"object formula variable\"",
+  "\"predicate variable\"", "\"atom variable\"",
+  "\"prefix formula variable\"", "\"function variable\"",
+  "\"constant variable\"", "\"object variable\"", "\"code variable\"",
+  "\"all variable\"", "\"exist variable\"", "\"Set variable\"",
+  "\"set variable\"", "\"set variable definition\"",
   "\"implicit set variable\"", "\"identifier constant\"",
   "\"identifier variable\"", "\"∃\"", "\"¬\"", "\"∧\"", "\"∨\"", "\"⇒\"",
   "\"⇐\"", "\"⇔\"", "prefix_not_key", "prefix_and_key", "prefix_or_key",
@@ -1712,14 +1719,14 @@ namespace mli {
   const short
   directive_parser::yyrline_[] =
   {
-       0,   622,   622,   623,   624,   633,   634,   639,   640,   641,
-     642,   643,   644,   649,   654,   655,   656,   661,   666,   676,
-     677,   682,   683,   684,   685,   686,   687,   688,   689,   690,
-     691,   692,   693,   694,   695,   696,   697,   698,   699,   700,
-     701,   706,   707,   712,   713,   714,   715,   716,   721,   722,
-     723,   724,   725,   726,   727,   728,   729,   730,   731,   732,
-     733,   734,   735,   736,   737,   738,   739,   740,   745,   750,
-     751,   756,   761,   766,   767,   771,   776,   781,   782
+       0,   623,   623,   624,   625,   634,   635,   640,   641,   642,
+     643,   644,   645,   650,   655,   656,   657,   662,   667,   677,
+     678,   683,   684,   685,   686,   687,   688,   689,   690,   691,
+     692,   693,   694,   695,   696,   697,   698,   699,   700,   701,
+     702,   703,   708,   709,   714,   715,   716,   717,   718,   723,
+     724,   725,   726,   727,   728,   729,   730,   731,   732,   733,
+     734,   735,   736,   737,   738,   739,   740,   741,   742,   747,
+     752,   753,   758,   763,   768,   769,   773,   778,   783,   784
   };
 
   void
@@ -1800,10 +1807,10 @@ namespace mli {
      135,   136,   137,   138,   139,   140,   141,   142,   143,   144,
      145,   146,   147,   148,   149,   150,   151,   152,   153,   154,
      155,   156,   157,   158,   159,   160,   161,   162,   163,   164,
-     165,   166,   167,   168,   169,   170,   171,   172
+     165,   166,   167,   168,   169,   170,   171,   172,   173
     };
     // Last valid token kind.
-    const int code_max = 427;
+    const int code_max = 428;
 
     if (t <= 0)
       return symbol_kind::S_YYEOF;
@@ -1815,9 +1822,9 @@ namespace mli {
 
 #line 22 "../../mli-root/src/directive-parser.yy"
 } // mli
-#line 1819 "../../mli-root/src/directive-parser.cc"
+#line 1826 "../../mli-root/src/directive-parser.cc"
 
-#line 787 "../../mli-root/src/directive-parser.yy"
+#line 789 "../../mli-root/src/directive-parser.yy"
 
 
 #include <sstream>

@@ -462,7 +462,7 @@ namespace mli {
 
     // Make variables unspecializable during proof (ensuring generality):
     virtual void unspecialize(depth, bool) {}
-    virtual void unspecialize(std::set<val<variable>>& ps, bool b) {}
+    virtual void unspecialize(std::set<val<variable>>&, bool) {}
 
     // Substitution:
     virtual val<formula> substitute(const val<substitution>&, substitute_environment) const;
